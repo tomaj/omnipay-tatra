@@ -1,0 +1,32 @@
+{
+    "name": "tomaj/omnipay-tatra",
+    "type": "library",
+    "description": "Tatrabank driver for the Omnipay payment processing library",
+    "keywords": [
+        "tatrapay",
+        "cardpay",
+        "comfortpay",
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment"
+    ],
+    "homepage": "https://github.com/tomaj/omnipay-tatra",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomas Majer",
+            "email": "tomasmajer@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Omnipay\\Tatra\\" : "src/" }
+    },
+    "require": {
+        "omnipay/common": "~2.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "~2.0"
+    }
+}
