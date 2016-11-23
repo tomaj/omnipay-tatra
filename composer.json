@@ -21,12 +21,20 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Omnipay\\Tatra\\" : "src/" }
+        "psr-4": { 
+            "Omnipay\\": "src/"
+        }
     },
     "require": {
         "omnipay/common": "~2.0"
     },
     "require-dev": {
         "omnipay/tests": "~2.0"
+    },
+    "suggest": {
+        "ext-mcrypt": "Few sign methods need mcrypt extension"
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }

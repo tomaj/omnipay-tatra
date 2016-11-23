@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\Tatra;
+namespace Omnipay\TatraPay;
 
 use Omnipay\Common\AbstractGateway;
 
@@ -8,15 +8,15 @@ class Gateway extends AbstractGateway
 {
     public function getName()
     {
-        return 'TatraPay AES Gateway';
+        return 'TatraPay Gateway';
     }
 
     public function getDefaultParameters()
     {
-        return array(
+        return [
             'mid' => '',
             'sharedSecret' => '',
-        );
+        ];
     }
 
     public function getMid()
@@ -41,12 +41,13 @@ class Gateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
-
-        return $this->createRequest('\Omnipay\Tatra\Message\PurchaseRequest', $parameters);
+        if (isset($parameters['amount'])) {
+            $parameters['amt'] = $parameters['amount'];
+        }
+        if (isset($parameters['currency'])) {
+            $parameters['curr'] = $parameters['currency'];
+        }
+        
+        return $this->createRequest('\Omnipay\TatraPay\Message\PurchaseRequest', $parameters);
     }
-
-    // public function completePurchase(array $parameters = array())
-    // {
-    //     return $this->createRequest('\Omnipay\Buckaroo\Message\CompletePurchaseRequest', $parameters);
-    // }
 }
