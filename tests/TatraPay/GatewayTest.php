@@ -16,11 +16,12 @@ class GatewayTest extends GatewayTestCase
         parent::setUp();
         $this->gateway = new Gateway($this->getHttpClient(), $this->getHttpRequest());
         $this->gateway->setMid(1111);
-        $this->gateway->setSharedSecret('11111111');
     }
 
     public function testPurchaseSign()
     {
+        $this->gateway->setSharedSecret('11111111');
+
         $request = $this->gateway->purchase(array(
         	'amount' => '10.00',
         	'currency' => 'EUR',

@@ -41,13 +41,11 @@ class Gateway extends AbstractGateway
 
     public function purchase(array $parameters = array())
     {
-        if (isset($parameters['amount'])) {
-            $parameters['amt'] = $parameters['amount'];
-        }
-        if (isset($parameters['currency'])) {
-            $parameters['curr'] = $parameters['currency'];
-        }
-        
         return $this->createRequest('\Omnipay\TatraPay\Message\PurchaseRequest', $parameters);
+    }
+
+    public function completePurchase(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\TatraPay\Message\CompletePurchaseRequest', $parameters);
     }
 }

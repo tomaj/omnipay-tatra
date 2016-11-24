@@ -12,7 +12,7 @@ $gateway->setSharedSecret('11111111111111111111111111111111111111111111111111111
 
 $gateway->setTestMode(true);
 
-$response = $gateway->purchase([
+$response = $gateway->completePurchase([
 	'amount' => '10.00',
 	'currency' => 'EUR',
 	'VS' => '123456',
@@ -20,10 +20,11 @@ $response = $gateway->purchase([
 	'rurl' => 'http://localhost:4444/testserver.php',
 ])->send();
 
+
 if ($response->isSuccessful()) {
     
     // Payment was successful
-    print_r($response);
+    echo "OK - {$response->getVs()}";
 
 } elseif ($response->isRedirect()) {
     
@@ -32,7 +33,7 @@ if ($response->isSuccessful()) {
     //$response->redirect();
 
 } else {
-
+	echo "FAIL!";
     // Payment failed
     echo $response->getMessage();
 }
