@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\Tatrapay\Message;
+namespace Omnipay\TatraPay\Message;
 
 use Omnipay\Common\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;

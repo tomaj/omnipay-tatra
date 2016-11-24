@@ -1,9 +1,8 @@
 <?php
 
-namespace Omnipay\Tatrapay\Message;
+namespace Omnipay\TatraPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\RequestInterface;
 
 class CompletePurchaseResponse extends AbstractResponse
 {
