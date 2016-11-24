@@ -73,7 +73,7 @@ class PurchaseRequest extends AbstractRequest
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}";
             $data['SIGN'] = $this->generateSignature($input);
         }
-        
+
         return $this->response = new PurchaseResponse($this, $data);
     }
 
@@ -83,11 +83,11 @@ class PurchaseRequest extends AbstractRequest
 
         if ($this->getTestmode()) {
             if (strlen($sharedSecret) == 128) {
-                return 'http://localhost:3333/payment/tatrapay-hmac';
+                return 'https://platby.tomaj.sk/payment/tatrapay-hmac';
             } elseif (strlen($sharedSecret) == 64) {
-                return 'http://localhost:3333/payment/tatrapay-aes256';
+                return 'https://platby.tomaj.sk/payment/tatrapay-aes256';
             } else {
-                return 'http://localhost:3333/payment/tatrapay-des';
+                return 'https://platby.tomaj.sk/payment/tatrapay-des';
             }
         } else {
             if (strlen($sharedSecret) == 128) {
