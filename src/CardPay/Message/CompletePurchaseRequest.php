@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\TatraPay\Message;
+namespace Omnipay\CardPay\Message;
 
 use Omnipay\Common\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;
@@ -24,7 +24,7 @@ class CompletePurchaseRequest extends AbstractRequest
                 throw new InvalidRequestException('incorect signature');
             }
         } elseif (strlen($sharedSecret) == 64) {
-            $data = "{$_GET['VS']}{$_GET['RES']}";
+            $data = "{$_GET['VS']}{$_GET['RES']}{$_GET['AC']}";
             $sign = new Aes256Sign();
             if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
                 throw new InvalidRequestException('incorect signature');

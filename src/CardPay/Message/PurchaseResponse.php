@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\TatraPay\Message;
+namespace Omnipay\CardPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;

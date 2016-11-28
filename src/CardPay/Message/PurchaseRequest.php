@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\TatraPay\Message;
+namespace Omnipay\CardPay\Message;
 
 use Omnipay\Common\Currency;
 use Omnipay\Core\Sign\DesSign;
@@ -17,11 +17,31 @@ class PurchaseRequest extends AbstractRequest
         return $this;
     }
 
+    public function getIpc()
+    {
+        return $this->getParameter('ipc');
+    }
+
+    public function setIpc($value)
+    {
+        return $this->setParameter('ipc', $value);
+    }
+
+    public function getName()
+    {
+        return $this->getParameter('name');
+    }
+
+    public function setName($value)
+    {
+        return $this->setParameter('name', $value);
+    }
+
     public function getData()
     {
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
         $data = [];
-        $data['PT'] = 'TatraPay';
+        $data['PT'] = 'CardPay';
         $data['MID'] = $this->getMid();
         $data['CURR'] = Currency::find($this->getCurrency())->getNumeric();
         $data['VS'] = $this->getVs();
@@ -33,7 +53,9 @@ class PurchaseRequest extends AbstractRequest
         $data['AREDIR'] = $this->getAredir();
         $data['LANG'] = $this->getLang();
         $data['RURL'] = $this->getRurl();
-
+        $data['IPC'] = $this->getIpc();
+        $data['NAME'] = $this->getName();
+       
      	$sharedSecret = $this->getParameter('sharedSecret');
      	if (strlen($sharedSecret) == 128) {
         	$data['TIMESTAMP'] = $this->getTimestamp();
@@ -71,7 +93,7 @@ class PurchaseRequest extends AbstractRequest
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}{$this->getRem()}{$this->getTimestamp()}";
             $data['HMAC'] = $this->generateSignature($input);
         } else {
-            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}";
+            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}";
             $data['SIGN'] = $this->generateSignature($input);
         }
         
@@ -84,15 +106,15 @@ class PurchaseRequest extends AbstractRequest
 
         if ($this->getTestmode()) {
             if (strlen($sharedSecret) == 128) {
-                return 'http://localhost:3333/payment/tatrapay-hmac';
+                return 'http://localhost:3333/payment/cardpay-hmac';
             } elseif (strlen($sharedSecret) == 64) {
-                return 'http://localhost:3333/payment/tatrapay-aes256';
+                return 'http://localhost:3333/payment/cardpay-aes256';
             } else {
-                return 'http://localhost:3333/payment/tatrapay-des';
+                return 'http://localhost:3333/payment/cardpay-des';
             }
         } else {
             if (strlen($sharedSecret) == 128) {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/tatrapay';
+                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';
             } else {
                 return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
             }

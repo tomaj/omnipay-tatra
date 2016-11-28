@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\TatraPay\Sign;
+namespace Omnipay\Core\Sign;
 
 class Aes256Sign implements SignInterface
 {

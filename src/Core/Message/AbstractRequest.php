@@ -1,11 +1,6 @@
 <?php
 
-namespace Omnipay\TatraPay\Message;
-
-use Omnipay\Common\Currency;
-use Omnipay\TatraPay\Sign\DesSign;
-use Omnipay\TatraPay\Sign\HmacSign;
-use Omnipay\TatraPay\Sign\Aes256Sign;
+namespace Omnipay\Core\Message;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
@@ -13,6 +8,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('mid');
     }
+
     public function setMid($value)
     {
         return $this->setParameter('mid', $value);
@@ -22,6 +18,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('sharedSecret');
     }
+
     public function setSharedSecret($value)
     {
         return $this->setParameter('sharedSecret', $value);
@@ -31,6 +28,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('vs');
     }
+
     public function setVs($value)
     {
         return $this->setParameter('vs', $value);
@@ -40,6 +38,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('cs');
     }
+
     public function setCs($value)
     {
         return $this->setParameter('cs', $value);
@@ -49,6 +48,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('ss');
     }
+
     public function setSs($value)
     {
         return $this->setParameter('ss', $value);
@@ -58,6 +58,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('desc');
     }
+
     public function setDesc($value)
     {
         return $this->setParameter('desc', $value);
@@ -67,6 +68,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('rsms');
     }
+
     public function setRsms($value)
     {
         return $this->setParameter('rsms', $value);
@@ -76,6 +78,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('aredis');
     }
+
     public function setAredir($value)
     {
         return $this->setParameter('aredir', $value);
@@ -85,6 +88,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('lang');
     }
+
     public function setLang($value)
     {
         return $this->setParameter('lang', $value);
@@ -94,6 +98,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('rem');
     }
+
     public function setRem($value)
     {
         return $this->setParameter('rem', $value);
@@ -103,6 +108,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('timestamp');
     }
+
     public function setTimestamp($value)
     {
         return $this->setParameter('timestamp', $value);
@@ -112,6 +118,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('rurl');
     }
+    
     public function setRurl($value)
     {
         return $this->setParameter('rurl', $value);
