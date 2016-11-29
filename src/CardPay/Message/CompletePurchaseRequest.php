@@ -30,7 +30,7 @@ class CompletePurchaseRequest extends AbstractRequest
                 throw new InvalidRequestException('incorect signature');
             }
         } elseif (strlen($sharedSecret) == 8) {
-            $data = "{$_GET['VS']}{$_GET['RES']}";
+            $data = "{$_GET['VS']}{$_GET['RES']}{$_GET['AC']}";
             $sign = new DesSign();
             if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
                 throw new InvalidRequestException('incorect signature');
