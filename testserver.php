@@ -4,10 +4,12 @@ use Omnipay\Omnipay;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$gateway = Omnipay::create('TatraPay');
+// $gateway = Omnipay::create('TatraPay');
+$gateway = Omnipay::create('CardPay');
 
 $gateway->setMid(1111);
 // $gateway->setSharedSecret('11111111');
+// $gateway->setSharedSecret('1111111111111111111111111111111111111111111111111111111111111111');
 $gateway->setSharedSecret('11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111');
 
 $gateway->setTestMode(true);
