@@ -106,11 +106,11 @@ class PurchaseRequest extends AbstractRequest
 
         if ($this->getTestmode()) {
             if (strlen($sharedSecret) == 128) {
-                return 'http://localhost:3333/payment/cardpay-hmac';
+                return 'https://platby.tomaj.sk/payment/cardpay-hmac';
             } elseif (strlen($sharedSecret) == 64) {
-                return 'http://localhost:3333/payment/cardpay-aes256';
+                return 'https://platby.tomaj.sk/payment/cardpay-aes256';
             } else {
-                return 'http://localhost:3333/payment/cardpay-des';
+                return 'https://platby.tomaj.sk/payment/cardpay-des';
             }
         } else {
             if (strlen($sharedSecret) == 128) {
