@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\CardPay\Message;
+namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Currency;
 use Omnipay\Core\Sign\DesSign;
@@ -14,9 +14,12 @@ class PurchaseRequest extends AbstractRequest
     {
         parent::initialize($parameters);
         $this->setTimestamp(date('dmYHis'));
+        $this->setTpay('Y');
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $this->setIpc($_SERVER['REMOTE_ADDR']);
         }
+        $this->setAredir(1);
+
         return $this;
     }
 
@@ -40,9 +43,19 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('name', $value);
     }
 
+    public function getTpay()
+    {
+        return $this->getParameter('tpay');
+    }
+
+    public function setTpay($value)
+    {
+        return $this->setParameter('tpay', $value);
+    }
+
     public function getData()
     {
-        $this->validate('sharedSecret', 'mid', 'vs', 'rurl', 'ipc', 'name');
+        $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
         $data = [];
         $data['PT'] = 'CardPay';
         $data['MID'] = $this->getMid();
@@ -58,7 +71,13 @@ class PurchaseRequest extends AbstractRequest
         $data['RURL'] = $this->getRurl();
         $data['IPC'] = $this->getIpc();
         $data['NAME'] = $this->getName();
-       
+        $data['IPC'] = $this->getIpc();
+        $data['TPAY'] = $this->getTpay();
+        if ($this->getRem()) {
+            $data['REM'] = $this->getRem();
+        }
+        $data['TEM'] = 1;
+
      	$sharedSecret = $this->getParameter('sharedSecret');
      	if (strlen($sharedSecret) == 128) {
         	$data['TIMESTAMP'] = $this->getTimestamp();
@@ -76,9 +95,6 @@ class PurchaseRequest extends AbstractRequest
         } elseif (strlen($sharedSecret) == 64) {
             $sign = new Aes256Sign();
             return $sign->sign($data, $sharedSecret);
-        } elseif (strlen($sharedSecret) == 8) {
-            $sign = new DesSign();
-            return $sign->sign($data, $sharedSecret);
         } else {
             throw new \Exception('Unknown key length');
         }
@@ -93,10 +109,11 @@ class PurchaseRequest extends AbstractRequest
         $curr = Currency::find($this->getCurrency())->getNumeric();;
 
         if (strlen($sharedSecret) == 128) {
-            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}{$this->getRem()}{$this->getTimestamp()}";
+            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTpay()}{$this->getTimestamp()}";
             $data['HMAC'] = $this->generateSignature($input);
         } else {
-            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}";
+            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getTpay()}";
+            var_dump($input);
             $data['SIGN'] = $this->generateSignature($input);
         }
         
@@ -109,11 +126,9 @@ class PurchaseRequest extends AbstractRequest
 
         if ($this->getTestmode()) {
             if (strlen($sharedSecret) == 128) {
-                return 'https://platby.tomaj.sk/payment/cardpay-hmac';
-            } elseif (strlen($sharedSecret) == 64) {
-                return 'https://platby.tomaj.sk/payment/cardpay-aes256';
+                return 'https://platby.tomaj.sk/payment/comfortpay-hmac';
             } else {
-                return 'https://platby.tomaj.sk/payment/cardpay-des';
+                return 'https://platby.tomaj.sk/payment/comfortpay-aes256';
             }
         } else {
             if (strlen($sharedSecret) == 128) {
