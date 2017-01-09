@@ -106,14 +106,13 @@ class PurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        $curr = Currency::find($this->getCurrency())->getNumeric();;
+        $curr = Currency::find($this->getCurrency())->getNumeric();
 
         if (strlen($sharedSecret) == 128) {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTpay()}{$this->getTimestamp()}";
             $data['HMAC'] = $this->generateSignature($input);
         } else {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getTpay()}";
-            var_dump($input);
             $data['SIGN'] = $this->generateSignature($input);
         }
         

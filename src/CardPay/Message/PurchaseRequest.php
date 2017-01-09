@@ -93,7 +93,8 @@ class PurchaseRequest extends AbstractRequest
         $curr = Currency::find($this->getCurrency())->getNumeric();;
 
         if (strlen($sharedSecret) == 128) {
-            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}{$this->getRem()}{$this->getTimestamp()}";
+            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTimestamp()}";
+            var_dump($input);
             $data['HMAC'] = $this->generateSignature($input);
         } else {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}";
@@ -109,6 +110,7 @@ class PurchaseRequest extends AbstractRequest
 
         if ($this->getTestmode()) {
             if (strlen($sharedSecret) == 128) {
+                // return 'http://127.0.0.1:4444/payment/cardpay-hmac';
                 return 'https://platby.tomaj.sk/payment/cardpay-hmac';
             } elseif (strlen($sharedSecret) == 64) {
                 return 'https://platby.tomaj.sk/payment/cardpay-aes256';

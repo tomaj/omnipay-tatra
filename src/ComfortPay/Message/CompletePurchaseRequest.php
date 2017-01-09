@@ -15,6 +15,8 @@ class CompletePurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
+        // todo: validate if $_GET['VS'] == $this->getVs()
+
         if (strlen($sharedSecret) == 128) {
             $curr = Currency::find($this->getCurrency())->getNumeric();
             $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
