@@ -34,9 +34,9 @@ class PurchaseRequest extends AbstractRequest
         $data['LANG'] = $this->getLang();
         $data['RURL'] = $this->getRurl();
 
-     	$sharedSecret = $this->getParameter('sharedSecret');
-     	if (strlen($sharedSecret) == 128) {
-        	$data['TIMESTAMP'] = $this->getTimestamp();
+        $sharedSecret = $this->getParameter('sharedSecret');
+        if (strlen($sharedSecret) == 128) {
+            $data['TIMESTAMP'] = $this->getTimestamp();
         }
         return $data;
     }
@@ -65,7 +65,8 @@ class PurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        $curr = Currency::find($this->getCurrency())->getNumeric();;
+        $curr = Currency::find($this->getCurrency())->getNumeric();
+        ;
 
         if (strlen($sharedSecret) == 128) {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}{$this->getRem()}{$this->getTimestamp()}";

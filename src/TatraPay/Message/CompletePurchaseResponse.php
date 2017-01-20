@@ -23,7 +23,7 @@ class CompletePurchaseResponse extends AbstractResponse
 
     public function getVs()
     {
-    	if (isset($this->data['VS'])) {
+        if (isset($this->data['VS'])) {
             return $this->data['VS'];
         }
         return null;

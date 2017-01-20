@@ -2,7 +2,7 @@
 
 namespace Omnipay\Core\Sign;
 
-interface SignInterface 
+interface SignInterface
 {
-	public function sign($input, $secret);
+    public function sign($input, $secret);
 }

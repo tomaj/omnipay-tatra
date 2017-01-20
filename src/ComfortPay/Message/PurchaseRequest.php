@@ -78,9 +78,9 @@ class PurchaseRequest extends AbstractRequest
         }
         $data['TEM'] = 1;
 
-     	$sharedSecret = $this->getParameter('sharedSecret');
-     	if (strlen($sharedSecret) == 128) {
-        	$data['TIMESTAMP'] = $this->getTimestamp();
+        $sharedSecret = $this->getParameter('sharedSecret');
+        if (strlen($sharedSecret) == 128) {
+            $data['TIMESTAMP'] = $this->getTimestamp();
         }
         return $data;
     }

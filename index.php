@@ -21,21 +21,12 @@ $response = $tatra->purchase(
 
 // Process response
 if ($response->isSuccessful()) {
-
-	// die('successfull');
     // Payment was successful
     print_r($response);
-
 } elseif ($response->isRedirect()) {
-    
-
-	// die('redirecting');
-
     // Redirect to offsite payment gateway
     $response->redirect();
-
 } else {
-
     // Payment failed
     echo $response->getMessage();
 }
