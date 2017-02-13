@@ -95,7 +95,6 @@ class PurchaseRequest extends AbstractRequest
 
         if (strlen($sharedSecret) == 128) {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTimestamp()}";
-            var_dump($input);
             $data['HMAC'] = $this->generateSignature($input);
         } else {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}";
