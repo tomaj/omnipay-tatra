@@ -18,7 +18,8 @@ class CompletePurchaseRequest extends AbstractRequest
         if (strlen($sharedSecret) == 128) {
             $curr = Currency::find($this->getCurrency())->getNumeric();
             $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
-            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$_GET['RES']}{$_GET['AC']}{$_GET['RES']}{$_GET['CC']}{$tid}{$_GET['TIMESTAMP']}";
+            $tres = isset($_GET['TRES']) ? $_GET['TRES'] : '';
+            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$_GET['RES']}{$_GET['AC']}{$tres}{$_GET['CC']}{$tid}{$_GET['TIMESTAMP']}";
             $sign = new HmacSign();
             if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
                 throw new InvalidRequestException('incorect signature');
