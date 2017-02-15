@@ -15,18 +15,29 @@ class CompletePurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        // todo: validate if $_GET['VS'] == $this->getVs()
+        $vs = isset($_GET['VS']) ? $_GET['VS'] : '';
+        $ac = isset($_GET['AC']) ? $_GET['AC'] : '';
+        $cid = isset($_GET['CID']) ? $_GET['CID'] : '';
+        $res = isset($_GET['RES']) ? $_GET['RES'] : '';
+        $tres = isset($_GET['TRES']) ? $_GET['TRES'] : '';
+        $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
+        $cc = isset($_GET['CC']) ? $_GET['CC'] : '';
+        $rc = isset($_GET['RC']) ? $_GET['RC'] : '';
+        $timestamp = isset($_GET['TIMESTAMP']) ? $_GET['TIMESTAMP'] : '';
+
+        if ($vs != $this->getVs()) {
+            throw new InvalidRequestException('Variable symbol mismatch');
+        }
 
         if (strlen($sharedSecret) == 128) {
             $curr = Currency::find($this->getCurrency())->getNumeric();
-            $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
-            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$_GET['RES']}{$_GET['AC']}{$_GET['TRES']}{$_GET['CID']}{$_GET['CC']}{$_GET['RC']}{$tid}{$_GET['TIMESTAMP']}";
+            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
             $sign = new HmacSign();
             if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
                 throw new InvalidRequestException('incorect signature');
             }
         } elseif (strlen($sharedSecret) == 64) {
-            $data = "{$this->getVs()}{$_GET['TRES']}{$_GET['AC']}{$_GET['CID']}";
+            $data = "{$this->getVs()}{$tres}{$ac}{$cid}";
             $sign = new Aes256Sign();
             if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
                 throw new InvalidRequestException('incorect signature');
@@ -36,11 +47,11 @@ class CompletePurchaseRequest extends AbstractRequest
         }
 
         return [
-            'RES' => $_GET['RES'],
-            'VS' => $_GET['VS'],
-            'CC' => isset($_GET['CC']) ? $_GET['CC'] : '',
-            'CID' => $_GET['CID'],
-            'TRES' => $_GET['TRES'],
+            'RES' => $res,
+            'VS' => $vs,
+            'CC' => $cc,
+            'CID' => $cid,
+            'TRES' => $tres,
         ];
     }
     public function sendData($data)

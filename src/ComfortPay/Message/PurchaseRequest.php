@@ -14,7 +14,6 @@ class PurchaseRequest extends AbstractRequest
     {
         parent::initialize($parameters);
         $this->setTimestamp(date('dmYHis'));
-        $this->setTpay('Y');
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $this->setIpc($_SERVER['REMOTE_ADDR']);
         }
@@ -45,12 +44,7 @@ class PurchaseRequest extends AbstractRequest
 
     public function getTpay()
     {
-        return $this->getParameter('tpay');
-    }
-
-    public function setTpay($value)
-    {
-        return $this->setParameter('tpay', $value);
+        return 'Y';
     }
 
     public function getData()
@@ -65,13 +59,11 @@ class PurchaseRequest extends AbstractRequest
         $data['AMT'] = $this->getAmount();
         $data['DESC'] = $this->getDesc();
         $data['RSMS'] = $this->getRsms();
-        $data['REM'] = $this->getRem();
         $data['AREDIR'] = $this->getAredir();
         $data['LANG'] = $this->getLang();
         $data['RURL'] = $this->getRurl();
         $data['IPC'] = $this->getIpc();
         $data['NAME'] = $this->getName();
-        $data['IPC'] = $this->getIpc();
         $data['TPAY'] = $this->getTpay();
         if ($this->getRem()) {
             $data['REM'] = $this->getRem();
