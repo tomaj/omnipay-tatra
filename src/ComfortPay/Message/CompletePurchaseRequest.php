@@ -53,6 +53,7 @@ class CompletePurchaseRequest extends AbstractRequest
             'TRES' => $tres,
         ];
     }
+    
     public function sendData($data)
     {
         return $this->response = new CompletePurchaseResponse($this, $data);

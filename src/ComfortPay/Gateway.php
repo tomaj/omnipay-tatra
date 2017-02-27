@@ -17,6 +17,9 @@ class Gateway extends AbstractGateway
             'mid' => '',
             'sharedSecret' => '',
             'terminalId' => '',
+            'ws' => '',
+            'certPath' => '',
+            'certPass' => '',
         ];
     }
 
@@ -69,4 +72,19 @@ class Gateway extends AbstractGateway
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\CompletePurchaseRequest::class, $parameters);
     }
+
+    // public function charge(array $parameters = array())
+    // {
+    //     return $this->createRequest(\Omnipay\ComfortPay\Message\Chargequest::class, $parameters);
+    // }
+
+    public function checkCard(array $parameters = array())
+    {
+        return $this->createRequest(\Omnipay\ComfortPay\Message\CheckCardRequest::class, $parameters);
+    }
+
+    // public function listOfExpire(array $parameters = array())
+    // {
+    //     return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpireRequest::class, $parameters);
+    // }
 }
