@@ -63,6 +63,26 @@ class Gateway extends AbstractGateway
         return $this->setParameter('ws', $value);
     }
 
+    public function getCertPath()
+    {
+        return $this->getParameter('certPath');
+    }
+
+    public function setCertPath($value)
+    {
+        return $this->setParameter('certPath', $value);
+    }
+
+    public function getCertPass()
+    {
+        return $this->getParameter('certPass');
+    }
+
+    public function setCertPass($value)
+    {
+        return $this->setParameter('certPass', $value);
+    }
+
     public function purchase(array $parameters = array())
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\PurchaseRequest::class, $parameters);

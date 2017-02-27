@@ -43,4 +43,38 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
     {
         return $this->setParameter('certPass', $value);
     }
+
+    public function getData()
+    {
+        $this->validate('terminalId', 'ws', 'cardId', 'certPath', 'certPass');
+
+        return [
+            'terminalId' => $this->getParameter('terminalId'),
+            'ws' => $this->getParameter('ws'),
+            'cardId' => $this->getParameter('cardId'),
+            'certPath' => $this->getParameter('certPath'),
+            'certPass' => $this->getParameter('certPass'),
+        ];
+    }
+
+    private function getSoapClient()
+    {
+        $options = [
+            'trace' => true,
+            'exception' => true,
+            'local_cert' => $this->getParameter('certPath'),
+            'passphrase' => $this->getParameter('certPass'),
+            'connection_timeout' => 5,
+            'keep_alive' => false,
+            'soap_version' => SOAP_1_2,
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'stream_context' => stream_context_create([
+                'ssl' => [
+                    'verify_peer'       => false,
+                    'verify_peer_name'  => false,
+                ]
+            ])
+        ];
+        return new SoapClient(__DIR__ . '/../comfortpay.wsdl', $options);
+    }
 }
