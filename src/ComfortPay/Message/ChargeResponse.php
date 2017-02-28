@@ -16,8 +16,8 @@ class ChargeResponse extends AbstractResponse implements ResponseInterface
     {
         if (!isset($this->data['transactionStatus'])) {
             return false;
-    	}
-    	return $this->data['transactionStatus'];
+        }
+        return $this->data['transactionStatus'];
     }
 
     public function getTransactionApproval()
@@ -25,6 +25,6 @@ class ChargeResponse extends AbstractResponse implements ResponseInterface
         if (!isset($this->data['transactionApproval'])) {
             return false;
         }
-    	return $this->data['transactionApproval'];
+        return $this->data['transactionApproval'];
     }
 }

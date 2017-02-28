@@ -27,7 +27,7 @@ class ChargeRequest extends AbstractSoapRequest
         return $this->setParameter('ws', $value);
     }
 
-	public function getCid()
+    public function getCid()
     {
         return $this->getParameter('cid');
     }
@@ -37,7 +37,7 @@ class ChargeRequest extends AbstractSoapRequest
         return $this->setParameter('cid', $value);
     }
 
-	public function getTransactionId()
+    public function getTransactionId()
     {
         return $this->getParameter('transactionId');
     }
@@ -45,7 +45,7 @@ class ChargeRequest extends AbstractSoapRequest
     public function setTransactionId($value)
     {
         return $this->setParameter('transactionId', $value);
-    }    
+    }
 
     public function getData()
     {
@@ -53,7 +53,7 @@ class ChargeRequest extends AbstractSoapRequest
 
         $data = parent::getData();
         $data = array_merge($data, [
-        	'terminalId' => $this->getTerminalId(),
+            'terminalId' => $this->getTerminalId(),
             'ws' => $this->getWs(),
             'cid' => $this->getCid(),
             'transactionId' => $this->getTransactionId(),
@@ -69,7 +69,7 @@ class ChargeRequest extends AbstractSoapRequest
     public function sendData($data)
     {
         if ($this->getTestmode()) {
-			if (intval($data['cid']) % 2 == 0) {
+            if (intval($data['cid']) % 2 == 0) {
                 return $this->response = new ChargeResponse($this, ['transactionStatus' => '02', 'transactionApproval' => '123']);
             }
             return $this->response = new ChargeResponse($this, ['transactionStatus' => '00', 'transactionApproval' => '123']);
@@ -77,7 +77,7 @@ class ChargeRequest extends AbstractSoapRequest
 
         $client = $this->getSoapClient();
 
-		$data = [
+        $data = [
             'transactionId' => $data['transactionId'],
             'referedCardId' => $data['cid'],
             'merchantId' => $data['ws'],
