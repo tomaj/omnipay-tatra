@@ -103,8 +103,8 @@ class Gateway extends AbstractGateway
         return $this->createRequest(\Omnipay\ComfortPay\Message\CheckCardRequest::class, $parameters);
     }
 
-    // public function listOfExpire(array $parameters = array())
-    // {
-    //     return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpireRequest::class, $parameters);
-    // }
+    public function listOfExpirePerId(array $parameters = array())
+    {
+        return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpirePerIdRequest::class, $parameters);
+    }
 }

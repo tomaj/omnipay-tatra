@@ -16,6 +16,15 @@ class CheckCardRequest extends AbstractSoapRequest
         return $this->setParameter('cardId', $value);
     }
 
+    public function getData()
+    {
+        $this->validate('cardId');
+
+        $data = parent::getData();
+        $data['cardId'] = $this->getCardId();
+        return $data;
+    }
+
     public function sendData($data)
     {
         if ($this->getTestmode()) {

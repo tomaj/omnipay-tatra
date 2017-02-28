@@ -46,12 +46,11 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
 
     public function getData()
     {
-        $this->validate('terminalId', 'ws', 'cardId', 'certPath', 'certPass');
+        $this->validate('terminalId', 'ws', 'certPath', 'certPass');
 
         return [
             'terminalId' => $this->getParameter('terminalId'),
             'ws' => $this->getParameter('ws'),
-            'cardId' => $this->getParameter('cardId'),
             'certPath' => $this->getParameter('certPath'),
             'certPass' => $this->getParameter('certPass'),
         ];
