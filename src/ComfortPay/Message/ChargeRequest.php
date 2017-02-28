@@ -3,6 +3,7 @@
 namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Currency;
+use SoapParam;
 
 class ChargeRequest extends AbstractSoapRequest
 {
@@ -87,7 +88,7 @@ class ChargeRequest extends AbstractSoapRequest
             'ss' => $data['ss'],
         ];
         $param = new SoapParam($data, 'TransactionRequest');
-        $response = $this->client->doCardTransaction($param);
+        $response = $client->doCardTransaction($param);
 
         return $this->response = new ChargeResponse($this, ['transactionStatus' => $response->transactionStatus, 'transactionApproval' => $response->transactionStatus]);
     }

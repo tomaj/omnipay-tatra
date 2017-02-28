@@ -2,6 +2,8 @@
 
 namespace Omnipay\ComfortPay\Message;
 
+use SoapClient;
+
 abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
 {
 
@@ -35,7 +37,7 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
         ];
     }
 
-    private function getSoapClient()
+    protected function getSoapClient()
     {
         $options = [
             'trace' => true,

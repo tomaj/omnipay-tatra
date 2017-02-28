@@ -3,6 +3,7 @@
 namespace Omnipay\ComfortPay\Message;
 
 use SoapClient;
+use SimpleXMLElement;
 
 class ListOfExpirePerIdRequest extends AbstractSoapRequest
 {
@@ -37,9 +38,9 @@ class ListOfExpirePerIdRequest extends AbstractSoapRequest
         }
 
         $client = $this->getSoapClient();
-        $this->client->__call('getListOfExpirePerId', ['listOfIds' => $ids]);
+        $client->__call('getListOfExpirePerId', ['listOfIds' => $data['cardIds']]);
 
-        $xmlResponse = $this->client->__getLastResponse();
+        $xmlResponse = $client->__getLastResponse();
         $xml = new SimpleXMLElement($xmlResponse);
         $pairs = $xml->xpath('//pair');
 
