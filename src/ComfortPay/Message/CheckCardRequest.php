@@ -28,6 +28,6 @@ class CheckCardRequest extends AbstractSoapRequest
         $client = $this->getSoapClient();
         $response = $client->checkCard($data['cardId']);
 
-		return $this->response = new CheckCardResponse($this, $response);
+        return $this->response = new CheckCardResponse($this, $response);
     }
 }
