@@ -26,10 +26,23 @@ $gateway->setTestMode(true);
 //     'rurl' => 'http://localhost:4444/testserver.php',
 // ])->send();
 
-$response = $gateway->checkCard([
-	'cardId' => '122',
-])->send();
+// $response = $gateway->checkCard([
+// 	'cardId' => '122',
+// ])->send();
 
+
+// $response = $gateway->listOfExpirePerId([
+// 	'cardIds' => ['122', '123421', '2354234'],
+// ])->send();
+
+// $response = $gateway->charge([
+// 	'transactionId' => '555555',
+// 	'cid' => '123',
+// 	'amount' => '10.00',
+// 	'currency' => 'EUR',
+// 	'VS' => '123455',
+// 	'CS' => '1234214',
+// ])->send();
 
 if ($response->isSuccessful()) {
     
@@ -44,7 +57,7 @@ if ($response->isSuccessful()) {
     //$response->redirect();
 
 } else {
-
+	echo "ERROR\n";
     // Payment failed
     echo $response->getMessage();
 }
