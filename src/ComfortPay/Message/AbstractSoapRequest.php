@@ -4,25 +4,6 @@ namespace Omnipay\ComfortPay\Message;
 
 abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
 {
-    public function getTerminalId()
-    {
-        return $this->getParameter('terminalId');
-    }
-
-    public function setTerminalId($value)
-    {
-        return $this->setParameter('terminalId', $value);
-    }
-
-    public function getWs()
-    {
-        return $this->getParameter('ws');
-    }
-
-    public function setWs($value)
-    {
-        return $this->setParameter('ws', $value);
-    }
 
     public function getCertPath()
     {
@@ -46,11 +27,9 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
 
     public function getData()
     {
-        $this->validate('terminalId', 'ws', 'certPath', 'certPass');
+        $this->validate('certPath', 'certPass');
 
         return [
-            'terminalId' => $this->getParameter('terminalId'),
-            'ws' => $this->getParameter('ws'),
             'certPath' => $this->getParameter('certPath'),
             'certPass' => $this->getParameter('certPass'),
         ];

@@ -93,10 +93,10 @@ class Gateway extends AbstractGateway
         return $this->createRequest(\Omnipay\ComfortPay\Message\CompletePurchaseRequest::class, $parameters);
     }
 
-    // public function charge(array $parameters = array())
-    // {
-    //     return $this->createRequest(\Omnipay\ComfortPay\Message\Chargequest::class, $parameters);
-    // }
+    public function charge(array $parameters = array())
+    {
+        return $this->createRequest(\Omnipay\ComfortPay\Message\ChargeRequest::class, $parameters);
+    }
 
     public function checkCard(array $parameters = array())
     {

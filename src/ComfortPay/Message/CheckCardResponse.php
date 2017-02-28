@@ -9,6 +9,6 @@ class CheckCardResponse extends AbstractResponse implements ResponseInterface
 {
     public function isSuccessful()
     {
-        return $this->data == 0 || $this->data == 3;
+        return $this->data == 0;
     }
 }
