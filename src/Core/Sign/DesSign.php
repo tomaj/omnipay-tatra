@@ -4,27 +4,15 @@ namespace Omnipay\Core\Sign;
 
 class DesSign implements SignInterface
 {
-    public function __construct()
-    {
-        if (!extension_loaded('mcrypt')) {
-            throw new \Exception('Yout have enable mcrypt extension for this sign');
-        }
-    }
-
     public function sign($input, $secret)
     {
         $sharedSecret = $secret;
-
         $bytesHash = sha1($input, true);
 
-        $des = mcrypt_module_open(MCRYPT_DES, "", MCRYPT_MODE_ECB, "");
-        $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($des), MCRYPT_RAND);
-        mcrypt_generic_init($des, $sharedSecret, $iv);
-        $bytesSign = mcrypt_generic($des, substr($bytesHash, 0, 8));
-        mcrypt_generic_deinit($des);
-        mcrypt_module_close($des);
-        $sign = strtoupper(bin2hex($bytesSign));
-
-        return $sign;
+        $cipher = 'des-ecb';
+        $ivsize = openssl_cipher_iv_length($cipher);
+        $iv = openssl_random_pseudo_bytes($ivsize);
+        $encrypted = openssl_encrypt($bytesHash, $cipher, $sharedSecret, OPENSSL_RAW_DATA, $iv);
+        return strtoupper(substr(bin2hex($encrypted), 0, 16));
     }
 }

@@ -31,9 +31,6 @@
     "require-dev": {
         "omnipay/tests": "~2.0"
     },
-    "suggest": {
-        "ext-mcrypt": "Few sign methods need mcrypt extension"
-    },
     "scripts": {
         "test": "phpunit"
     }
