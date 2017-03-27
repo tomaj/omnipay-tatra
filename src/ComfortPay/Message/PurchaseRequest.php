@@ -13,7 +13,7 @@ class PurchaseRequest extends AbstractRequest
     public function initialize(array $parameters = array())
     {
         parent::initialize($parameters);
-        $this->setTimestamp(date('dmYHis'));
+        $this->setTimestamp(gmdate('dmYHis'));
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $this->setIpc($_SERVER['REMOTE_ADDR']);
         }
