@@ -76,7 +76,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     public function getAredir()
     {
-        return $this->getParameter('aredis');
+        return $this->getParameter('aredir') !== null ? (int)(boolean)$this->getParameter('aredir') : null;
     }
 
     public function setAredir($value)
