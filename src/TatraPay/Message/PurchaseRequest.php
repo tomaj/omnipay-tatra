@@ -75,7 +75,7 @@ class PurchaseRequest extends AbstractRequest
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}";
             $data['SIGN'] = $this->generateSignature($input);
         }
-        
+
         return $this->response = new PurchaseResponse($this, $data);
     }
 
