@@ -26,6 +26,10 @@
         }
     },
     "require": {
+        "ext-openssl": "*",
+        "ext-hash": "*",
+        "ext-soap": "*",
+        "ext-SimpleXML": "*",
         "omnipay/common": "~2.0"
     },
     "require-dev": {
