@@ -2,7 +2,8 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use Omnipay\Common\Currency;
+use Money\Currency;
+use Money\Currencies\ISOCurrencies;
 use SoapParam;
 
 class ChargeRequest extends AbstractSoapRequest
@@ -58,7 +59,7 @@ class ChargeRequest extends AbstractSoapRequest
             'cid' => $this->getCid(),
             'transactionId' => $this->getTransactionId(),
             'amount' => $this->getAmount(),
-            'currency' => Currency::find($this->getCurrency())->getNumeric(),
+            'currency' => (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency())),
             'vs' => $this->getVs(),
             'ss' => $this->getSs(),
         ]);

@@ -2,7 +2,8 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use Omnipay\Common\Currency;
+use Money\Currency;
+use Money\Currencies\ISOCurrencies;
 use Omnipay\Core\Sign\DesSign;
 use Omnipay\Core\Sign\HmacSign;
 use Omnipay\Core\Sign\Aes256Sign;
@@ -49,11 +50,12 @@ class PurchaseRequest extends AbstractRequest
 
     public function getData()
     {
+    
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
         $data = [];
         $data['PT'] = 'CardPay';
         $data['MID'] = $this->getMid();
-        $data['CURR'] = Currency::find($this->getCurrency())->getNumeric();
+        $data['CURR'] = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
         $data['VS'] = $this->getVs();
         $data['CS'] = $this->getCs();
         $data['AMT'] = $this->getAmount();
@@ -98,7 +100,7 @@ class PurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        $curr = Currency::find($this->getCurrency())->getNumeric();
+        $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
 
         if (strlen($sharedSecret) == 128) {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTpay()}{$this->getTimestamp()}";
@@ -128,5 +130,11 @@ class PurchaseRequest extends AbstractRequest
                 return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
             }
         }
+    }
+
+    private function getCurrencyNumber($code)
+    {
+        $isoCurrencies = new ISOCurrencies();
+        return $isoCurrencies->numericCodeFor(new Currency($code));
     }
 }

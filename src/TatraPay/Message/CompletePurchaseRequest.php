@@ -2,7 +2,8 @@
 
 namespace Omnipay\TatraPay\Message;
 
-use Omnipay\Common\Currency;
+use Money\Currency;
+use Money\Currencies\ISOCurrencies;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Sign\DesSign;
 use Omnipay\Core\Sign\HmacSign;
@@ -16,7 +17,7 @@ class CompletePurchaseRequest extends AbstractRequest
         $sharedSecret = $this->getParameter('sharedSecret');
 
         if (strlen($sharedSecret) == 128) {
-            $curr = Currency::find($this->getCurrency())->getNumeric();
+            $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
             $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
             $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$_GET['RES']}{$tid}{$_GET['TIMESTAMP']}";
             $sign = new HmacSign();

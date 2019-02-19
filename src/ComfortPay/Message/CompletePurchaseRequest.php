@@ -2,7 +2,8 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use Omnipay\Common\Currency;
+use Money\Currency;
+use Money\Currencies\ISOCurrencies;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Sign\HmacSign;
 use Omnipay\Core\Sign\Aes256Sign;
@@ -29,7 +30,7 @@ class CompletePurchaseRequest extends AbstractRequest
         }
 
         if (strlen($sharedSecret) == 128) {
-            $curr = Currency::find($this->getCurrency())->getNumeric();
+            $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
             $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
             $sign = new HmacSign();
             if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
