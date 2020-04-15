@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:types="urn:tatrabanka:ibanking:Types" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:tatrabanka:ibanking:Types" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+  <simpleType name="GatewayType">
+    <restriction base="xsd:string">
+      <enumeration value="RESERVED"/>
+      <enumeration value="TELEPLATBA"/>
+    </restriction>
+  </simpleType>
+  <complexType name="ExceptionType">
+    <sequence>
+      <element name="method" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      <element name="file" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      <element name="line" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+      <element name="errorCode" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+      <element name="subsystemId" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+      <element name="subsystemErrorCode" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      <element name="message" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    </sequence>
+  </complexType>
+  <complexType name="AuditInfo">
+    <annotation>
+      <documentation>audit informacie pri volani</documentation>
+    </annotation>
+    <sequence>
+      <element name="sessionId" type="xsd:string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>identifikacia session, na zalogovanie, niekdy sa pouziva aj na vyhodnocovanie volani od jedneho klienta</documentation>
+        </annotation>
+      </element>
+      <element name="gateway" type="types:GatewayType" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>identifikacia volajuceho systemu, niektore aplikacie sa mozu spravat inak pre rozne systemy</documentation>
+        </annotation>
+      </element>
+      <element name="gatewayUser" type="xsd:string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>identifikacia uzivatela v zdrojovom systeme, len na zalogovanie</documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="UserId">
+    <!-- types__UserId -->
+    <complexContent>
+      <extension base="types:AuditInfo">
+        <sequence>
+          <element name="userId" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+          <!-- types__UserId::userId -->
+          <element name="tellerId" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+          <!-- types__UserId::tellerId -->
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="ExceptionType" type="types:ExceptionType"/>
+</schema>

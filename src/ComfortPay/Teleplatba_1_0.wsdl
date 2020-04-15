@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Teleplatba"
+ targetNamespace="urn:tatrabanka:ibanking:Teleplatba"
+ xmlns:tns="urn:tatrabanka:ibanking:Teleplatba"
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:types="urn:tatrabanka:ibanking:Types"
+ xmlns:teleplatba="urn:tatrabanka:ibanking:Teleplatba"
+ xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
+ xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
+ xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+ xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<types>
+
+ <schema targetNamespace="urn:tatrabanka:ibanking:Teleplatba"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:types="urn:tatrabanka:ibanking:Types"
+  xmlns:teleplatba="urn:tatrabanka:ibanking:Teleplatba"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  <import namespace="urn:tatrabanka:ibanking:Types" schemaLocation="Types_1_0.xsd"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <simpleType name="CardStatus">
+   <annotation>
+    <documentation>OK      - karta je zaregistrovana a nie je expirovana
+ FAIL    - karta je zaregistrovana, ale uz expirovala
+ UNKNOWN - karta nie je zaregistrovana</documentation>
+   </annotation>
+   <restriction base="xsd:string">
+    <enumeration value="OK"/><!-- teleplatba__CardStatus::teleplatba__CardStatus__OK -->
+    <!-- = 0 -->
+    <enumeration value="FAIL"/><!-- teleplatba__CardStatus::teleplatba__CardStatus__FAIL -->
+    <!-- = 1 -->
+    <enumeration value="UNKNOWN"/><!-- teleplatba__CardStatus::teleplatba__CardStatus__UNKNOWN -->
+    <!-- = 2 -->
+   </restriction>
+  </simpleType>
+  <simpleType name="CurrencyCodes">
+   <annotation>
+    <documentation>Zoznam podporovanych mien</documentation>
+   </annotation>
+   <restriction base="xsd:string">
+    <enumeration value="EUR"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__EUR -->
+    <!-- = 0 -->
+    <enumeration value="USD"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__USD -->
+    <!-- = 1 -->
+    <enumeration value="CZK"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__CZK -->
+    <!-- = 2 -->
+    <enumeration value="GBP"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__GBP -->
+    <!-- = 3 -->
+    <enumeration value="PLN"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__PLN -->
+    <!-- = 4 -->
+    <enumeration value="CHF"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__CHF -->
+    <!-- = 5 -->
+    <enumeration value="HUF"/><!-- teleplatba__CurrencyCodes::teleplatba__CurrencyCodes__HUF -->
+    <!-- = 6 -->
+   </restriction>
+  </simpleType>
+  <simpleType name="TransactionType">
+   <annotation>
+    <documentation>Typ transakcie</documentation>
+   </annotation>
+   <restriction base="xsd:string">
+    <enumeration value="PURCHASE"/><!-- teleplatba__TransactionType::teleplatba__TransactionType__PURCHASE -->
+    <!-- = 0 -->
+    <enumeration value="PREAUTHORIZATION"/><!-- teleplatba__TransactionType::teleplatba__TransactionType__PREAUTHORIZATION -->
+    <!-- = 1 -->
+    <enumeration value="PREAUTH-CONFIRM"/><!-- teleplatba__TransactionType::teleplatba__TransactionType__PREAUTH_CONFIRM -->
+    <!-- = 2 -->
+    <enumeration value="PREAUTH-CANCEL"/><!-- teleplatba__TransactionType::teleplatba__TransactionType__PREAUTH_CANCEL -->
+    <!-- = 3 -->
+    <enumeration value="CHARGEBACK"/><!-- teleplatba__TransactionType::teleplatba__TransactionType__CHARGEBACK -->
+    <!-- = 4 -->
+   </restriction>
+  </simpleType>
+  <complexType name="CardData">
+   <annotation>
+    <documentation>Udaje o karte + merchantovi
+ \param requestedIdOfCard id karty, numericky string
+ \param CardNumber        cislo karty
+ \param CardExpiration    expiracia karty, format MMYY
+ \param MerchantId        id merchanta</documentation>
+   </annotation>
+   <sequence>
+     <element name="requestedIdOfCard" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/><!-- teleplatba__CardData::requestedIdOfCard -->
+     <element name="CardNumber" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardData::CardNumber -->
+     <element name="CardExpiration" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardData::CardExpiration -->
+     <element name="MerchantId" type="xsd:long" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardData::MerchantId -->
+   </sequence>
+  </complexType>
+  <complexType name="EncryptedCardData">
+   <annotation>
+    <documentation>Zakryptovane udaje o karte
+ \param requestedIdOfCard id karty, numericky string
+ \param cryptoValue       zakryptovane cislo karty + expiracia</documentation>
+   </annotation>
+   <sequence>
+     <element name="requestedIdOfCard" type="xsd:string" minOccurs="0" maxOccurs="1"/><!-- teleplatba__EncryptedCardData::requestedIdOfCard -->
+     <element name="cryptoValue" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__EncryptedCardData::cryptoValue -->
+   </sequence>
+  </complexType>
+  <complexType name="CardExpirationPair">
+   <annotation>
+    <documentation>Zakryptovane udaje o karte
+ \param idOfCard          id karty, numericky string
+ \param expiration        expiracia karty vo formate MMYY</documentation>
+   </annotation>
+   <sequence>
+     <element name="idOfCard" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardExpirationPair::idOfCard -->
+     <element name="expiration" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardExpirationPair::expiration -->
+   </sequence>
+  </complexType>
+  <complexType name="TransactionSymbols">
+   <annotation>
+    <documentation>Zakryptovane udaje o karte
+ \param variableSymbol    variabilny symbol, max 10 znakov
+ \param specificSymbol    specificky symbol, max 10 znakov</documentation>
+   </annotation>
+   <sequence>
+     <element name="variableSymbol" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__TransactionSymbols::variableSymbol -->
+     <element name="specificSymbol" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__TransactionSymbols::specificSymbol -->
+   </sequence>
+  </complexType>
+  <complexType name="TransactionIdentificator">
+    <choice>
+     <element name="symbols" type="teleplatba:TransactionSymbols" minOccurs="1" maxOccurs="1" nillable="true"/><!-- teleplatba__TransactionIdentificatorUnion::symbols -->
+     <element name="e2eReference" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="true"/><!-- teleplatba__TransactionIdentificatorUnion::e2eReference -->
+    </choice>
+  </complexType>
+  <complexType name="IPSPData">
+   <annotation>
+    <documentation>Vyplnaju iba IPSP obchodnici
+ \param submerchantId         id submerchanta
+ \param location              location, string max 25 znakov
+ \param city                  city, string max 13 znakov
+ \param alpha2CountryCode     ISO 3166-1 alpha-2 code</documentation>
+   </annotation>
+   <sequence>
+     <element name="submerchantId" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__IPSPData::submerchantId -->
+     <element name="location" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__IPSPData::location -->
+     <element name="city" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__IPSPData::city -->
+     <element name="alpha2CountryCode" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__IPSPData::alpha2CountryCode -->
+   </sequence>
+  </complexType>
+  <complexType name="CardTransactionRequest">
+   <annotation>
+    <documentation>Transakcny request
+ \param transactionId             id transakcie, numericky string
+ \param parentTransactionId       id povodnej transakcie (povinne pre typ transakcie CONFIRM, CANCEL, CHARGEBACK), numericky string
+ \param referedCardId             id karty, numericky string
+ \param merchantId                id merchanta
+ \param terminalId                terminal id
+ \param amount                    hodnota transakcie
+ \param transactionIdentificator  identifikator transakcie
+ \param cc                        mena transakcie
+ \param ipspData                  ipspData, sice nepovinne, ale ak sa v requete uvedie, MUSIA byt vnutorne fieldy vyplnene</documentation>
+   </annotation>
+   <sequence>
+     <element name="transactionId" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::transactionId -->
+     <element name="parentTransactionId" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/><!-- teleplatba__CardTransactionRequest::parentTransactionId -->
+     <element name="referedCardId" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::referedCardId -->
+     <element name="merchantId" type="xsd:long" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::merchantId -->
+     <element name="terminalId" type="xsd:long" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::terminalId -->
+     <element name="amount" type="xsd:double" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::amount -->
+     <element name="transactionIdentificator" type="teleplatba:TransactionIdentificator" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::transactionIdentificator -->
+     <element name="cc" type="teleplatba:CurrencyCodes" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionRequest::cc -->
+     <element name="ipspData" type="teleplatba:IPSPData" minOccurs="0" maxOccurs="1" nillable="true"/><!-- teleplatba__CardTransactionRequest::ipspData -->
+   </sequence>
+  </complexType>
+  <complexType name="CardTransactionResponse">
+   <annotation>
+    <documentation>Informacie o stave transakcie
+ \param transactionId             id transakcie
+ \param transactionStatus         navratovy kod transakcie
+ \param transactionApproval       kod schvalenia</documentation>
+   </annotation>
+   <sequence>
+     <element name="transactionId" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionResponse::transactionId -->
+     <element name="transactionStatus" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionResponse::transactionStatus -->
+     <element name="transactionApproval" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__CardTransactionResponse::transactionApproval -->
+   </sequence>
+  </complexType>
+  <!-- operation request element -->
+  <element name="doCardTransaction">
+   <complexType>
+    <sequence>
+     <element name="transactionType" type="teleplatba:TransactionType" minOccurs="1" maxOccurs="1"/><!-- teleplatba__doCardTransaction::transactionType -->
+     <element name="req" type="teleplatba:CardTransactionRequest" minOccurs="1" maxOccurs="1"/><!-- teleplatba__doCardTransaction::req -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="doCardTransactionResponse">
+   <complexType>
+    <sequence>
+     <element name="res" type="teleplatba:CardTransactionResponse" minOccurs="1" maxOccurs="1"/><!-- teleplatba__doCardTransactionResponse::res -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation request element -->
+  <element name="getTransactionStatus">
+   <complexType>
+    <sequence>
+     <element name="transactionId" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__getTransactionStatus::transactionId -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="getTransactionStatusResponse">
+   <complexType>
+    <sequence>
+     <element name="res" type="teleplatba:CardTransactionResponse" minOccurs="1" maxOccurs="1"/><!-- teleplatba__getTransactionStatusResponse::res -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation request element -->
+  <element name="unRegisterCard">
+   <complexType>
+    <sequence>
+     <element name="idOfCard" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__unRegisterCard::idOfCard -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="unRegisterCardResponse">
+   <complexType>
+    <sequence>
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation request element -->
+  <element name="checkCard">
+   <complexType>
+    <sequence>
+     <element name="idOfCard" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- teleplatba__checkCard::idOfCard -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="checkCardResponse">
+   <complexType>
+    <sequence>
+     <element name="status" type="teleplatba:CardStatus" minOccurs="1" maxOccurs="1"/><!-- teleplatba__checkCardResponse::status -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation request element -->
+  <element name="getListOfExpired">
+   <complexType>
+    <sequence>
+     <element name="expDate" type="xsd:date" minOccurs="1" maxOccurs="1"/><!-- teleplatba__getListOfExpired::expDate -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="getListOfExpiredResponse">
+   <complexType>
+    <sequence>
+     <element name="list" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/><!-- teleplatba__getListOfExpiredResponse::list -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation request element -->
+  <element name="getListOfExpPerId">
+   <complexType>
+    <sequence>
+     <element name="listOfIdCards" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/><!-- teleplatba__getListOfExpPerId::listOfIdCards -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="getListOfExpPerIdResponse">
+   <complexType>
+    <sequence>
+     <element name="list" type="teleplatba:CardExpirationPair" minOccurs="0" maxOccurs="unbounded"/><!-- teleplatba__getListOfExpPerIdResponse::list -->
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation request element -->
+  <element name="ping">
+   <complexType>
+    <sequence>
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="pingResponse">
+   <complexType>
+    <sequence>
+     <element name="reply" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/><!-- teleplatba__pingResponse::reply -->
+    </sequence>
+   </complexType>
+  </element>
+ </schema>
+
+</types>
+
+<message name="doCardTransaction">
+ <part name="parameters" element="teleplatba:doCardTransaction"/><!-- teleplatba__doCardTransaction::teleplatba__doCardTransaction -->
+</message>
+
+<message name="doCardTransactionResponse">
+ <part name="parameters" element="teleplatba:doCardTransactionResponse"/><!-- teleplatba__doCardTransaction::response -->
+</message>
+
+<message name="getTransactionStatus">
+ <part name="parameters" element="teleplatba:getTransactionStatus"/><!-- teleplatba__getTransactionStatus::teleplatba__getTransactionStatus -->
+</message>
+
+<message name="getTransactionStatusResponse">
+ <part name="parameters" element="teleplatba:getTransactionStatusResponse"/><!-- teleplatba__getTransactionStatus::response -->
+</message>
+
+<message name="unRegisterCard">
+ <part name="parameters" element="teleplatba:unRegisterCard"/><!-- teleplatba__unRegisterCard::teleplatba__unRegisterCard -->
+</message>
+
+<message name="unRegisterCardResponse">
+ <part name="parameters" element="teleplatba:unRegisterCardResponse"/><!-- teleplatba__unRegisterCard::response -->
+</message>
+
+<message name="checkCard">
+ <part name="parameters" element="teleplatba:checkCard"/><!-- teleplatba__checkCard::teleplatba__checkCard -->
+</message>
+
+<message name="checkCardResponse">
+ <part name="parameters" element="teleplatba:checkCardResponse"/><!-- teleplatba__checkCard::response -->
+</message>
+
+<message name="getListOfExpired">
+ <part name="parameters" element="teleplatba:getListOfExpired"/><!-- teleplatba__getListOfExpired::teleplatba__getListOfExpired -->
+</message>
+
+<message name="getListOfExpiredResponse">
+ <part name="parameters" element="teleplatba:getListOfExpiredResponse"/><!-- teleplatba__getListOfExpired::response -->
+</message>
+
+<message name="getListOfExpPerId">
+ <part name="parameters" element="teleplatba:getListOfExpPerId"/><!-- teleplatba__getListOfExpPerId::teleplatba__getListOfExpPerId -->
+</message>
+
+<message name="getListOfExpPerIdResponse">
+ <part name="parameters" element="teleplatba:getListOfExpPerIdResponse"/><!-- teleplatba__getListOfExpPerId::response -->
+</message>
+
+<message name="ping">
+ <part name="parameters" element="teleplatba:ping"/><!-- teleplatba__ping::teleplatba__ping -->
+</message>
+
+<message name="pingResponse">
+ <part name="parameters" element="teleplatba:pingResponse"/><!-- teleplatba__ping::response -->
+</message>
+
+<message name="ExceptionTypeFault">
+ <part name="fault" element="types:ExceptionType"/>
+</message>
+
+<portType name="TeleplatbaPortType">
+ <operation name="doCardTransaction">
+  <documentation>Poziadavka na zrealizovanie transakcie
+ \param transactionType   typ transakcie
+ \param req               atributy transakcie
+ \return res              informacia o stave transakcie</documentation>
+  <input message="tns:doCardTransaction"/>
+  <output message="tns:doCardTransactionResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+ <operation name="getTransactionStatus">
+  <documentation>Ziskanie aktualneho stavu transakcie
+ \param transactionId     id transakcie, numericky string
+ \return res              informacia o stave transakcie</documentation>
+  <input message="tns:getTransactionStatus"/>
+  <output message="tns:getTransactionStatusResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+ <operation name="unRegisterCard">
+  <documentation>Odregistrovanie karty
+ \param idOfCard  id registracie karty</documentation>
+  <input message="tns:unRegisterCard"/>
+  <output message="tns:unRegisterCardResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+ <operation name="checkCard">
+  <documentation>Zistenie stavu karty
+ \param idOfCard  id registracie karty</documentation>
+  <input message="tns:checkCard"/>
+  <output message="tns:checkCardResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+ <operation name="getListOfExpired">
+  <documentation>Ziskanie zoznamu expirovanych kariet v pozadovanom mesiaci
+ \param expDate   datum expiracie, vyznamny je mesiac a rok, den je ignorovany
+ \return list     zoznam ID registracii expirovanych kariet</documentation>
+  <input message="tns:getListOfExpired"/>
+  <output message="tns:getListOfExpiredResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+ <operation name="getListOfExpPerId">
+  <documentation>Ziskanie expiracie vybranych kariet
+ \param listOfIdCards vektor id registracii kariet
+ \return list         vektor parov id registraci kariet a ich expiracii</documentation>
+  <input message="tns:getListOfExpPerId"/>
+  <output message="tns:getListOfExpPerIdResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+ <operation name="ping">
+  <documentation>Servisna metoda
+ \return reply    datum a cas spracovania poziadavky</documentation>
+  <input message="tns:ping"/>
+  <output message="tns:pingResponse"/>
+  <fault name="ExceptionType" message="tns:ExceptionTypeFault"/>
+ </operation>
+</portType>
+
+<binding name="Teleplatba" type="tns:TeleplatbaPortType">
+ <SOAP:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+ <operation name="doCardTransaction">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+ <operation name="getTransactionStatus">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+ <operation name="unRegisterCard">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+ <operation name="checkCard">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+ <operation name="getListOfExpired">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+ <operation name="getListOfExpPerId">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+ <operation name="ping">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal"/>
+  </output>
+  <fault name="ExceptionType">
+   <SOAP:fault name="ExceptionType" use="literal"/>
+  </fault>
+ </operation>
+</binding>
+
+<service name="Teleplatba">
+ <documentation>gSOAP 2.8.7 generated service definition</documentation>
+ <port name="Teleplatba" binding="tns:Teleplatba">
+  <SOAP:address location="https://comfortpay.tatrabanka.sk:8011/services/Teleplatba_1_0"/>
+ </port>
+</service>
+
+</definitions>
