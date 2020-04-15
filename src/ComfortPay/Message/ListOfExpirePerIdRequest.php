@@ -37,17 +37,21 @@ class ListOfExpirePerIdRequest extends AbstractSoapRequest
             }, $data['cardIds']));
         }
 
+        $request = new \stdClass();
+        $request->listOfIdCards = implode(',', $data['cardIds']);
+
         $client = $this->getSoapClient();
-        $client->__call('getListOfExpirePerId', ['listOfIds' => $data['cardIds']]);
+        $client->getListOfExpPerId($request);
 
         $xmlResponse = $client->__getLastResponse();
+
         $xml = new SimpleXMLElement($xmlResponse);
-        $pairs = $xml->xpath('//pair');
+        $pairs = $xml->xpath('//list');
 
         $resultData = array_map(function ($element) {
             return [
                 'id' => (string)$element->idOfCard,
-                'date' => (string)$element->expirationDate
+                'date' => (string)$element->expiration
             ];
         }, $pairs);
 

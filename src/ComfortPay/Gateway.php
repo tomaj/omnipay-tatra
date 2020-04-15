@@ -2,10 +2,22 @@
 
 namespace Omnipay\ComfortPay;
 
+use Omnipay\ComfortPay\Message\ListOfExpiredRequest;
+use Omnipay\ComfortPay\Message\TransactionStatusRequest;
 use Omnipay\Common\AbstractGateway;
 
 class Gateway extends AbstractGateway
 {
+    const TRANSACTION_TYPE_PURCHASE = 'PURCHASE';
+    const TRANSACTION_TYPE_PREAUTHORIZATION = 'PREAUTHORIZATION';
+    const TRANSACTION_TYPE_PREAUTH_CONFIRM = 'PREAUTH-CONFIRM';
+    const TRANSACTION_TYPE_PREAUTH_CANCEL = 'PREAUTH-CANCEL';
+    const TRANSACTION_TYPE_CHARGEBACK = 'CHARGEBACK';
+
+    const CARD_STATUS_OK = 'OK';
+    const CARD_STATUS_FAIL = 'FAIL';
+    const CARD_STATUS_UNKNOWN = 'UNKNOWN';
+
     public function getName()
     {
         return 'ComfortPay Gateway';
@@ -106,5 +118,15 @@ class Gateway extends AbstractGateway
     public function listOfExpirePerId(array $parameters = array())
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpirePerIdRequest::class, $parameters);
+    }
+
+    public function listOfExpired(array $parameters = array())
+    {
+        return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpiredRequest::class, $parameters);
+    }
+
+    public function checkTransaction(array $parameters = array())
+    {
+        return $this->createRequest(\Omnipay\ComfortPay\Message\TransactionStatusRequest::class, $parameters);
     }
 }

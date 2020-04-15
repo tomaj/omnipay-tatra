@@ -2,7 +2,7 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use SoapClient;
+use Omnipay\Common\Http\Exception;
 
 class CheckCardRequest extends AbstractSoapRequest
 {
@@ -28,14 +28,17 @@ class CheckCardRequest extends AbstractSoapRequest
     public function sendData($data)
     {
         if ($this->getTestmode()) {
-            if (intval($data['cardId']) % 2 == 0) {
+            if ((int) $data['cardId'] % 2 === 0) {
                 return $this->response = new CheckCardResponse($this, 0);
             }
             return $this->response = new CheckCardResponse($this, 5);
         }
 
+        $request = new \stdClass();
+        $request->idOfCard = $data['cardId'];
+
         $client = $this->getSoapClient();
-        $response = $client->checkCard($data['cardId']);
+        $response = $client->checkCard($request);
 
         return $this->response = new CheckCardResponse($this, $response);
     }

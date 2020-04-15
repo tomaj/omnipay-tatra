@@ -55,6 +55,6 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
                 ]
             ])
         ];
-        return new SoapClient(__DIR__ . '/../comfortpay.wsdl', $options);
+        return new SoapClient(__DIR__ . '/../Teleplatba_1_0.wsdl', $options);
     }
 }
