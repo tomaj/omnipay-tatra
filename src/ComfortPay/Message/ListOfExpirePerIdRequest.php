@@ -38,7 +38,7 @@ class ListOfExpirePerIdRequest extends AbstractSoapRequest
         }
 
         $request = new \stdClass();
-        $request->listOfIdCards = implode(',', $data['cardIds']);
+        $request->listOfIdCards = $data['cardIds'];
 
         $client = $this->getSoapClient();
         $client->getListOfExpPerId($request);

@@ -2,6 +2,8 @@
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Gateway;
+
 class ChargeRequest extends AbstractSoapRequest
 {
     public function getTransactionType()
@@ -42,16 +44,6 @@ class ChargeRequest extends AbstractSoapRequest
     public function setReferedCardId($value)
     {
         return $this->setParameter('referedCardId', $value);
-    }
-
-    public function getIpspData()
-    {
-        return $this->getParameter('ipspData');
-    }
-
-    public function setIpspData($value)
-    {
-        return $this->setParameter('ipspData', $value);
     }
 
     public function getE2eReference()
@@ -108,6 +100,10 @@ class ChargeRequest extends AbstractSoapRequest
     {
         $this->validate('terminalId', 'amount', 'transactionId', 'transactionType', 'referedCardId', 'mid', 'currency');
 
+        if (in_array($this->getTransactionType(), [Gateway::TRANSACTION_TYPE_PREAUTH_CONFIRM, Gateway::TRANSACTION_TYPE_PREAUTH_CANCEL, Gateway::TRANSACTION_TYPE_CHARGEBACK])) {
+            $this->validate('parentTransactionId');
+        }
+
         $data = parent::getData();
         $data = array_merge($data, [
             'transactionType' => $this->getTransactionType(),
@@ -118,7 +114,6 @@ class ChargeRequest extends AbstractSoapRequest
             'terminalId' => $this->getTerminalId(),
             'amount' => $this->getAmount(),
             'cc' => $this->getCurrency(),
-            'ipspData' => $this->getIpspData(),
             'vs' => $this->getVs(),
             'ss' => $this->getSs(),
             'e2eReference' => $this->getE2eReference(),
@@ -127,6 +122,18 @@ class ChargeRequest extends AbstractSoapRequest
             'city' => $this->getCity(),
             'alpha2CountryCode' => $this->getAlpha2CountryCode(),
         ]);
+
+        if (empty($data['e2eReference'])) {
+            $this->validate('ss', 'vs');
+        }
+
+        if (empty($data['ss']) && empty($data['vs'])) {
+            $this->validate('e2eReference');
+        }
+
+        if (!empty($data['submerchantId']) || !empty($data['location']) || !empty($data['city']) || !empty($data['alpha2CountryCode'])) {
+            $this->validate('submerchantId', 'location', 'city', 'alpha2CountryCode');
+        }
 
         return $data;
     }
@@ -152,13 +159,17 @@ class ChargeRequest extends AbstractSoapRequest
         $req->parentTransactionId = $data['parentTransactionId'];
         $req->cc = $data['cc'];
 
-        $symbols = new \stdClass();
-        $symbols->variableSymbol = $data['vs'];
-        $symbols->specificSymbol = $data['ss'];
-
         $transactionIdentificator = new \stdClass();
-        $transactionIdentificator->symbols = $symbols;
-        $transactionIdentificator->e2eReference = $data['e2eReference'];
+
+        if (!empty($data['vs']) && !empty($data['ss'])) {
+            $symbols = new \stdClass();
+            $symbols->variableSymbol = $data['vs'];
+            $symbols->specificSymbol = $data['ss'];
+            $transactionIdentificator->symbols = $symbols;
+        } else {
+            $transactionIdentificator->e2eReference = $data['e2eReference'];
+        }
+
         $req->transactionIdentificator = $transactionIdentificator;
 
         if (!empty($data['submerchantId']) && !empty($data['location']) && !empty($data['city']) && !empty($data['alpha2CountryCode'])) {
@@ -177,10 +188,10 @@ class ChargeRequest extends AbstractSoapRequest
         $client = $this->getSoapClient();
         $response = $client->doCardTransaction($request);
 
-        return $this->response = new ChargeResponse($this, [
+        return $this->response = new CardTransactionResponse($this, [
             'transactionId' => $response->res->transactionId,
             'transactionStatus' => $response->res->transactionStatus,
-            'transactionApproval' => $response->res->transactionStatus
+            'transactionApproval' => $response->res->transactionStatus,
         ]);
     }
 }

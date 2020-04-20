@@ -10,10 +10,11 @@ class CheckCardResponse extends AbstractResponse implements ResponseInterface
 {
     public function isSuccessful()
     {
-        return in_array($this->data->status, [
-            Gateway::CARD_STATUS_OK,
-            Gateway::CARD_STATUS_FAIL,
-            Gateway::CARD_STATUS_UNKNOWN
-        ]);
+        return $this->data->status == Gateway::CARD_STATUS_OK;
+    }
+
+    public function getStatus()
+    {
+        return $this->data->status;
     }
 }

@@ -5,7 +5,7 @@ namespace Omnipay\ComfortPay\Message;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\ResponseInterface;
 
-class TransactionStatusResponse extends AbstractResponse implements ResponseInterface
+class CardTransactionResponse extends AbstractResponse implements ResponseInterface
 {
     public function isSuccessful()
     {

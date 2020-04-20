@@ -4,7 +4,6 @@ namespace Omnipay\ComfortPay\Message;
 
 use Money\Currency;
 use Money\Currencies\ISOCurrencies;
-use SoapParam;
 
 class TransactionStatusRequest extends AbstractSoapRequest
 {
@@ -38,7 +37,7 @@ class TransactionStatusRequest extends AbstractSoapRequest
         $client = $this->getSoapClient();
         $response = $client->getTransactionStatus($request);
 
-        return $this->response = new ChargeResponse($this, [
+        return $this->response = new CardTransactionResponse($this, [
             'transactionId' => $response->res->transactionId,
             'transactionStatus' => $response->res->transactionStatus,
             'transactionApproval' => $response->res->transactionStatus
