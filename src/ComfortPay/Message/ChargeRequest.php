@@ -142,7 +142,7 @@ class ChargeRequest extends AbstractSoapRequest
     {
         if ($this->getTestmode())
         {
-            if (intval($data['cid']) % 2 == 0) {
+            if ((int)$this->getReferedCardId() % 2 == 0) {
                 return $this->response = new ChargeResponse($this,
                     ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123']);
             }
