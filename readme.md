@@ -4,13 +4,9 @@ Omnipay Tatra module
 
 ## **ComfortPay**
 
-### Charge
+### ChargeRequest
 
 Method to create transaction with registered card.
-
-##### Request:
-    
-ChargeRequest
 
 ##### Parameters:
 
@@ -37,13 +33,9 @@ CardTransactionResponse
 - `transactionStatus` - Status code of transaction (see transaction's status codes)
 - `transactionApprova` - Autorization code
 
-### Check card
+### CheckCardRequest
 
 Method to check the status of registered card.
-
-##### Request:
-
-CheckCardRequest
 
 ##### Parameters:
 
@@ -54,13 +46,9 @@ CheckCardRequest
 CheckCardResponse
 - `status` - (OK, FAIL, UNKNOWN)
 
-### Transaction status
+### TransactionStatusRequest
 
 Method to check the status of transaction.
-
-##### Request:
-
-TransactionStatusRequest
 
 ##### Parameters:
 
@@ -73,13 +61,9 @@ CardTransactionResponse
 - `transactionStatus` - Status code of transaction (see transaction's status codes)
 - `transactionApproval` - Autorization code
 
-###  List of expired cards
+###  ListOfExpiredRequest
 
 Method to get the list of expired cards with expiration date after requested one.
-
-##### Request:
-
-ListOfExpiredRequest
 
 ##### Parameters: 
     
@@ -90,13 +74,9 @@ ListOfExpiredRequest
 ListOfExpiredResponse
 - `list` - array of card ids
 
-##### List of expired card by card id
+##### ListOfExpiredPerIdRequest
 
 Method to get the expiration date of cards specified in request.
-
-##### Request:
-
-ListOfExpiredPerIdRequest
 
 ##### Parameters:
 

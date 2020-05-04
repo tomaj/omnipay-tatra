@@ -16,6 +16,16 @@ class ChargeRequest extends AbstractSoapRequest
         return $this->setParameter('transactionType', $value);
     }
 
+    public function getWs()
+    {
+        return $this->getParameter('ws');
+    }
+
+    public function setWs($value)
+    {
+        return $this->setParameter('ws', $value);
+    }
+
     public function getTerminalId()
     {
         return $this->getParameter('terminalId');

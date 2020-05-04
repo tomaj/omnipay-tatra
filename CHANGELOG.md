@@ -9,4 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.0.0]
 
- - Updated ComfortPay implementation according new WSDL defined by TB. Changed ChargeRequest parameters please see [readme.md](readme.md) to reflect actual parameters.  
+ - Updated ComfortPay implementation according new WSDL defined by TB. 
+ - Breaking changes in ChargeRequest: 
+    - parameter `cid` renamed to `referedCardId` 
+    - added new mandatory parameter `transactionType`.
