@@ -21,14 +21,17 @@ class TransactionStatusRequest extends AbstractSoapRequest
 
     public function sendData($data)
     {
-        if ($this->getTestmode())
-        {
+        if ($this->getTestmode()) {
             if (intval($data['cid']) % 2 == 0) {
-                return $this->response = new ChargeResponse($this,
-                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123']);
+                return $this->response = new ChargeResponse(
+                    $this,
+                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123']
+                );
             }
-            return $this->response = new ChargeResponse($this,
-                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123']);
+            return $this->response = new ChargeResponse(
+                $this,
+                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123']
+            );
         }
 
         $request = new \stdClass();
