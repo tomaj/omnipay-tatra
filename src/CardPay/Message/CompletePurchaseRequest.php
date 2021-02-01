@@ -56,6 +56,7 @@ class CompletePurchaseRequest extends AbstractRequest
         return [
             'RES' => $res,
             'VS' => $vs,
+            'RC' => $rc,
         ];
     }
     public function sendData($data)
