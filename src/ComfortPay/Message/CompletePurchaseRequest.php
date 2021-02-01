@@ -52,6 +52,7 @@ class CompletePurchaseRequest extends AbstractRequest
             'CC' => $cc,
             'CID' => $cid,
             'TRES' => $tres,
+            'RC' => $rc,
         ];
     }
     
