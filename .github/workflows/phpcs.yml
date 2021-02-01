@@ -1,0 +1,24 @@
+name: PHPCS check
+
+on: [push]
+
+jobs:
+  phpcs:
+    name: PHPCS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.1'
+          ini-values: post_max_size=256M, max_execution_time=180
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Composer update
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: phpcs
+        run: vendor/bin/phpcs --standard=PSR2 src tests -n

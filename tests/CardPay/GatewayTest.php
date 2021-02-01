@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\TatraPay;
+namespace Omnipay\CardPay;
 
 use Omnipay\Tests\GatewayTestCase;
 
@@ -31,9 +31,11 @@ class GatewayTest extends GatewayTestCase
             'currency' => 'EUR',
             'vs' => 123456,
             'rurl' => 'http://return.sk',
+            'ipc' => 'a',
+            'name' => 'test',
         ));
         
-        $this->assertInstanceOf('Omnipay\TatraPay\Message\PurchaseRequest', $request);
+        $this->assertInstanceOf('Omnipay\CardPay\Message\PurchaseRequest', $request);
         $this->assertSame('10.00', $request->getAmount());
 
         $response = $request->send();
@@ -41,7 +43,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertTrue($response->isRedirect());
 
         $this->assertEquals(
-            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp?PT=TatraPay&MID=1111&CURR=978&VS=123456&AMT=10.00&RURL=http%3A%2F%2Freturn.sk&SIGN=C758BF5F3A60FC3B',
+            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp?PT=CardPay&MID=1111&CURR=978&VS=123456&AMT=10.00&RURL=http%3A%2F%2Freturn.sk&IPC=a&NAME=test&SIGN=A6E11F14B1782C67',
             $response->getRedirectUrl()
         );
     }
@@ -59,9 +61,11 @@ class GatewayTest extends GatewayTestCase
             'currency' => 'EUR',
             'vs' => 123456,
             'rurl' => 'http://return.sk',
+            'ipc' => 'a',
+            'name' => 'test',
         ));
         
-        $this->assertInstanceOf('Omnipay\TatraPay\Message\PurchaseRequest', $request);
+        $this->assertInstanceOf('Omnipay\CardPay\Message\PurchaseRequest', $request);
         $this->assertSame('10.00', $request->getAmount());
 
         $response = $request->send();
@@ -69,7 +73,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertTrue($response->isRedirect());
 
         $this->assertEquals(
-            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp?PT=TatraPay&MID=1111&CURR=978&VS=123456&AMT=10.00&RURL=http%3A%2F%2Freturn.sk&SIGN=A50341DBBE65CB0A0E67F487C463DAF9',
+            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp?PT=CardPay&MID=1111&CURR=978&VS=123456&AMT=10.00&RURL=http%3A%2F%2Freturn.sk&IPC=a&NAME=test&SIGN=53819B07462B0E9879342BE729EC5CC1',
             $response->getRedirectUrl()
         );
     }
@@ -83,12 +87,14 @@ class GatewayTest extends GatewayTestCase
             'currency' => 'EUR',
             'vs' => 123456,
             'rurl' => 'http://return.sk',
+            'ipc' => 'a',
+            'name' => 'test',
         ));
 
         $request->setTimestamp('01022021214520');
 
         
-        $this->assertInstanceOf('Omnipay\TatraPay\Message\PurchaseRequest', $request);
+        $this->assertInstanceOf('Omnipay\CardPay\Message\PurchaseRequest', $request);
         $this->assertSame('10.00', $request->getAmount());
 
         $response = $request->send();
@@ -96,7 +102,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertTrue($response->isRedirect());
 
         $this->assertEquals(
-            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/tatrapay?PT=TatraPay&MID=1111&CURR=978&VS=123456&AMT=10.00&RURL=http%3A%2F%2Freturn.sk&TIMESTAMP=01022021214520&HMAC=949f80a0b9a5626bc4a742de1835d7f307e8690a0eeb43473c5f79405023f43a',
+            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay?PT=CardPay&MID=1111&CURR=978&VS=123456&AMT=10.00&RURL=http%3A%2F%2Freturn.sk&IPC=a&NAME=test&TIMESTAMP=01022021214520&HMAC=cc562c09b3d75d8028c09ad541943d92246e5d78ef7ebc9de409229b6c133f8c',
             $response->getRedirectUrl()
         );
     }

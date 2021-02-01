@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+ - Added CardPay tests
+ - Removed travis support
+ - Added support for github workflows
+
 ## [4.0.0]
 
  - Updated ComfortPay implementation according new WSDL defined by TB. 
