@@ -23,12 +23,12 @@ class TransactionStatusRequest extends AbstractSoapRequest
     {
         if ($this->getTestmode()) {
             if (intval($data['cid']) % 2 == 0) {
-                return $this->response = new ChargeResponse(
+                return $this->response = new CardTransactionResponse(
                     $this,
                     ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123']
                 );
             }
-            return $this->response = new ChargeResponse(
+            return $this->response = new CardTransactionResponse(
                 $this,
                 ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123']
             );

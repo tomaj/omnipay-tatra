@@ -34,7 +34,8 @@
     },
     "require-dev": {
         "omnipay/tests": "~3.0",
-        "squizlabs/php_codesniffer": "3.*"
+        "squizlabs/php_codesniffer": "3.*",
+        "phpstan/phpstan": "^0.12.65"
     },
     "scripts": {
         "test": "phpunit"
