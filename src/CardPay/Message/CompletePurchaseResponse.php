@@ -4,7 +4,6 @@ namespace Omnipay\CardPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Core\Message\AbstractRequest;
 
 class CompletePurchaseResponse extends AbstractResponse
 {
@@ -34,7 +33,7 @@ class CompletePurchaseResponse extends AbstractResponse
     public function getRc()
     {
         if (isset($this->data['RC'])) {
-            return $this->data['RC';]
+            return $this->data['RC'];
         }
         return null;
     }

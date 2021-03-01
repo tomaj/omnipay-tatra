@@ -58,7 +58,7 @@ class CompletePurchaseResponse extends AbstractResponse
     public function getRc()
     {
         if (isset($this->data['RC'])) {
-            return $this->data['RC';]
+            return $this->data['RC'];
         }
         return null;
     }
