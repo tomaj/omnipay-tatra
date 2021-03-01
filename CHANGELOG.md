@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Removed travis support
  - Added support for github workflows
  - Fix syntax errors
+ - Add methods for authorization and cancel authorization
 
 ## [4.0.0]
 
