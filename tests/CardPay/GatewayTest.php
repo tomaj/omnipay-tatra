@@ -106,4 +106,30 @@ class GatewayTest extends GatewayTestCase
             $response->getRedirectUrl()
         );
     }
+
+    public function testAuthorizeSignWithHmac()
+    {
+        $this->gateway->setSharedSecret('11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111');
+
+        $request = $this->gateway->authorize([
+            'amount' => '1.01',
+            'vs' => '0257430862',
+            'currency' => 'EUR',
+            'rurl' => 'http://return.sk',
+            'name' => 'test',
+            'tpay' => "Y",
+            'rem' => 'test@example.com',
+            'ipc' => '127.0.0.1',
+        ]);
+
+        $request->setTimestamp('01022021214520');
+
+        $response = $request->send();
+
+        $this->assertTrue($response->isRedirect());
+        $this->assertEquals(
+            'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay?PT=CardPay&MID=1111&AMT=1.01&CURR=978&VS=0257430862&RURL=http%3A%2F%2Freturn.sk&IPC=127.0.0.1&NAME=test&TIMESTAMP=01022021214520&TXN=PA&REM=test%40example.com&TPAY=Y&HMAC=a6ae350560717be53682d381ae3abc714f5d7f65bf64a98a94e9110b8e25fb1a',
+            $response->getRedirectUrl()
+        );
+    }
 }
