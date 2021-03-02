@@ -61,5 +61,4 @@ class CompleteAuthorizeResponse extends AbstractResponse
 
         return null;
     }
-
 }
