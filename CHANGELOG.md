@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.0]
  - Added CardPay tests
  - Removed travis support
  - Added support for github workflows
  - Fix syntax errors
  - Add methods for authorization and cancel authorization
+ - Handling TB internal error as a failed charge - could be breaking change ;-)
 
 ## [4.0.0]
 
