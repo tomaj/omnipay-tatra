@@ -123,9 +123,4 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->setParameter('rurl', $value);
     }
-
-    public function getHttpClient()
-    {
-        return $this->httpClient;
-    }
 }

@@ -5,7 +5,6 @@ namespace Omnipay\CardPay\Message;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\HmacSign;
-use Tracy\Debugger;
 
 class CancelAuthorizeRequest extends AbstractRequest
 {
@@ -75,8 +74,7 @@ class CancelAuthorizeRequest extends AbstractRequest
 
         $params = http_build_query($data);
 
-        $client = $this->getHttpClient();
-        $response = $client->request(
+        $response = $this->httpClient->request(
             'GET',
             "{$this->getEndpoint()}?{$params}"
         );
