@@ -1,12 +1,10 @@
 <?php
 
-namespace Omnipay\ComfortPay\Message;
+namespace Omnipay\CardPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Core\Message\AbstractRequest;
 
-class CompletePurchaseResponse extends AbstractResponse
+class CompleteAuthorizeResponse extends AbstractResponse
 {
     const SUCCESS = 'OK';
 
@@ -31,18 +29,10 @@ class CompletePurchaseResponse extends AbstractResponse
         return null;
     }
 
-    public function getCid()
+    public function getRc()
     {
-        if (isset($this->data['CID'])) {
-            return $this->data['CID'];
-        }
-        return null;
-    }
-
-    public function getCc()
-    {
-        if (isset($this->data['CC'])) {
-            return $this->data['CC'];
+        if (isset($this->data['RC'])) {
+            return $this->data['RC'];
         }
         return null;
     }
@@ -55,11 +45,20 @@ class CompletePurchaseResponse extends AbstractResponse
         return null;
     }
 
-    public function getRc()
+    public function getCid()
     {
-        if (isset($this->data['RC'])) {
-            return $this->data['RC'];
+        if (isset($this->data['CID'])) {
+            return $this->data['CID'];
         }
+        return null;
+    }
+
+    public function getTransactionReference()
+    {
+        if (isset($this->data['TID'])) {
+            return $this->data['TID'];
+        }
+
         return null;
     }
 }
