@@ -39,11 +39,6 @@ class Gateway extends AbstractGateway
         return $this->setParameter('sharedSecret', $value);
     }
 
-    public function getDefaultHttpClient()
-    {
-        return parent::getDefaultHttpClient();
-    }
-
     public function purchase(array $parameters = array())
     {
         return $this->createRequest(\Omnipay\CardPay\Message\PurchaseRequest::class, $parameters);
