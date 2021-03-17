@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.1]
+ - Fixed duplicated recurrent charge. Upgrade ASAP from 4.1
+
 ## [4.1.0]
+ - THIS VERSION IS BROKEN (duplicate charge) - UPGRADE ASAP TO 4.1.1
  - Added CardPay tests
  - Removed travis support
  - Added support for github workflows

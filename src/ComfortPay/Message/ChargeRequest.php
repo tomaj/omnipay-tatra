@@ -216,8 +216,6 @@ class ChargeRequest extends AbstractSoapRequest
             throw $sf;
         }
 
-        $response = $client->doCardTransaction($request);
-
         return $this->response = new CardTransactionResponse($this, [
             'transactionId' => $response->res->transactionId,
             'transactionStatus' => $response->res->transactionStatus,
