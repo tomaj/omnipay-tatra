@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+ - Added `CC`(card number) and `ac` (approval code) parameters into authorization response.
+
 ## [4.1.1]
  - Fixed duplicated recurrent charge. Upgrade ASAP from 4.1
 

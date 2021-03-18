@@ -61,4 +61,22 @@ class CompleteAuthorizeResponse extends AbstractResponse
 
         return null;
     }
+
+    public function getCc()
+    {
+        if (isset($this->data['CC'])) {
+            return $this->data['CC'];
+        }
+
+        return null;
+    }
+
+    public function getAc()
+    {
+        if (isset($this->data['AC'])) {
+            return $this->data['AC'];
+        }
+
+        return null;
+    }
 }
