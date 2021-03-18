@@ -15,8 +15,8 @@ class CancelAuthorizeResponse extends AbstractResponse
 
     public function getRes()
     {
-        if (isset($this->data['RES'])) {
-            return $this->data['RES'];
+        if (isset($this->data['res'])) {
+            return $this->data['res'];
         }
         return null;
     }
