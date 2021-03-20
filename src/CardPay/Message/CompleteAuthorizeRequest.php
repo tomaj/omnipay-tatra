@@ -42,6 +42,8 @@ class CompleteAuthorizeRequest extends AbstractRequest
             'TRES' => $tres,
             'TID' => $tid,
             'CID' => $cid,
+            'CC' => $cc,
+            'AC' => $ac,
         ];
     }
 
