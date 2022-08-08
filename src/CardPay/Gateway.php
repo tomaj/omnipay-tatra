@@ -16,6 +16,7 @@ class Gateway extends AbstractGateway
         return [
             'mid' => '',
             'sharedSecret' => '',
+            'testHost' => '',
         ];
     }
 
@@ -37,6 +38,16 @@ class Gateway extends AbstractGateway
     public function setSharedSecret($value)
     {
         return $this->setParameter('sharedSecret', $value);
+    }
+
+    public function getTestHost()
+    {
+        return $this->getParameter('testHost');
+    }
+
+    public function setTestHost($value)
+    {
+        return $this->setParameter('testHost', $value);
     }
 
     public function purchase(array $parameters = array())

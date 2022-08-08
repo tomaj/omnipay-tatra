@@ -109,13 +109,15 @@ class PurchaseRequest extends AbstractRequest
         $sharedSecret = $this->getParameter('sharedSecret');
 
         if ($this->getTestmode()) {
+            $host = $this->getParameter('testHost') ?: 'https://platby.tomaj.sk';
+
             if (strlen($sharedSecret) == 128) {
                 // return 'http://127.0.0.1:4444/payment/cardpay-hmac';
-                return 'https://platby.tomaj.sk/payment/cardpay-hmac';
+                return $host . '/payment/cardpay-hmac';
             } elseif (strlen($sharedSecret) == 64) {
-                return 'https://platby.tomaj.sk/payment/cardpay-aes256';
+                return $host . '/payment/cardpay-aes256';
             } else {
-                return 'https://platby.tomaj.sk/payment/cardpay-des';
+                return $host . '/payment/cardpay-des';
             }
         } else {
             if (strlen($sharedSecret) == 128) {

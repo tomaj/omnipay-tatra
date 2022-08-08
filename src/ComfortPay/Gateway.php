@@ -28,6 +28,7 @@ class Gateway extends AbstractGateway
         return [
             'mid' => '',
             'sharedSecret' => '',
+            'testHost' => '',
             'terminalId' => '',
             'ws' => '',
             'certPath' => '',
@@ -53,6 +54,16 @@ class Gateway extends AbstractGateway
     public function setSharedSecret($value)
     {
         return $this->setParameter('sharedSecret', $value);
+    }
+
+    public function getTestHost()
+    {
+        return $this->getParameter('testHost');
+    }
+
+    public function setTestHost($value)
+    {
+        return $this->setParameter('testHost', $value);
     }
 
     public function getTerminalId()
