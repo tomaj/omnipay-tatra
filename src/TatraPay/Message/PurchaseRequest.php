@@ -84,12 +84,14 @@ class PurchaseRequest extends AbstractRequest
         $sharedSecret = $this->getParameter('sharedSecret');
 
         if ($this->getTestmode()) {
+            $host = $this->getParameter('testHost') ?: 'https://platby.tomaj.sk';
+
             if (strlen($sharedSecret) == 128) {
-                return 'https://platby.tomaj.sk/payment/tatrapay-hmac';
+                return $host . '/payment/tatrapay-hmac';
             } elseif (strlen($sharedSecret) == 64) {
-                return 'https://platby.tomaj.sk/payment/tatrapay-aes256';
+                return $host . '/payment/tatrapay-aes256';
             } else {
-                return 'https://platby.tomaj.sk/payment/tatrapay-des';
+                return $host . '/payment/tatrapay-des';
             }
         } else {
             if (strlen($sharedSecret) == 128) {

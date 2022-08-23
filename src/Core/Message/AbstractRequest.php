@@ -24,6 +24,16 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->setParameter('sharedSecret', $value);
     }
 
+    public function getTestHost()
+    {
+        return $this->getParameter('testHost');
+    }
+
+    public function setTestHost($value)
+    {
+        return $this->setParameter('testHost', $value);
+    }
+
     public function getVs()
     {
         return $this->getParameter('vs');

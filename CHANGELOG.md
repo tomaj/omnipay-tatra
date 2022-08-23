@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added support for configurable host url in purchase request in test mode.
+
 ## [4.1.2]
 
  - Added `CC`(card number) and `ac` (approval code) parameters into authorization response.

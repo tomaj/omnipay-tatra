@@ -160,10 +160,12 @@ class PurchaseRequest extends AbstractRequest
         $sharedSecret = $this->getParameter('sharedSecret');
 
         if ($this->getTestmode()) {
+            $host = $this->getParameter('testHost') ?: 'https://platby.tomaj.sk';
+
             if (strlen($sharedSecret) == 128) {
-                return 'https://platby.tomaj.sk/payment/comfortpay-hmac';
+                return $host . '/payment/comfortpay-hmac';
             } else {
-                return 'https://platby.tomaj.sk/payment/comfortpay-aes256';
+                return $host . '/payment/comfortpay-aes256';
             }
         } else {
             if (strlen($sharedSecret) == 128) {
