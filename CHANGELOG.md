@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Added support for configurable host url in purchase request in test mode.
+## [4.2.1]
 - Added data and sign to `InvalidRequestException` message in CardPay `CompletePurchaseRequest` on incorrect hmac signature.
 
-## [4.1.2]
+## [4.2.0]
+- Added support for configurable host url in purchase request in test mode.
 
+## [4.1.2]
  - Added `CC`(card number) and `ac` (approval code) parameters into authorization response.
  - Fixed cancel authorization response check.
 
@@ -28,7 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Handling TB internal error as a failed charge - could be breaking change ;-)
 
 ## [4.0.0]
-
  - Updated ComfortPay implementation according new WSDL defined by TB. 
  - Breaking changes in ChargeRequest: 
     - parameter `cid` renamed to `referedCardId` 
