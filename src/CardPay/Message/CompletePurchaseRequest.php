@@ -35,7 +35,7 @@ class CompletePurchaseRequest extends AbstractRequest
             $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cc}{$rc}{$tid}{$timestamp}";
             $sign = new HmacSign();
             if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
-                throw new InvalidRequestException('incorect signature');
+                throw new InvalidRequestException("incorrect signature for data: '{$data}', sign: '{$_GET['HMAC']}'");
             }
         } elseif (strlen($sharedSecret) == 64) {
             $data = "{$this->getVs()}{$res}{$ac}";

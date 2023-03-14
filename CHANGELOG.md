@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Added support for configurable host url in purchase request in test mode.
+- Added data and sign to `InvalidRequestException` message in CardPay `CompletePurchaseRequest` on incorrect hmac signature.
 
 ## [4.1.2]
 
