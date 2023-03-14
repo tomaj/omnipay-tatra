@@ -207,11 +207,20 @@ class ChargeRequest extends AbstractSoapRequest
             // here is an error example:
             // <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope" xmlns:SOAP-ENC="http://www.w3.org/2003/05/soap-encoding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:types="urn:tatrabanka:ibanking:Types" xmlns:teleplatba="urn:tatrabanka:ibanking:Teleplatba" xmlns:vposCommon="http://www.ri-rpc.sk/cmsdd/aim/common" xmlns:vposAuth="http://www.ri-rpc.sk/cmsdd/aim/vposAuth" xmlns:vposAuthFollow="http://www.ri-rpc.sk/cmsdd/aim/vposAuthFollow" xmlns:vposAuthResponse="http://www.ri-rpc.sk/cmsdd/aim/vposAuthResponse"><SOAP-ENV:Body><SOAP-ENV:Fault><SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:Receiver</SOAP-ENV:Value></SOAP-ENV:Code><SOAP-ENV:Reason><SOAP-ENV:Text xml:lang="en"></SOAP-ENV:Text></SOAP-ENV:Reason><SOAP-ENV:Detail><types:ExceptionType><method>doCardTransaction</method><file>ImplFile</file><line>1359</line><errorCode>50051</errorCode><subsystemId>19</subsystemId><subsystemErrorCode>0</subsystemErrorCode><message></message></types:ExceptionType></SOAP-ENV:Detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>
             if ($sf->faultcode == 'SOAP-ENV:Receiver') {
-                return $this->response = new CardTransactionResponse($this, [
-                    'transactionId' => false,
-                    'transactionStatus' => false,
-                    'transactionApproval' => false,
-                ]);
+                $lastResponse = $client->__getLastResponse();
+                $xml = new \SimpleXMLElement($lastResponse);
+                $path = $xml->xpath('//errorCode');
+                if ($path && isset($path[0])) {
+                    $errorCode = (int)$path;
+                    // More info about error codes: https://github.com/tomaj/omnipay-tatra/issues/12
+                    if ($errorCode !== 50000) {
+                        return $this->response = new CardTransactionResponse($this, [
+                            'transactionId' => false,
+                            'transactionStatus' => false,
+                            'transactionApproval' => false,
+                        ]);
+                    }
+                }
             }
             throw $sf;
         }
