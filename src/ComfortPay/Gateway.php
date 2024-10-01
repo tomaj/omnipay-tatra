@@ -106,6 +106,46 @@ class Gateway extends AbstractGateway
         return $this->setParameter('certPass', $value);
     }
 
+    public function getProxyHost()
+    {
+        return $this->getParameter('proxyHost');
+    }
+
+    public function setProxyHost($value)
+    {
+        return $this->setParameter('proxyHost', $value);
+    }
+
+    public function getProxyPort()
+    {
+        return $this->getParameter('proxyPort');
+    }
+
+    public function setProxyPort($value)
+    {
+        return $this->setParameter('proxyPort', $value);
+    }
+
+    public function getProxyLogin()
+    {
+        return $this->getParameter('proxyLogin');
+    }
+
+    public function setProxyLogin($value)
+    {
+        return $this->setParameter('proxyLogin', $value);
+    }
+
+    public function getProxyPass()
+    {
+        return $this->getParameter('proxyPass');
+    }
+
+    public function setProxyPass($value)
+    {
+        return $this->setParameter('proxyPass', $value);
+    }
+
     public function purchase(array $parameters = array())
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\PurchaseRequest::class, $parameters);

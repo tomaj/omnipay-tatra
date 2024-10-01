@@ -27,6 +27,46 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
         return $this->setParameter('certPass', $value);
     }
 
+    public function getProxyHost()
+    {
+        return $this->getParameter('proxyHost');
+    }
+
+    public function setProxyHost($value)
+    {
+        return $this->setParameter('proxyHost', $value);
+    }
+
+    public function getProxyPort()
+    {
+        return $this->getParameter('proxyPort');
+    }
+
+    public function setProxyPort($value)
+    {
+        return $this->setParameter('proxyPort', $value);
+    }
+
+    public function getProxyLogin()
+    {
+        return $this->getParameter('proxyLogin');
+    }
+
+    public function setProxyLogin($value)
+    {
+        return $this->setParameter('proxyLogin', $value);
+    }
+
+    public function getProxyPass()
+    {
+        return $this->getParameter('proxyPass');
+    }
+
+    public function setProxyPass($value)
+    {
+        return $this->setParameter('proxyPass', $value);
+    }
+
     public function getData()
     {
         $this->validate('certPath', 'certPass');
@@ -48,6 +88,10 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
             'keep_alive' => false,
             'soap_version' => SOAP_1_2,
             'cache_wsdl' => WSDL_CACHE_NONE,
+            'proxy_host' => $this->getParameter('proxyHost'),
+            'proxy_port' => $this->getParameter('proxyPort'),
+            'proxy_login' => $this->getParameter('proxyLogin'),
+            'proxy_password' => $this->getParameter('proxyPassword'),
             'stream_context' => stream_context_create([
                 'ssl' => [
                     'verify_peer'       => false,
