@@ -74,7 +74,7 @@ Method to get the list of expired cards with expiration date after requested one
 ListOfExpiredResponse
 - `list` - array of card ids
 
-##### ListOfExpiredPerIdRequest
+### ListOfExpiredPerIdRequest
 
 Method to get the expiration date of cards specified in request.
 
@@ -87,7 +87,18 @@ Method to get the expiration date of cards specified in request.
 ListOfExpiredPerIdResponse
 - `listOfIdCards` - array of pairs idOfCard and expiration date
 
+### UnRegisterCardRequest
 
+Method to unregister comfortpay card
+
+##### Parameters:
+
+- `cardId` - card identifier
+
+##### Return:
+ 
+UnRegisterCardResopnse
+n/a
 
 ##### Transaction's status codes
 

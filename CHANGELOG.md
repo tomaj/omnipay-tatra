@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.3.0]
+- Added new request `UnregisterCardRequest`
+
 ## [4.2.1]
 - Added data and sign to `InvalidRequestException` message in CardPay `CompletePurchaseRequest` on incorrect hmac signature.
 
