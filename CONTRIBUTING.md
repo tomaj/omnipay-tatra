@@ -13,7 +13,7 @@ Security vulnerabilities are reported in private. See [SECURITY.md](SECURITY.md)
 - Signatures: expected values in tests are computed independently with the `openssl` CLI, never with the library's own signers.
 - Document behaviour changes in the documentation (`docs/`) and `CHANGELOG.md`.
 - Follow [Semantic Versioning](https://semver.org/). The current stable line is 4.x; `master` holds 5.0. Breaking changes wait for the next major version.
-- Open one pull request per change, from a feature branch. Do not ask us to pull from your `master` branch.
+- Open one pull request per change, from a feature branch. Do not ask us to pull from your `master` branch. `master` is protected: every change lands through a pull request once the required CI checks (PHP 8.4, 8.4 `--prefer-lowest`, 8.5, 8.6, code style, PHPStan, Rector, security audit, Infection) are green.
 - Keep the history coherent. Squash work-in-progress commits before submitting.
 
 ## Development
