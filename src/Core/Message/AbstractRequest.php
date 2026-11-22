@@ -172,6 +172,21 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     }
 
     /**
+     * Checks the customer name (NAME) against the characters the bank accepts: letters without diacritics, digits,
+     * space, dot, hyphen, underscore and @.
+     *
+     * @throws InvalidRequestException
+     */
+    protected static function validateCustomerName(?string $name): void
+    {
+        if ($name !== null && preg_match('/^[0-9a-zA-Z .\-_@]*\z/', $name) !== 1) {
+            throw new InvalidRequestException(
+                'The name parameter may contain only letters without diacritics, digits, space and the characters . - _ @',
+            );
+        }
+    }
+
+    /**
      * @throws UnsupportedKeyException
      */
     protected function getKeyType(): KeyType

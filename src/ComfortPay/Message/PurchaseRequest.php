@@ -65,6 +65,7 @@ final class PurchaseRequest extends AbstractRequest
     public function getData(): array
     {
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
+        self::validateCustomerName($this->getName());
 
         $data = [];
         $data['PT'] = 'CardPay';

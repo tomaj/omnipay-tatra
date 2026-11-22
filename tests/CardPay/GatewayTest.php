@@ -591,4 +591,36 @@ final class GatewayTest extends TestCase
         $this->expectExceptionMessageIsOrContains('incorect signature');
         $this->gateway->completeAuthorize(['amount' => '10.00', 'currency' => 'EUR'])->send();
     }
+
+
+    /**
+     * @return array<string, array{string, bool}>
+     */
+    public static function customerNameProvider(): array
+    {
+        return [
+            'letters, digits and allowed characters' => ['Jan Novak-2_x.y@z', true],
+            'empty' => ['', true],
+            'diacritics' => ['Ján Novák', false],
+            'comma' => ['Novak, Jan', false],
+            'new line' => ["Jan\n", false],
+        ];
+    }
+
+    #[DataProvider('customerNameProvider')]
+    public function testCustomerName(string $name, bool $valid): void
+    {
+        $this->gateway->setSharedSecret(self::HMAC_KEY);
+        $parameters = ['amount' => '1.00', 'currency' => 'EUR', 'vs' => '1', 'rurl' => 'http://return.sk', 'ipc' => '127.0.0.1', 'name' => $name];
+
+        foreach ([$this->gateway->purchase($parameters), $this->gateway->authorize($parameters)] as $request) {
+            try {
+                $request->getData();
+                self::assertTrue($valid, "'{$name}' must be rejected");
+            } catch (InvalidRequestException $exception) {
+                self::assertFalse($valid, "'{$name}' must be accepted");
+                self::assertSame('The name parameter may contain only letters without diacritics, digits, space and the characters . - _ @', $exception->getMessage());
+            }
+        }
+    }
 }

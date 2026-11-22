@@ -243,6 +243,7 @@ final class AuthorizeRequest extends AbstractRequest
     public function getData(): array
     {
         $this->validate('sharedSecret', 'mid', 'currency', 'vs', 'rurl', 'ipc', 'name', 'timestamp');
+        self::validateCustomerName($this->getName());
 
         $data = [];
         $data['PT'] = 'CardPay';

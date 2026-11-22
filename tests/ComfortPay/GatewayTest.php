@@ -200,4 +200,14 @@ final class GatewayTest extends TestCase
         $this->expectExceptionMessageIsOrContains('incorect signature');
         $this->gateway->completePurchase()->send();
     }
+
+
+    public function testPurchaseRejectsNamesWithDiacritics(): void
+    {
+        $this->gateway->setSharedSecret(self::AES_KEY);
+
+        $this->expectException(InvalidRequestException::class);
+        $this->expectExceptionMessageIsOrContains('The name parameter may contain only');
+        $this->gateway->purchase(['amount' => '10.00', 'currency' => 'EUR', 'vs' => '1', 'rurl' => 'http://return.sk', 'name' => 'Ján'])->getData();
+    }
 }

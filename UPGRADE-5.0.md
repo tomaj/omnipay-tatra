@@ -133,6 +133,21 @@ $gateway->cancelAuthorize(['txn' => \Omnipay\CardPay\Message\CancelAuthorizeRequ
 $gateway->cancelAuthorize(['txn' => \Omnipay\CardPay\Message\CancelAuthorizeTxn::Chargeback, ...]);
 ```
 
+## Customer name is validated
+
+CardPay `purchase()`/`authorize()` and ComfortPay `purchase()` throw `InvalidRequestException` for a `name` with
+characters Tatra banka does not accept ([#3](https://github.com/tomaj/omnipay-tatra/issues/3)). **(action)** Remove
+diacritics first:
+
+```php
+// 4.x: the bank showed an error page
+$gateway->purchase(['name' => 'Ján Novák', ...]);
+
+// 5.0
+$name = preg_replace('/[^0-9a-zA-Z .\-_@]/', '', (string) iconv('UTF-8', 'ASCII//TRANSLIT', 'Ján Novák'));
+$gateway->purchase(['name' => $name, ...]);
+```
+
 ## Behaviour fixes you may notice
 
 - CardPay `authorize()`: `tdsCardholder` used to overwrite the `E2E` parameter and was sent as both `E2E` and
