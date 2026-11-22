@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - AES and DES signing threw `ValueError` on PHP 8 (ECB mode has no IV); a failing cipher (e.g. DES without the OpenSSL legacy provider) now throws instead of producing an empty signature.
+- Signatures received from the bank (`HMAC`, `SIGN`, the cancel-authorization `Authorization` header) are compared with `hash_equals()` instead of `!=`. The loose comparison accepted numeric-looking "magic" signatures (e.g. `SIGN=0` matched a DES signature `0E74203727752110`); a missing or non-string signature is now rejected without PHP warnings.
 
 ## [4.3.0]
 - Added new request `UnregisterCardRequest`

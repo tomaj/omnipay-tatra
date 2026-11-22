@@ -9,6 +9,7 @@ use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\Aes256Sign;
 use Omnipay\Core\Sign\DesSign;
 use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\Signature;
 
 class CompletePurchaseRequest extends AbstractRequest
 {
@@ -34,19 +35,21 @@ class CompletePurchaseRequest extends AbstractRequest
             $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
             $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cc}{$rc}{$tid}{$timestamp}";
             $sign = new HmacSign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
-                throw new InvalidRequestException("incorrect signature for data: '{$data}', sign: '{$_GET['HMAC']}'");
+            $received = $_GET['HMAC'] ?? null;
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $received)) {
+                $received = is_string($received) ? $received : '';
+                throw new InvalidRequestException("incorrect signature for data: '{$data}', sign: '{$received}'");
             }
         } elseif (strlen($sharedSecret) == 64) {
             $data = "{$this->getVs()}{$res}{$ac}";
             $sign = new Aes256Sign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
                 throw new InvalidRequestException('incorect signature');
             }
         } elseif (strlen($sharedSecret) == 8) {
             $data = "{$this->getVs()}{$res}{$ac}";
             $sign = new DesSign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
                 throw new InvalidRequestException('incorect signature');
             }
         } else {

@@ -7,6 +7,7 @@ use Money\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\Signature;
 
 class CompleteAuthorizeRequest extends AbstractRequest
 {
@@ -31,7 +32,7 @@ class CompleteAuthorizeRequest extends AbstractRequest
         $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$txn}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
 
         $sign = new HmacSign();
-        if ($sign->sign($data, $this->getParameter('sharedSecret')) != $_GET['HMAC']) {
+        if (!Signature::equals($sign->sign($data, $this->getParameter('sharedSecret')), $_GET['HMAC'] ?? null)) {
             throw new InvalidRequestException('incorect signature');
         }
 

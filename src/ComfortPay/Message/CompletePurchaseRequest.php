@@ -8,6 +8,7 @@ use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\Aes256Sign;
 use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\Signature;
 
 class CompletePurchaseRequest extends AbstractRequest
 {
@@ -33,13 +34,13 @@ class CompletePurchaseRequest extends AbstractRequest
             $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
             $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
             $sign = new HmacSign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['HMAC'] ?? null)) {
                 throw new InvalidRequestException('incorect signature');
             }
         } elseif (strlen($sharedSecret) == 64) {
             $data = "{$this->getVs()}{$tres}{$ac}{$cid}";
             $sign = new Aes256Sign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
                 throw new InvalidRequestException('incorect signature');
             }
         } else {

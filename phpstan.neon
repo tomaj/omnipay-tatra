@@ -10,7 +10,8 @@ parameters:
         - src
         - tests
     strictRules:
-        # The loose comparisons (signatures, variable symbols, response statuses) and empty() checks
-        # are payment logic; making them strict changes behaviour, so it is left for a dedicated change.
+        # Signatures are compared with hash_equals() (Omnipay\Core\Sign\Signature). The remaining loose
+        # comparisons (variable symbols, response statuses, key lengths) and empty() checks are payment logic;
+        # making them strict changes behaviour, so it is left for a dedicated change.
         disallowedLooseComparison: false
         disallowedEmpty: false

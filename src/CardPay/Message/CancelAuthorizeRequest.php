@@ -5,6 +5,7 @@ namespace Omnipay\CardPay\Message;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\Signature;
 
 class CancelAuthorizeRequest extends AbstractRequest
 {
@@ -93,7 +94,7 @@ class CancelAuthorizeRequest extends AbstractRequest
                 $parsedHeaders[$item[0]] = $item[1];
             }
 
-            if (isset($parsedHeaders['HMAC']) && $parsedHeaders['HMAC'] !== $this->generateSignature($xml)) {
+            if (isset($parsedHeaders['HMAC']) && !Signature::equals($this->generateSignature($xml), $parsedHeaders['HMAC'])) {
                 throw new InvalidResponseException('Incorrect signature');
             }
         }

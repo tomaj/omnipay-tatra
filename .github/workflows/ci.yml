@@ -61,6 +61,17 @@ jobs:
       if: matrix.php == '8.6' && matrix.dependency-version == ''
       run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
+    - name: Run tests with the OpenSSL legacy provider (DES signatures)
+      if: matrix.php == '8.6' && matrix.dependency-version == ''
+      # OpenSSL 3 only offers des-ecb through the legacy provider; without it the DES tests are skipped
+      run: |
+        printf '%s\n' 'openssl_conf = openssl_init' '[openssl_init]' 'providers = provider_sect' \
+          '[provider_sect]' 'default = default_sect' 'legacy = legacy_sect' \
+          '[default_sect]' 'activate = 1' '[legacy_sect]' 'activate = 1' > "$RUNNER_TEMP/openssl-legacy.cnf"
+        export OPENSSL_CONF="$RUNNER_TEMP/openssl-legacy.cnf"
+        php -r 'exit(in_array("des-ecb", openssl_get_cipher_methods(), true) ? 0 : 1);' || { echo "des-ecb not available"; exit 1; }
+        vendor/bin/phpunit --no-coverage --fail-on-skipped
+
   code-style:
     name: Code Style (PER-CS + PHP 8.3)
     runs-on: ubuntu-latest
