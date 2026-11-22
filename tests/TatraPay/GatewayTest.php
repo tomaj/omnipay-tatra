@@ -356,7 +356,16 @@ final class GatewayTest extends TestCase
         $response = $this->gateway->completePurchase(['vs' => '123456'])->send();
 
         self::assertFalse($response->isSuccessful());
+        self::assertFalse($response->isPending());
         self::assertSame('FAIL', $response->getRes());
+    }
+
+    public function testTimeoutIsPending(): void
+    {
+        $response = new CompletePurchaseResponse($this->gateway->completePurchase(), ['RES' => 'TOUT', 'VS' => '1']);
+
+        self::assertFalse($response->isSuccessful());
+        self::assertTrue($response->isPending());
     }
 
     public function testResponseGettersOnEmptyData(): void

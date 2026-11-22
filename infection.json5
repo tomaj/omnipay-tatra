@@ -3,10 +3,6 @@
     "source": {
         "directories": [
             "src"
-        ],
-        // no executable code (all behaviour is inherited), so there is nothing to mutate and no coverage file for it
-        "excludes": [
-            "TatraPay/Message/CompletePurchaseResponse.php"
         ]
     },
     "logs": {
