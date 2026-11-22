@@ -30,7 +30,7 @@
         "security": "https://github.com/tomaj/omnipay-tatra/security/policy"
     },
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-openssl": "*",
         "ext-hash": "*",
         "ext-soap": "*",
@@ -39,11 +39,15 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.90",
-        "omnipay/tests": "^4.2",
+        "guzzlehttp/psr7": "^2.7",
+        "infection/infection": "^0.35",
+        "php-http/mock-client": "^1.6",
         "phpstan/phpstan": "^2.3",
-        "phpstan/phpstan-phpunit": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0.5",
         "phpstan/phpstan-strict-rules": "^2.1",
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^13.2",
+        "rector/rector": "^2.8"
     },
     "minimum-stability": "stable",
     "autoload": {
@@ -51,9 +55,15 @@
             "Omnipay\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Omnipay\\Tests\\Tatra\\": "tests/"
+        }
+    },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": false
+            "php-http/discovery": false,
+            "infection/extension-installer": true
         },
         "sort-packages": true
     },
@@ -61,15 +71,38 @@
         "check": [
             "@phpcs",
             "@phpstan",
+            "@rector",
             "@test"
         ],
+        "coverage": [
+            "@putenv XDEBUG_MODE=coverage",
+            "phpunit --coverage-clover build/logs/clover.xml --coverage-html build/coverage"
+        ],
         "cs-fix": "php-cs-fixer fix",
+        "infection": [
+            "@putenv XDEBUG_MODE=coverage",
+            "infection --threads=max"
+        ],
         "phpcs": "php-cs-fixer fix --dry-run --diff --verbose",
         "phpstan": "phpstan analyse --memory-limit=1G",
         "phpunit": [
             "@putenv XDEBUG_MODE=off",
             "phpunit --no-coverage"
         ],
+        "rector": "rector --dry-run",
+        "rector-fix": "rector",
         "test": "@phpunit"
+    },
+    "scripts-descriptions": {
+        "check": "Runs code style, PHPStan, Rector and the tests",
+        "coverage": "Runs the tests with a Clover and HTML coverage report in build/ (needs Xdebug or PCOV)",
+        "cs-fix": "Fixes the code style",
+        "infection": "Runs mutation testing with Infection (needs Xdebug or PCOV)",
+        "phpcs": "Checks the code style without changing files",
+        "phpstan": "Runs PHPStan at level max",
+        "phpunit": "Runs the tests without coverage",
+        "rector": "Shows the changes Rector would make",
+        "rector-fix": "Applies the Rector changes",
+        "test": "Runs the tests"
     }
 }

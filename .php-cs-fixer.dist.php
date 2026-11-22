@@ -12,7 +12,8 @@ $finder = PhpCsFixer\Finder::create()
 return (new PhpCsFixer\Config())
     ->setRules([
         '@PER-CS' => true,
-        '@PHP8x3Migration' => true,
+        '@PHP8x4Migration' => true,
+        'declare_strict_types' => true,
         'array_syntax' => ['syntax' => 'short'],
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'no_unused_imports' => true,

@@ -6,9 +6,9 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Changed
 
-* **BREAKING CHANGE**: Requires PHP 8.3 or newer (`"php": "^8.3"`; there was no PHP constraint before and CI covered PHP 8.0 - 8.3).
+* **BREAKING CHANGE**: Requires PHP 8.4 or newer (`"php": "^8.4"`; there was no PHP constraint before and CI covered PHP 8.0 - 8.3). Stay on 4.x for older PHP ([#28](https://github.com/tomaj/omnipay-tatra/issues/28)).
 * CI runs in one GitHub Actions workflow: tests on PHP 8.3 - 8.6 (plus `--prefer-lowest`) and a nightly PHP 8.7 job that may fail, PHP-CS-Fixer (PER-CS, replaces PHP_CodeSniffer), PHPStan level 5 with strict rules, and `composer audit`. Dependabot keeps Composer packages and actions up to date ([#24](https://github.com/tomaj/omnipay-tatra/pull/24)).
-* PHPUnit 11.
+* PHPStan runs at level max with bleedingEdge, strict, deprecation and PHPUnit rules; PHP-CS-Fixer enforces `declare(strict_types=1)` and the PHP 8.4 migration rules; Rector checks the code; new composer scripts `rector`, `rector-fix`, `coverage` and `infection` ([#27](https://github.com/tomaj/omnipay-tatra/issues/27)).
 * The Composer dist archive contains only the library (`src/`, `composer.json`, README, LICENSE, CHANGELOG); the ad-hoc scripts `index.php`, `test.php` and `testserver.php` were removed. Added `LICENSE.md` (MIT), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` and `RELEASING.md`; `omnipay/common` is required as `^3.2` ([#25](https://github.com/tomaj/omnipay-tatra/issues/25)).
 
 ### Fixed
