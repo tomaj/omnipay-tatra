@@ -29,6 +29,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Security
 
+* **Security**: **BREAKING CHANGE**: TatraPay `completePurchase()` requires the expected `vs` and rejects a callback whose `VS` differs (`InvalidRequestException('Variable symbol mismatch')`), like CardPay and ComfortPay already did. With AES and DES keys the signature covers only the returned VS and result, so a genuine callback for one order was accepted for another. The response returns the verified VS. Still compare the amount with the order yourself: AES and DES signatures do not cover it ([#33](https://github.com/tomaj/omnipay-tatra/issues/33)).
 * **Security**: Signatures received from the bank (`HMAC`, `SIGN`, the cancel-authorization `Authorization` header) are compared with `hash_equals()` instead of `!=`. The loose comparison accepted numeric-looking "magic" signatures (e.g. `SIGN=0` matched the DES signature `0E74203727752110`); a missing or non-string signature is now rejected without PHP warnings ([#24](https://github.com/tomaj/omnipay-tatra/pull/24)).
 
 ## [4.3.0] - 2024-10-21

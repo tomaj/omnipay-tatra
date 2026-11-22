@@ -7,6 +7,24 @@ points marked with **(action)**.
 
 `composer.json` requires `"php": "^8.4"`. Stay on 4.x until you run PHP 8.4 ([#28](https://github.com/tomaj/omnipay-tatra/issues/28)).
 
+## TatraPay `completePurchase()` requires `vs`
+
+**(action)** Pass the variable symbol of the order you expect. A callback for a different VS is rejected
+([#33](https://github.com/tomaj/omnipay-tatra/issues/33)):
+
+```php
+// 4.x: any correctly signed callback was successful; you had to compare getVs() yourself
+$response = $gateway->completePurchase(['amount' => '10.00', 'currency' => 'EUR'])->send();
+if ($response->isSuccessful() && $response->getVs() === $order->vs) { /* paid */ }
+
+// 5.0
+$response = $gateway->completePurchase(['vs' => $order->vs, 'amount' => '10.00', 'currency' => 'EUR'])->send();
+if ($response->isSuccessful()) { /* paid */ } // InvalidRequestException('Variable symbol mismatch') otherwise
+```
+
+With AES and DES keys the bank signs only the VS and the result, not the amount: compare the amount of the order
+yourself before you ship it.
+
 ## Native types on every accessor
 
 Parameter setters take `?string` (or the type named below) and getters return `?string`. Omnipay's `initialize()` and

@@ -16,22 +16,29 @@ final class CompletePurchaseRequest extends AbstractRequest
 {
     /**
      * @return array{RES: string, VS: string}
-     * @throws InvalidRequestException when the signature is wrong
+     * @throws InvalidRequestException when `vs` is missing, the bank returned another VS, or the signature is wrong
      */
     #[\Override]
     public function getData(): array
     {
-        $vs = $this->getQueryParameter('VS');
+        $expectedVs = $this->getVs();
+        if ($expectedVs === null) {
+            throw new InvalidRequestException('The vs parameter is required');
+        }
         $res = $this->getQueryParameter('RES');
+
+        if ($this->getQueryParameter('VS') !== $expectedVs) {
+            throw new InvalidRequestException('Variable symbol mismatch');
+        }
 
         if ($this->getKeyType() === KeyType::Hmac) {
             $curr = $this->getCurrencyNumericCode();
             $tid = $this->getQueryParameter('TID');
             $timestamp = $this->getQueryParameter('TIMESTAMP');
-            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$res}{$tid}{$timestamp}";
+            $data = "{$this->getAmount()}{$curr}{$expectedVs}{$this->getSs()}{$this->getCs()}{$res}{$tid}{$timestamp}";
             $received = $this->getQueryParameter('HMAC');
         } else {
-            $data = "{$vs}{$res}";
+            $data = "{$expectedVs}{$res}";
             $received = $this->getQueryParameter('SIGN');
         }
 
@@ -41,7 +48,7 @@ final class CompletePurchaseRequest extends AbstractRequest
 
         return [
             'RES' => $res,
-            'VS' => $vs,
+            'VS' => $expectedVs,
         ];
     }
 
