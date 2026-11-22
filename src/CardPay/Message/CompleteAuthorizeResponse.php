@@ -1,82 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Core\Message\AbstractCallbackResponse;
 
-class CompleteAuthorizeResponse extends AbstractResponse
+/**
+ * The verified result of a CardPay pre-authorization.
+ */
+final class CompleteAuthorizeResponse extends AbstractCallbackResponse
 {
-    public const SUCCESS = 'OK';
-
-    public function isSuccessful()
+    /**
+     * The reason code of a declined payment.
+     */
+    public function getRc(): ?string
     {
-        return static::SUCCESS === $this->getRes();
+        return $this->getDataString('RC');
     }
 
-    public function getRes()
+    /**
+     * The 3-D Secure result (TRES).
+     */
+    public function getTres(): ?string
     {
-        if (isset($this->data['RES'])) {
-            return $this->data['RES'];
-        }
-        return null;
+        return $this->getDataString('TRES');
     }
 
-    public function getVs()
+    /**
+     * The registered card id (CID), when the card was registered.
+     */
+    public function getCid(): ?string
     {
-        if (isset($this->data['VS'])) {
-            return $this->data['VS'];
-        }
-        return null;
+        return $this->getDataString('CID');
     }
 
-    public function getRc()
+    /**
+     * The bank's transaction id (TID), needed to capture, reverse or refund the pre-authorization.
+     */
+    #[\Override]
+    public function getTransactionReference(): ?string
     {
-        if (isset($this->data['RC'])) {
-            return $this->data['RC'];
-        }
-        return null;
+        return $this->getDataString('TID');
     }
 
-    public function getTres()
+    /**
+     * The masked card number (CC).
+     */
+    public function getCc(): ?string
     {
-        if (isset($this->data['TRES'])) {
-            return $this->data['TRES'];
-        }
-        return null;
+        return $this->getDataString('CC');
     }
 
-    public function getCid()
+    /**
+     * The approval code (AC).
+     */
+    public function getAc(): ?string
     {
-        if (isset($this->data['CID'])) {
-            return $this->data['CID'];
-        }
-        return null;
-    }
-
-    public function getTransactionReference()
-    {
-        if (isset($this->data['TID'])) {
-            return $this->data['TID'];
-        }
-
-        return null;
-    }
-
-    public function getCc()
-    {
-        if (isset($this->data['CC'])) {
-            return $this->data['CC'];
-        }
-
-        return null;
-    }
-
-    public function getAc()
-    {
-        if (isset($this->data['AC'])) {
-            return $this->data['AC'];
-        }
-
-        return null;
+        return $this->getDataString('AC');
     }
 }

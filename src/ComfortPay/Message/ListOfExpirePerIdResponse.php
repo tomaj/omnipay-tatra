@@ -1,19 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\ResponseInterface;
 
-class ListOfExpirePerIdResponse extends AbstractResponse implements ResponseInterface
+/**
+ * The expiration of each card: a list of ['id' => card id, 'date' => MMYY].
+ */
+final class ListOfExpirePerIdResponse extends AbstractResponse
 {
-    public function isSuccessful()
+    #[\Override]
+    public function isSuccessful(): bool
     {
-        return count($this->data) > 0;
+        return $this->getExpires() !== [];
     }
 
-    public function getExpires()
+    /**
+     * @return array<array<string, int|string>>
+     */
+    public function getExpires(): array
     {
-        return $this->data;
+        /** @var array<array<string, int|string>> */
+        return is_array($this->data) ? $this->data : [];
     }
 }

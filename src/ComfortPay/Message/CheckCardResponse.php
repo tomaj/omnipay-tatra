@@ -1,20 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use Omnipay\ComfortPay\Gateway;
+use Omnipay\ComfortPay\CardStatus;
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\ResponseInterface;
 
-class CheckCardResponse extends AbstractResponse implements ResponseInterface
+/**
+ * The status of a registered card: OK, FAIL or UNKNOWN.
+ */
+final class CheckCardResponse extends AbstractResponse
 {
-    public function isSuccessful()
+    #[\Override]
+    public function isSuccessful(): bool
     {
-        return $this->data->status == Gateway::CARD_STATUS_OK;
+        return $this->getCardStatus() === CardStatus::Ok;
     }
 
-    public function getStatus()
+    public function getStatus(): ?string
     {
-        return $this->data->status;
+        $status = is_object($this->data) && property_exists($this->data, 'status') ? $this->data->status : null;
+
+        return is_string($status) ? $status : null;
+    }
+
+    public function getCardStatus(): ?CardStatus
+    {
+        return CardStatus::tryFrom((string) $this->getStatus());
     }
 }

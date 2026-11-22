@@ -1,30 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\TatraPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Omnipay\Core\Message\AbstractRequest;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Sign\DesSign;
-use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\KeyType;
 
-class PurchaseRequest extends AbstractRequest
+final class PurchaseRequest extends AbstractRequest
 {
-    public function initialize(array $parameters = [])
+    /**
+     * @param array<mixed> $parameters
+     */
+    #[\Override]
+    public function initialize(array $parameters = []): static
     {
         parent::initialize($parameters);
         $this->setTimestamp(gmdate('dmYHis'));
+
         return $this;
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
+
         $data = [];
         $data['PT'] = 'TatraPay';
         $data['MID'] = $this->getMid();
-        $data['CURR'] = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+        $data['CURR'] = $this->getCurrencyNumericCode();
         $data['VS'] = $this->getVs();
         $data['CS'] = $this->getCs();
         $data['AMT'] = $this->getAmount();
@@ -35,69 +43,54 @@ class PurchaseRequest extends AbstractRequest
         $data['LANG'] = $this->getLang();
         $data['RURL'] = $this->getRurl();
 
-        $sharedSecret = $this->getParameter('sharedSecret');
-        if (strlen($sharedSecret) == 128) {
+        if ($this->getKeyType() === KeyType::Hmac) {
             $data['TIMESTAMP'] = $this->getTimestamp();
         }
+
         return $data;
     }
 
-    public function generateSignature($data)
+    public function generateSignature(string $data): string
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
-
-        if (strlen($sharedSecret) == 128) {
-            $sign = new HmacSign();
-            return $sign->sign($data, $sharedSecret);
-        } elseif (strlen($sharedSecret) == 64) {
-            $sign = new Aes256Sign();
-            return $sign->sign($data, $sharedSecret);
-        } elseif (strlen($sharedSecret) == 8) {
-            $sign = new DesSign();
-            return $sign->sign($data, $sharedSecret);
-        } else {
-            throw new \Exception('Unknown key length');
-        }
+        return $this->sign($data);
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): PurchaseResponse
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        return $this->sendData($this->getData());
+    }
 
-        $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+    #[\Override]
+    public function sendData(mixed $data): PurchaseResponse
+    {
+        $data = self::arrayData($data);
+        $curr = $this->getCurrencyNumericCode();
+        $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}";
 
-        if (strlen($sharedSecret) == 128) {
-            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}{$this->getRem()}{$this->getTimestamp()}";
-            $data['HMAC'] = $this->generateSignature($input);
+        if ($this->getKeyType() === KeyType::Hmac) {
+            $data['HMAC'] = $this->generateSignature("{$input}{$this->getRem()}{$this->getTimestamp()}");
         } else {
-            $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}";
             $data['SIGN'] = $this->generateSignature($input);
         }
 
         return $this->response = new PurchaseResponse($this, $data);
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $keyType = $this->getKeyType();
 
         if ($this->getTestMode()) {
-            $testHost = $this->getParameter('testHost');
-            $host = is_string($testHost) && $testHost !== '' ? $testHost : 'https://platby.tomaj.sk';
-
-            if (strlen($sharedSecret) == 128) {
-                return $host . '/payment/tatrapay-hmac';
-            } elseif (strlen($sharedSecret) == 64) {
-                return $host . '/payment/tatrapay-aes256';
-            } else {
-                return $host . '/payment/tatrapay-des';
-            }
-        } else {
-            if (strlen($sharedSecret) == 128) {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/tatrapay';
-            } else {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
-            }
+            return $this->getTestEndpointHost() . match ($keyType) {
+                KeyType::Hmac => '/payment/tatrapay-hmac',
+                KeyType::Aes => '/payment/tatrapay-aes256',
+                KeyType::Des => '/payment/tatrapay-des',
+            };
         }
+
+        return $keyType === KeyType::Hmac
+            ? 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/tatrapay'
+            : 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
     }
 }

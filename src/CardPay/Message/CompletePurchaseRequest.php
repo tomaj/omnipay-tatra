@@ -1,59 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Message\AbstractRequest;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Sign\DesSign;
-use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\KeyType;
 use Omnipay\Core\Sign\Signature;
 
-class CompletePurchaseRequest extends AbstractRequest
+/**
+ * Verifies the customer's return from CardPay (the query string of the return URL).
+ */
+final class CompletePurchaseRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @return array{RES: string, VS: string, RC: string}
+     * @throws InvalidRequestException when the bank returned another VS or the signature is wrong
+     */
+    #[\Override]
+    public function getData(): array
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $vs = $this->getQueryParameter('VS');
+        $ac = $this->getQueryParameter('AC');
+        $res = $this->getQueryParameter('RES');
+        $tres = $this->getQueryParameter('TRES');
+        $tid = $this->getQueryParameter('TID');
+        $cc = $this->getQueryParameter('CC');
+        $rc = $this->getQueryParameter('RC');
+        $timestamp = $this->getQueryParameter('TIMESTAMP');
 
-        $vs = $_GET['VS'] ?? '';
-        $ac = $_GET['AC'] ?? '';
-        $cid = $_GET['CID'] ?? '';
-        $res = $_GET['RES'] ?? '';
-        $tres = $_GET['TRES'] ?? '';
-        $tid = $_GET['TID'] ?? '';
-        $cc = $_GET['CC'] ?? '';
-        $rc = $_GET['RC'] ?? '';
-        $timestamp = $_GET['TIMESTAMP'] ?? '';
-
-        if ($vs != $this->getVs()) {
+        if ($vs !== (string) $this->getVs()) {
             throw new InvalidRequestException('Variable symbol mismatch');
         }
 
-        if (strlen($sharedSecret) == 128) {
-            $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
-            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cc}{$rc}{$tid}{$timestamp}";
-            $sign = new HmacSign();
-            $received = $_GET['HMAC'] ?? null;
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $received)) {
-                $received = is_string($received) ? $received : '';
+        $keyType = $this->getKeyType();
+        if ($keyType === KeyType::Hmac) {
+            $curr = $this->getCurrencyNumericCode();
+            $data = "{$this->getAmount()}{$curr}{$vs}{$res}{$ac}{$tres}{$cc}{$rc}{$tid}{$timestamp}";
+            $received = $this->getQueryParameter('HMAC');
+            if (!Signature::equals($this->sign($data), $received)) {
                 throw new InvalidRequestException("incorrect signature for data: '{$data}', sign: '{$received}'");
             }
-        } elseif (strlen($sharedSecret) == 64) {
-            $data = "{$this->getVs()}{$res}{$ac}";
-            $sign = new Aes256Sign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
-        } elseif (strlen($sharedSecret) == 8) {
-            $data = "{$this->getVs()}{$res}{$ac}";
-            $sign = new DesSign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
-        } else {
-            throw new \Exception('Unknown key length');
+        } elseif (!Signature::equals($this->sign("{$vs}{$res}{$ac}"), $this->getQueryParameter('SIGN'))) {
+            throw new InvalidRequestException('incorect signature');
         }
 
         return [
@@ -62,8 +52,16 @@ class CompletePurchaseRequest extends AbstractRequest
             'RC' => $rc,
         ];
     }
-    public function sendData($data)
+
+    #[\Override]
+    public function send(): CompletePurchaseResponse
     {
-        return $this->response = new CompletePurchaseResponse($this, $data);
+        return $this->sendData($this->getData());
+    }
+
+    #[\Override]
+    public function sendData(mixed $data): CompletePurchaseResponse
+    {
+        return $this->response = new CompletePurchaseResponse($this, self::arrayData($data));
     }
 }

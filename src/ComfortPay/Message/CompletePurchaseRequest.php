@@ -1,50 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
+use Omnipay\ComfortPay\ParametersTrait;
 use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\Core\Exception\UnsupportedKeyException;
 use Omnipay\Core\Message\AbstractRequest;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\KeyType;
 use Omnipay\Core\Sign\Signature;
 
-class CompletePurchaseRequest extends AbstractRequest
+/**
+ * Verifies the customer's return from a ComfortPay payment; CID is the id of the registered card.
+ */
+final class CompletePurchaseRequest extends AbstractRequest
 {
-    public function getData()
+    use ParametersTrait;
+
+    /**
+     * @return array{RES: string, VS: string, CC: string, CID: string, TRES: string, RC: string}
+     * @throws InvalidRequestException when the bank returned another VS or the signature is wrong
+     */
+    #[\Override]
+    public function getData(): array
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $vs = $this->getQueryParameter('VS');
+        $ac = $this->getQueryParameter('AC');
+        $cid = $this->getQueryParameter('CID');
+        $res = $this->getQueryParameter('RES');
+        $tres = $this->getQueryParameter('TRES');
+        $tid = $this->getQueryParameter('TID');
+        $cc = $this->getQueryParameter('CC');
+        $rc = $this->getQueryParameter('RC');
+        $timestamp = $this->getQueryParameter('TIMESTAMP');
 
-        $vs = $_GET['VS'] ?? '';
-        $ac = $_GET['AC'] ?? '';
-        $cid = $_GET['CID'] ?? '';
-        $res = $_GET['RES'] ?? '';
-        $tres = $_GET['TRES'] ?? '';
-        $tid = $_GET['TID'] ?? '';
-        $cc = $_GET['CC'] ?? '';
-        $rc = $_GET['RC'] ?? '';
-        $timestamp = $_GET['TIMESTAMP'] ?? '';
-
-        if ($vs != $this->getVs()) {
+        if ($vs !== (string) $this->getVs()) {
             throw new InvalidRequestException('Variable symbol mismatch');
         }
 
-        if (strlen($sharedSecret) == 128) {
-            $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
-            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
-            $sign = new HmacSign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['HMAC'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
-        } elseif (strlen($sharedSecret) == 64) {
-            $data = "{$this->getVs()}{$tres}{$ac}{$cid}";
-            $sign = new Aes256Sign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
+        $keyType = $this->getKeyType();
+        if ($keyType === KeyType::Hmac) {
+            $curr = $this->getCurrencyNumericCode();
+            $data = "{$this->getAmount()}{$curr}{$vs}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
+            $received = $this->getQueryParameter('HMAC');
+        } elseif ($keyType === KeyType::Aes) {
+            $data = "{$vs}{$tres}{$ac}{$cid}";
+            $received = $this->getQueryParameter('SIGN');
         } else {
-            throw new \Exception('Unknown key length');
+            throw new UnsupportedKeyException('Unknown key length 8: ComfortPay supports only 64 (AES) or 128 (HMAC) character keys');
+        }
+
+        if (!Signature::equals($this->sign($data), $received)) {
+            throw new InvalidRequestException('incorect signature');
         }
 
         return [
@@ -57,48 +65,15 @@ class CompletePurchaseRequest extends AbstractRequest
         ];
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): CompletePurchaseResponse
     {
-        return $this->response = new CompletePurchaseResponse($this, $data);
+        return $this->sendData($this->getData());
     }
 
-    public function getTerminalId()
+    #[\Override]
+    public function sendData(mixed $data): CompletePurchaseResponse
     {
-        return $this->getParameter('terminalId');
-    }
-
-    public function setTerminalId($value)
-    {
-        return $this->setParameter('terminalId', $value);
-    }
-
-    public function getWs()
-    {
-        return $this->getParameter('ws');
-    }
-
-    public function setWs($value)
-    {
-        return $this->setParameter('ws', $value);
-    }
-
-    public function getCertPath()
-    {
-        return $this->getParameter('certPath');
-    }
-
-    public function setCertPath($value)
-    {
-        return $this->setParameter('certPath', $value);
-    }
-
-    public function getCertPass()
-    {
-        return $this->getParameter('certPass');
-    }
-
-    public function setCertPass($value)
-    {
-        return $this->setParameter('certPass', $value);
+        return $this->response = new CompletePurchaseResponse($this, self::arrayData($data));
     }
 }

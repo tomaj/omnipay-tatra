@@ -1,38 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\HmacSign;
 use Omnipay\Core\Sign\Signature;
 
-class CompleteAuthorizeRequest extends AbstractRequest
+/**
+ * Verifies the customer's return from a CardPay pre-authorization (HMAC).
+ */
+final class CompleteAuthorizeRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @return array{RES: string, VS: string, RC: string, TRES: string, TID: string, CID: string, CC: string, AC: string}
+     * @throws InvalidRequestException when the bank returned another VS or the signature is wrong
+     */
+    #[\Override]
+    public function getData(): array
     {
-        $vs = $_GET['VS'] ?? '';
-        $ac = $_GET['AC'] ?? '';
-        $res = $_GET['RES'] ?? '';
-        $tres = $_GET['TRES'] ?? '';
-        $tid = $_GET['TID'] ?? '';
-        $cc = $_GET['CC'] ?? '';
-        $rc = $_GET['RC'] ?? '';
-        $txn = $_GET['TXN'] ?? '';
-        $cid = $_GET['CID'] ?? '';
-        $timestamp = $_GET['TIMESTAMP'] ?? '';
+        $vs = $this->getQueryParameter('VS');
+        $ac = $this->getQueryParameter('AC');
+        $res = $this->getQueryParameter('RES');
+        $tres = $this->getQueryParameter('TRES');
+        $tid = $this->getQueryParameter('TID');
+        $cc = $this->getQueryParameter('CC');
+        $rc = $this->getQueryParameter('RC');
+        $txn = $this->getQueryParameter('TXN');
+        $cid = $this->getQueryParameter('CID');
+        $timestamp = $this->getQueryParameter('TIMESTAMP');
 
-        if ($vs != $this->getVs()) {
+        if ($vs !== (string) $this->getVs()) {
             throw new InvalidRequestException('Variable symbol mismatch');
         }
 
-        $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
-        $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$txn}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
+        $curr = $this->getCurrencyNumericCode();
+        $data = "{$this->getAmount()}{$curr}{$vs}{$txn}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
 
-        $sign = new HmacSign();
-        if (!Signature::equals($sign->sign($data, $this->getParameter('sharedSecret')), $_GET['HMAC'] ?? null)) {
+        $signature = new HmacSign()->sign($data, $this->getSharedSecret() ?? '');
+        if (!Signature::equals($signature, $this->getQueryParameter('HMAC'))) {
             throw new InvalidRequestException('incorect signature');
         }
 
@@ -48,8 +56,15 @@ class CompleteAuthorizeRequest extends AbstractRequest
         ];
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): CompleteAuthorizeResponse
     {
-        return $this->response = new CompleteAuthorizeResponse($this, $data);
+        return $this->sendData($this->getData());
+    }
+
+    #[\Override]
+    public function sendData(mixed $data): CompleteAuthorizeResponse
+    {
+        return $this->response = new CompleteAuthorizeResponse($this, self::arrayData($data));
     }
 }

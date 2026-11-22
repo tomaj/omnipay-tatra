@@ -1,8 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Core\Sign;
+
+use Omnipay\Core\Exception\SignatureException;
 
 interface SignInterface
 {
-    public function sign($input, $secret);
+    /**
+     * @throws SignatureException when the signature cannot be computed
+     */
+    public function sign(string $input, string $secret): string;
 }

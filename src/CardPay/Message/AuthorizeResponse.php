@@ -1,46 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\RedirectResponseInterface;
+use Omnipay\Core\Message\AbstractRedirectResponse;
 
-class AuthorizeResponse extends AbstractResponse implements RedirectResponseInterface
+final class AuthorizeResponse extends AbstractRedirectResponse
 {
-    public function isSuccessful()
-    {
-        return false;
-    }
-
-    public function isRedirect()
-    {
-        return true;
-    }
-
-    public function getRedirectUrl()
-    {
-        return $this->getRequest()->getEndpoint() . '?' . http_build_query($this->getRedirectData());
-    }
-
-    /**
-     * @return AuthorizeRequest
-     */
-    public function getRequest()
+    #[\Override]
+    public function getRequest(): AuthorizeRequest
     {
         if (!$this->request instanceof AuthorizeRequest) {
-            throw new \LogicException('Response was created for an unexpected request ' . get_class($this->request));
+            throw new \LogicException('Response was created for an unexpected request ' . $this->request::class);
         }
 
         return $this->request;
     }
 
-    public function getRedirectMethod()
+    #[\Override]
+    protected function getEndpoint(): string
     {
-        return 'GET';
-    }
-
-    public function getRedirectData()
-    {
-        return $this->data;
+        return $this->getRequest()->getEndpoint();
     }
 }

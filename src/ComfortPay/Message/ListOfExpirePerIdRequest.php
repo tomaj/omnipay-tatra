@@ -1,58 +1,82 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use SimpleXMLElement;
-
-class ListOfExpirePerIdRequest extends AbstractSoapRequest
+/**
+ * The expiration (MMYY) of the given registered cards (getListOfExpPerId), at most 1000 ids.
+ */
+final class ListOfExpirePerIdRequest extends AbstractSoapRequest
 {
-    public function getCardIds()
+    /**
+     * @return list<string>|null
+     */
+    public function getCardIds(): ?array
     {
-        return $this->getParameter('cardIds');
+        $value = $this->getParameter('cardIds');
+        if (!is_array($value)) {
+            return null;
+        }
+
+        return array_values(array_map(static fn(mixed $id): string => is_scalar($id) ? (string) $id : '', $value));
     }
 
-    public function setCardIds($value)
+    /**
+     * @param array<int|string>|null $value
+     */
+    public function setCardIds(?array $value): static
     {
         return $this->setParameter('cardIds', $value);
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('cardIds');
 
         $data = parent::getData();
         $data['cardIds'] = $this->getCardIds();
+
         return $data;
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): ListOfExpirePerIdResponse
     {
+        return $this->sendData($this->getData());
+    }
+
+    /**
+     * @throws \SoapFault
+     */
+    #[\Override]
+    public function sendData(mixed $data): ListOfExpirePerIdResponse
+    {
+        $data = self::arrayData($data);
+        /** @var list<string> $cardIds */
+        $cardIds = $data['cardIds'] ?? [];
+
         if ($this->getTestMode()) {
-            return $this->response = new ListOfExpirePerIdResponse($this, array_map(function ($id) {
-                return [
-                    'id' => $id,
-                    'date' => '0199',
-                ];
-            }, $data['cardIds']));
+            return $this->response = new ListOfExpirePerIdResponse($this, array_map(
+                static fn(string $id): array => ['id' => $id, 'date' => '0199'],
+                $cardIds,
+            ));
         }
 
         $request = new \stdClass();
-        $request->listOfIdCards = $data['cardIds'];
+        $request->listOfIdCards = $cardIds;
 
-        $client = $this->getSoapClient();
-        $client->getListOfExpPerId($request);
-
-        $xmlResponse = $client->__getLastResponse();
-
-        $xml = new SimpleXMLElement($xmlResponse);
-        $pairs = $xml->xpath('//list');
-
-        $resultData = array_map(function ($element) {
-            return [
+        $resultData = array_map(
+            static fn(\SimpleXMLElement $element): array => [
                 'id' => (string) $element->idOfCard,
                 'date' => (string) $element->expiration,
-            ];
-        }, $pairs);
+            ],
+            $this->callForList('getListOfExpPerId', $request),
+        );
 
         return $this->response = new ListOfExpirePerIdResponse($this, $resultData);
     }

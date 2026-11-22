@@ -1,53 +1,59 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\TatraPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Core\Message\AbstractRequest;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Sign\DesSign;
-use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\KeyType;
 use Omnipay\Core\Sign\Signature;
 
-class CompletePurchaseRequest extends AbstractRequest
+/**
+ * Verifies the customer's return from TatraPay (the query string of the return URL).
+ */
+final class CompletePurchaseRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @return array{RES: string, VS: string}
+     * @throws InvalidRequestException when the signature is wrong
+     */
+    #[\Override]
+    public function getData(): array
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $vs = $this->getQueryParameter('VS');
+        $res = $this->getQueryParameter('RES');
 
-        if (strlen($sharedSecret) == 128) {
-            $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
-            $tid = $_GET['TID'] ?? '';
-            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$_GET['RES']}{$tid}{$_GET['TIMESTAMP']}";
-            $sign = new HmacSign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['HMAC'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
-        } elseif (strlen($sharedSecret) == 64) {
-            $data = "{$_GET['VS']}{$_GET['RES']}";
-            $sign = new Aes256Sign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
-        } elseif (strlen($sharedSecret) == 8) {
-            $data = "{$_GET['VS']}{$_GET['RES']}";
-            $sign = new DesSign();
-            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
-                throw new InvalidRequestException('incorect signature');
-            }
+        if ($this->getKeyType() === KeyType::Hmac) {
+            $curr = $this->getCurrencyNumericCode();
+            $tid = $this->getQueryParameter('TID');
+            $timestamp = $this->getQueryParameter('TIMESTAMP');
+            $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$res}{$tid}{$timestamp}";
+            $received = $this->getQueryParameter('HMAC');
         } else {
-            throw new \Exception('Unknown key length');
+            $data = "{$vs}{$res}";
+            $received = $this->getQueryParameter('SIGN');
+        }
+
+        if (!Signature::equals($this->sign($data), $received)) {
+            throw new InvalidRequestException('incorect signature');
         }
 
         return [
-            'RES' => $_GET['RES'],
-            'VS' => $_GET['VS'],
+            'RES' => $res,
+            'VS' => $vs,
         ];
     }
-    public function sendData($data)
+
+    #[\Override]
+    public function send(): CompletePurchaseResponse
     {
-        return $this->response = new CompletePurchaseResponse($this, $data);
+        return $this->sendData($this->getData());
+    }
+
+    #[\Override]
+    public function sendData(mixed $data): CompletePurchaseResponse
+    {
+        return $this->response = new CompletePurchaseResponse($this, self::arrayData($data));
     }
 }

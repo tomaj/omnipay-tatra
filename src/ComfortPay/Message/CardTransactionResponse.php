@@ -1,39 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\ResponseInterface;
 
-class CardTransactionResponse extends AbstractResponse implements ResponseInterface
+/**
+ * The result of a charge or a transaction status query. transactionStatus 00 means approved; a declined charge that
+ * the bank reported as a SOAP fault has no status.
+ */
+final class CardTransactionResponse extends AbstractResponse
 {
-    public function isSuccessful()
+    public const string STATUS_APPROVED = '00';
+
+    #[\Override]
+    public function isSuccessful(): bool
     {
-        return $this->getTransactionStatus() == '00';
+        return $this->getTransactionStatus() === self::STATUS_APPROVED;
     }
 
-    public function getTransactionId()
+    /**
+     * @return string|false false when the bank returned no transaction (a declined charge)
+     */
+    #[\Override] // @phpstan-ignore method.childReturnType (false instead of null is kept for backward compatibility)
+    public function getTransactionId(): string|false
     {
-        if (!isset($this->data['transactionId'])) {
-            // kept for backward compatibility, the parent documents string|null
-            return false; // @phpstan-ignore return.type
-        }
-        return $this->data['transactionId'];
+        return $this->getDataString('transactionId');
     }
 
-    public function getTransactionStatus()
+    /**
+     * @return string|false false when the bank returned no status (a declined charge)
+     */
+    public function getTransactionStatus(): string|false
     {
-        if (!isset($this->data['transactionStatus'])) {
-            return false;
-        }
-        return $this->data['transactionStatus'];
+        return $this->getDataString('transactionStatus');
     }
 
-    public function getTransactionApproval()
+    /**
+     * @return string|false the approval code, false when the bank returned none
+     */
+    public function getTransactionApproval(): string|false
     {
-        if (!isset($this->data['transactionApproval'])) {
-            return false;
-        }
-        return $this->data['transactionApproval'];
+        return $this->getDataString('transactionApproval');
+    }
+
+    private function getDataString(string $key): string|false
+    {
+        $value = is_array($this->data) ? $this->data[$key] ?? null : null;
+
+        return is_string($value) ? $value : false;
     }
 }

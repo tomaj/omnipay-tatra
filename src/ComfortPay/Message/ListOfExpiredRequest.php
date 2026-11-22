@@ -1,32 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use SimpleXMLElement;
-
-class ListOfExpiredRequest extends AbstractSoapRequest
+/**
+ * The registered cards that expire after a date (getListOfExpired).
+ */
+final class ListOfExpiredRequest extends AbstractSoapRequest
 {
-    public function getExpDate()
+    /**
+     * The date, format YYYY-MM-DD (xsd:date).
+     */
+    public function getExpDate(): ?string
     {
-        return $this->getParameter('expDate');
+        return $this->getStringParameter('expDate');
     }
 
-    public function setExpDate($value)
+    public function setExpDate(?string $value): static
     {
         return $this->setParameter('expDate', $value);
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('expDate');
 
         $data = parent::getData();
         $data['expDate'] = $this->getExpDate();
+
         return $data;
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): ListOfExpiredResponse
     {
+        return $this->sendData($this->getData());
+    }
+
+    /**
+     * @throws \SoapFault
+     */
+    #[\Override]
+    public function sendData(mixed $data): ListOfExpiredResponse
+    {
+        $data = self::arrayData($data);
+
         if ($this->getTestMode()) {
             return $this->response = new ListOfExpiredResponse($this, [
                 ['id' => 12345],
@@ -37,19 +60,10 @@ class ListOfExpiredRequest extends AbstractSoapRequest
         $request = new \stdClass();
         $request->expDate = $data['expDate'];
 
-        $client = $this->getSoapClient();
-        $client->getListOfExpired($request);
-
-        $xmlResponse = $client->__getLastResponse();
-        $xml = new SimpleXMLElement($xmlResponse);
-
-        $pairs = $xml->xpath('//list');
-
-        $resultData = array_map(function ($element) {
-            return [
-                'id' => (string) $element,
-            ];
-        }, $pairs);
+        $resultData = array_map(
+            static fn(\SimpleXMLElement $element): array => ['id' => (string) $element],
+            $this->callForList('getListOfExpired', $request),
+        );
 
         return $this->response = new ListOfExpiredResponse($this, $resultData);
     }

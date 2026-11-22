@@ -1,20 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Core\Sign;
 
-class DesSign implements SignInterface
-{
-    public function sign($input, $secret)
-    {
-        $sharedSecret = $secret;
-        $bytesHash = sha1($input, true);
+use Omnipay\Core\Exception\SignatureException;
 
-        $cipher = 'des-ecb';
+/**
+ * DES with the 8-character key: the first 8 bytes of DES-ECB(SHA-1(input)), uppercase hexadecimal (16 characters).
+ *
+ * OpenSSL 3 only offers des-ecb through its legacy provider.
+ */
+final class DesSign implements SignInterface
+{
+    private const string CIPHER = 'des-ecb';
+
+    #[\Override]
+    public function sign(string $input, string $secret): string
+    {
         // ECB mode uses no initialization vector
-        $encrypted = openssl_encrypt($bytesHash, $cipher, $sharedSecret, OPENSSL_RAW_DATA);
+        $encrypted = openssl_encrypt(sha1($input, true), self::CIPHER, $secret, OPENSSL_RAW_DATA);
         if ($encrypted === false) {
-            throw new \RuntimeException("Cannot sign with cipher {$cipher}, is it supported by the OpenSSL build?");
+            throw new SignatureException('Cannot sign with cipher ' . self::CIPHER . ', is it supported by the OpenSSL build?');
         }
+
         return strtoupper(substr(bin2hex($encrypted), 0, 16));
     }
 }

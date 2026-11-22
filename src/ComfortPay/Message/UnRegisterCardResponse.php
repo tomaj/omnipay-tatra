@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\ResponseInterface;
 
-class UnRegisterCardResponse extends AbstractResponse implements ResponseInterface
+/**
+ * The bank answers a removed card with an empty unRegisterCardResponse; a refusal comes as a SOAP fault.
+ */
+final class UnRegisterCardResponse extends AbstractResponse
 {
-    public function isSuccessful()
+    #[\Override]
+    public function isSuccessful(): bool
     {
         return (bool) $this->data;
     }

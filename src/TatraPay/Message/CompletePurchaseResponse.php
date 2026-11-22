@@ -1,31 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\TatraPay\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Core\Message\AbstractCallbackResponse;
 
-class CompletePurchaseResponse extends AbstractResponse
-{
-    public const SUCCESS = 'OK';
-
-    public function isSuccessful()
-    {
-        return static::SUCCESS === $this->getRes();
-    }
-
-    public function getRes()
-    {
-        if (isset($this->data['RES'])) {
-            return $this->data['RES'];
-        }
-        return null;
-    }
-
-    public function getVs()
-    {
-        if (isset($this->data['VS'])) {
-            return $this->data['VS'];
-        }
-        return null;
-    }
-}
+/**
+ * The verified result of a TatraPay payment: RES is OK (paid), FAIL or TOUT (timeout).
+ */
+final class CompletePurchaseResponse extends AbstractCallbackResponse {}

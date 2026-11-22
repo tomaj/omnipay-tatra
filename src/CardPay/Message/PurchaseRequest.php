@@ -1,53 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Omnipay\Core\Message\AbstractRequest;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Sign\DesSign;
-use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\KeyType;
 
-class PurchaseRequest extends AbstractRequest
+final class PurchaseRequest extends AbstractRequest
 {
-    public function initialize(array $parameters = [])
+    /**
+     * @param array<mixed> $parameters
+     */
+    #[\Override]
+    public function initialize(array $parameters = []): static
     {
         parent::initialize($parameters);
         $this->setTimestamp(gmdate('dmYHis'));
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            $this->setIpc($_SERVER['REMOTE_ADDR']);
+        $remoteAddress = $this->httpRequest->server->get('REMOTE_ADDR');
+        if ($this->getIpc() === null && is_string($remoteAddress)) {
+            $this->setIpc($remoteAddress);
         }
+
         return $this;
     }
 
-    public function getIpc()
+    public function getIpc(): ?string
     {
-        return $this->getParameter('ipc');
+        return $this->getStringParameter('ipc');
     }
 
-    public function setIpc($value)
+    public function setIpc(?string $value): static
     {
         return $this->setParameter('ipc', $value);
     }
 
-    public function getName()
+    public function getName(): ?string
     {
-        return $this->getParameter('name');
+        return $this->getStringParameter('name');
     }
 
-    public function setName($value)
+    public function setName(?string $value): static
     {
         return $this->setParameter('name', $value);
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl', 'ipc', 'name');
+
         $data = [];
         $data['PT'] = 'CardPay';
         $data['MID'] = $this->getMid();
-        $data['CURR'] = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+        $data['CURR'] = $this->getCurrencyNumericCode();
         $data['VS'] = $this->getVs();
         $data['CS'] = $this->getCs();
         $data['AMT'] = $this->getAmount();
@@ -60,38 +69,31 @@ class PurchaseRequest extends AbstractRequest
         $data['IPC'] = $this->getIpc();
         $data['NAME'] = $this->getName();
 
-        $sharedSecret = $this->getParameter('sharedSecret');
-        if (strlen($sharedSecret) == 128) {
+        if ($this->getKeyType() === KeyType::Hmac) {
             $data['TIMESTAMP'] = $this->getTimestamp();
         }
+
         return $data;
     }
 
-    public function generateSignature($data)
+    public function generateSignature(string $data): string
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
-
-        if (strlen($sharedSecret) == 128) {
-            $sign = new HmacSign();
-            return $sign->sign($data, $sharedSecret);
-        } elseif (strlen($sharedSecret) == 64) {
-            $sign = new Aes256Sign();
-            return $sign->sign($data, $sharedSecret);
-        } elseif (strlen($sharedSecret) == 8) {
-            $sign = new DesSign();
-            return $sign->sign($data, $sharedSecret);
-        } else {
-            throw new \Exception('Unknown key length');
-        }
+        return $this->sign($data);
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): PurchaseResponse
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        return $this->sendData($this->getData());
+    }
 
-        $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+    #[\Override]
+    public function sendData(mixed $data): PurchaseResponse
+    {
+        $data = self::arrayData($data);
+        $curr = $this->getCurrencyNumericCode();
 
-        if (strlen($sharedSecret) == 128) {
+        if ($this->getKeyType() === KeyType::Hmac) {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTimestamp()}";
             $data['HMAC'] = $this->generateSignature($input);
         } else {
@@ -102,28 +104,20 @@ class PurchaseRequest extends AbstractRequest
         return $this->response = new PurchaseResponse($this, $data);
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $keyType = $this->getKeyType();
 
         if ($this->getTestMode()) {
-            $testHost = $this->getParameter('testHost');
-            $host = is_string($testHost) && $testHost !== '' ? $testHost : 'https://platby.tomaj.sk';
-
-            if (strlen($sharedSecret) == 128) {
-                // return 'http://127.0.0.1:4444/payment/cardpay-hmac';
-                return $host . '/payment/cardpay-hmac';
-            } elseif (strlen($sharedSecret) == 64) {
-                return $host . '/payment/cardpay-aes256';
-            } else {
-                return $host . '/payment/cardpay-des';
-            }
-        } else {
-            if (strlen($sharedSecret) == 128) {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';
-            } else {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
-            }
+            return $this->getTestEndpointHost() . match ($keyType) {
+                KeyType::Hmac => '/payment/cardpay-hmac',
+                KeyType::Aes => '/payment/cardpay-aes256',
+                KeyType::Des => '/payment/cardpay-des',
+            };
         }
+
+        return $keyType === KeyType::Hmac
+            ? 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay'
+            : 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
     }
 }

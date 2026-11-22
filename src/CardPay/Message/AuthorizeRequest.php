@@ -1,233 +1,246 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\HmacSign;
 
-class AuthorizeRequest extends AbstractRequest
+/**
+ * CardPay pre-authorization (TXN=PA) with 3-D Secure data. Signed with HMAC; the shared secret must be the 128-character key.
+ */
+final class AuthorizeRequest extends AbstractRequest
 {
-    public const TXN_VALUE = 'PA';
+    public const string TXN_VALUE = 'PA';
 
-    public function initialize(array $parameters = [])
+    /**
+     * @param array<mixed> $parameters
+     */
+    #[\Override]
+    public function initialize(array $parameters = []): static
     {
         parent::initialize($parameters);
 
         $this->setTimestamp(gmdate('dmYHis'));
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            $this->setIpc($_SERVER['REMOTE_ADDR']);
+        $remoteAddress = $this->httpRequest->server->get('REMOTE_ADDR');
+        if ($this->getIpc() === null && is_string($remoteAddress)) {
+            $this->setIpc($remoteAddress);
         }
+
         return $this;
     }
 
-    public function getIpc()
+    public function getIpc(): ?string
     {
-        return $this->getParameter('ipc');
+        return $this->getStringParameter('ipc');
     }
 
-    public function setIpc($value)
+    public function setIpc(?string $value): static
     {
         return $this->setParameter('ipc', $value);
     }
 
-    public function getName()
+    public function getName(): ?string
     {
-        return $this->getParameter('name');
+        return $this->getStringParameter('name');
     }
 
-    public function setName($value)
+    public function setName(?string $value): static
     {
         return $this->setParameter('name', $value);
     }
 
-    public function setTpay($value)
+    public function getTpay(): ?string
+    {
+        return $this->getStringParameter('tpay');
+    }
+
+    public function setTpay(?string $value): static
     {
         return $this->setParameter('tpay', $value);
     }
 
-    public function getTpay()
+    public function getTxn(): string
     {
-        return $this->getParameter('tpay');
+        return self::TXN_VALUE;
     }
 
-    public function getTxn()
+    public function getE2E(): ?string
     {
-        return static::TXN_VALUE;
+        return $this->getStringParameter('E2E');
     }
 
-    public function getE2E()
-    {
-        return $this->getParameter('E2E');
-    }
-
-    public function setE2E($value)
+    public function setE2E(?string $value): static
     {
         return $this->setParameter('E2E', $value);
     }
 
-    public function getCid()
+    public function getCid(): ?string
     {
-        return $this->getParameter('CID');
+        return $this->getStringParameter('CID');
     }
 
-    public function setCid($value)
+    public function setCid(?string $value): static
     {
         return $this->setParameter('CID', $value);
     }
 
-    public function getEcid()
+    public function getEcid(): ?string
     {
-        return $this->getParameter('ECID');
+        return $this->getStringParameter('ECID');
     }
 
-    public function setEcid($value)
+    public function setEcid(?string $value): static
     {
         return $this->setParameter('ECID', $value);
     }
 
-    public function getTdsCardholder()
+    public function getTdsCardholder(): ?string
     {
-        return $this->getParameter('E2E');
+        return $this->getStringParameter('TDS_CARDHOLDER');
     }
 
-    public function setTdsCardholder($value)
+    public function setTdsCardholder(?string $value): static
     {
-        return $this->setParameter('E2E', $value);
+        return $this->setParameter('TDS_CARDHOLDER', $value);
     }
 
-    public function getTdsEmail()
+    public function getTdsEmail(): ?string
     {
-        return $this->getParameter('TDS_EMAIL');
+        return $this->getStringParameter('TDS_EMAIL');
     }
 
-    public function setTdsEmail($value)
+    public function setTdsEmail(?string $value): static
     {
         return $this->setParameter('TDS_EMAIL', $value);
     }
 
-    public function getTdsMobilePhone()
+    public function getTdsMobilePhone(): ?string
     {
-        return $this->getParameter('TDS_MOBILE_PHONE');
+        return $this->getStringParameter('TDS_MOBILE_PHONE');
     }
 
-    public function setTdsMobilePhone($value)
+    public function setTdsMobilePhone(?string $value): static
     {
         return $this->setParameter('TDS_MOBILE_PHONE', $value);
     }
 
-    public function getTdsBillCity()
+    public function getTdsBillCity(): ?string
     {
-        return $this->getParameter('TDS_BILL_CITY');
+        return $this->getStringParameter('TDS_BILL_CITY');
     }
 
-    public function setTdsBillCity($value)
+    public function setTdsBillCity(?string $value): static
     {
         return $this->setParameter('TDS_BILL_CITY', $value);
     }
 
-    public function getTdsBillCountry()
+    public function getTdsBillCountry(): ?string
     {
-        return $this->getParameter('TDS_BILL_COUNTRY');
+        return $this->getStringParameter('TDS_BILL_COUNTRY');
     }
 
-    public function setTdsBillCountry($value)
+    public function setTdsBillCountry(?string $value): static
     {
         return $this->setParameter('TDS_BILL_COUNTRY', $value);
     }
 
-    public function getTdsBillAddress1()
+    public function getTdsBillAddress1(): ?string
     {
-        return $this->getParameter('TDS_BILL_ADDRESS1');
+        return $this->getStringParameter('TDS_BILL_ADDRESS1');
     }
 
-    public function setTdsBillAddress1($value)
+    public function setTdsBillAddress1(?string $value): static
     {
         return $this->setParameter('TDS_BILL_ADDRESS1', $value);
     }
 
-    public function getTdsBillAddress2()
+    public function getTdsBillAddress2(): ?string
     {
-        return $this->getParameter('TDS_BILL_ADDRESS2');
+        return $this->getStringParameter('TDS_BILL_ADDRESS2');
     }
 
-    public function setTdsBillAddress2($value)
+    public function setTdsBillAddress2(?string $value): static
     {
         return $this->setParameter('TDS_BILL_ADDRESS2', $value);
     }
 
-    public function getTdsBillZip()
+    public function getTdsBillZip(): ?string
     {
-        return $this->getParameter('TDS_BILL_ZIP');
+        return $this->getStringParameter('TDS_BILL_ZIP');
     }
 
-    public function setTdsBillZip($value)
+    public function setTdsBillZip(?string $value): static
     {
         return $this->setParameter('TDS_BILL_ZIP', $value);
     }
 
-    public function getTdsShipCity()
+    public function getTdsShipCity(): ?string
     {
-        return $this->getParameter('TDS_SHIP_CITY');
+        return $this->getStringParameter('TDS_SHIP_CITY');
     }
 
-    public function setTdsShipCity($value)
+    public function setTdsShipCity(?string $value): static
     {
         return $this->setParameter('TDS_SHIP_CITY', $value);
     }
 
-    public function getTdsShipCountry()
+    public function getTdsShipCountry(): ?string
     {
-        return $this->getParameter('TDS_SHIP_COUNTRY');
+        return $this->getStringParameter('TDS_SHIP_COUNTRY');
     }
 
-    public function setTdsShipCountry($value)
+    public function setTdsShipCountry(?string $value): static
     {
         return $this->setParameter('TDS_SHIP_COUNTRY', $value);
     }
 
-    public function getTdsShipAddress1()
+    public function getTdsShipAddress1(): ?string
     {
-        return $this->getParameter('TDS_SHIP_ADDRESS1');
+        return $this->getStringParameter('TDS_SHIP_ADDRESS1');
     }
 
-    public function setTdsShipAddress1($value)
+    public function setTdsShipAddress1(?string $value): static
     {
         return $this->setParameter('TDS_SHIP_ADDRESS1', $value);
     }
 
-    public function getTdsShipAddress2()
+    public function getTdsShipAddress2(): ?string
     {
-        return $this->getParameter('TDS_SHIP_ADDRESS2');
+        return $this->getStringParameter('TDS_SHIP_ADDRESS2');
     }
 
-    public function setTdsShipAddress2($value)
+    public function setTdsShipAddress2(?string $value): static
     {
         return $this->setParameter('TDS_SHIP_ADDRESS2', $value);
     }
 
-    public function getTdsShipZip()
+    public function getTdsShipZip(): ?string
     {
-        return $this->getParameter('TDS_SHIP_ZIP');
+        return $this->getStringParameter('TDS_SHIP_ZIP');
     }
 
-    public function setTdsShipZip($value)
+    public function setTdsShipZip(?string $value): static
     {
         return $this->setParameter('TDS_SHIP_ZIP', $value);
     }
 
-    public function getTdsAddrMatch()
+    public function getTdsAddrMatch(): ?string
     {
-        return $this->getParameter('TDS_ADDR_MATCH');
+        return $this->getStringParameter('TDS_ADDR_MATCH');
     }
 
-    public function setTdsAddrMatch($value)
+    public function setTdsAddrMatch(?string $value): static
     {
         return $this->setParameter('TDS_ADDR_MATCH', $value);
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('sharedSecret', 'mid', 'currency', 'vs', 'rurl', 'ipc', 'name', 'timestamp');
 
@@ -236,7 +249,7 @@ class AuthorizeRequest extends AbstractRequest
 
         $data['MID'] = $this->getMid();
         $data['AMT'] = $this->getAmount();
-        $data['CURR'] = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+        $data['CURR'] = $this->getCurrencyNumericCode();
         $data['VS'] = $this->getVs();
         $data['RURL'] = $this->getRurl();
         $data['IPC'] = $this->getIpc();
@@ -255,11 +268,10 @@ class AuthorizeRequest extends AbstractRequest
         $data['TDS_MOBILE_PHONE'] = $this->getTdsMobilePhone();
         $data['TDS_BILL_CITY'] = $this->getTdsBillCity();
         $data['TDS_BILL_COUNTRY'] = $this->getTdsBillCountry();
-        $data['TDS_BILL_CITY'] = $this->getTdsBillCity();
         $data['TDS_BILL_ADDRESS1'] = $this->getTdsBillAddress1();
         $data['TDS_BILL_ADDRESS2'] = $this->getTdsBillAddress2();
         $data['TDS_BILL_ZIP'] = $this->getTdsBillZip();
-        $data['TDS_BILL_CITY'] = $this->getTdsBillCity();
+        $data['TDS_SHIP_CITY'] = $this->getTdsShipCity();
         $data['TDS_SHIP_COUNTRY'] = $this->getTdsShipCountry();
         $data['TDS_SHIP_ADDRESS1'] = $this->getTdsShipAddress1();
         $data['TDS_SHIP_ADDRESS2'] = $this->getTdsShipAddress2();
@@ -272,15 +284,22 @@ class AuthorizeRequest extends AbstractRequest
         return $data;
     }
 
-    public function generateSignature($data)
+    public function generateSignature(string $data): string
     {
-        $sign = new HmacSign();
-        return $sign->sign($data, $this->getParameter('sharedSecret'));
+        return new HmacSign()->sign($data, $this->getSharedSecret() ?? '');
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): AuthorizeResponse
     {
-        $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+        return $this->sendData($this->getData());
+    }
+
+    #[\Override]
+    public function sendData(mixed $data): AuthorizeResponse
+    {
+        $data = self::arrayData($data);
+        $curr = $this->getCurrencyNumericCode();
 
         $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getE2E()}{$this->getTxn()}{$this->getRurl()}";
         $input .= "{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTpay()}{$this->getCid()}{$this->getEcid()}";
@@ -294,10 +313,10 @@ class AuthorizeRequest extends AbstractRequest
         return $this->response = new AuthorizeResponse($this, $data);
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         if ($this->getTestMode()) {
-            return 'https://platby.tomaj.sk/payment/cardpay-authorize-hmac';
+            return $this->getTestEndpointHost() . '/payment/cardpay-authorize-hmac';
         }
 
         return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';

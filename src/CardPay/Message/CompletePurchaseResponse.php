@@ -1,39 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Core\Message\AbstractCallbackResponse;
 
-class CompletePurchaseResponse extends AbstractResponse
+/**
+ * The verified result of a CardPay payment.
+ */
+final class CompletePurchaseResponse extends AbstractCallbackResponse
 {
-    public const SUCCESS = 'OK';
-
-    public function isSuccessful()
+    /**
+     * The reason code of a declined payment (returned when Tatra banka enabled it for the merchant).
+     */
+    public function getRc(): ?string
     {
-        return static::SUCCESS === $this->getRes();
-    }
-
-    public function getRes()
-    {
-        if (isset($this->data['RES'])) {
-            return $this->data['RES'];
-        }
-        return null;
-    }
-
-    public function getVs()
-    {
-        if (isset($this->data['VS'])) {
-            return $this->data['VS'];
-        }
-        return null;
-    }
-
-    public function getRc()
-    {
-        if (isset($this->data['RC'])) {
-            return $this->data['RC'];
-        }
-        return null;
+        return $this->getDataString('RC');
     }
 }

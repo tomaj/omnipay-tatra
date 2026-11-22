@@ -1,25 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Core\Sign;
 
-class Aes256Sign implements SignInterface
+use Omnipay\Core\Exception\SignatureException;
+
+/**
+ * The "AES256" signature for the 64-character hexadecimal key: AES-ECB(first 16 bytes of SHA-1(input)),
+ * uppercase hexadecimal (32 characters).
+ *
+ * Despite the name, the block is encrypted with AES-128 and the first 16 bytes of the 32-byte key; the second half of the
+ * key has no effect. This has been the behaviour since 0.2.1 (the switch from mcrypt to OpenSSL); before that, mcrypt
+ * chose AES-256 from the 32-byte key. Tatra banka's specification of the AES mode is not public, so the output is kept
+ * unchanged until it is confirmed against the bank. See https://github.com/tomaj/omnipay-tatra/issues/34.
+ */
+final class Aes256Sign implements SignInterface
 {
-    public function sign($input, $secret)
+    private const string CIPHER = 'aes-128-ecb';
+
+    #[\Override]
+    public function sign(string $input, string $secret): string
     {
-        $sharedSecret = pack('H*', $secret);
+        $hash = substr(sha1($input, true), 0, 16);
 
-        $bytesHash = sha1($input, true);
-        $bytesHash = substr($bytesHash, 0, 16);
-
-        $cipher = 'aes-128-ecb';
-        // ECB mode uses no initialization vector
-        $encrypted = openssl_encrypt($bytesHash, $cipher, $sharedSecret, OPENSSL_RAW_DATA);
+        // ECB mode uses no initialization vector; OpenSSL uses the first 16 bytes of the key for AES-128
+        $encrypted = openssl_encrypt($hash, self::CIPHER, pack('H*', $secret), OPENSSL_RAW_DATA);
         if ($encrypted === false) {
-            throw new \RuntimeException("Cannot sign with cipher {$cipher}, is it supported by the OpenSSL build?");
+            throw new SignatureException('Cannot sign with cipher ' . self::CIPHER . ', is it supported by the OpenSSL build?');
         }
 
-        $sign = strtoupper(substr(bin2hex($encrypted), 0, 32));
-
-        return $sign;
+        return strtoupper(substr(bin2hex($encrypted), 0, 32));
     }
 }

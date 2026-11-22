@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\Core\Sign;
 
-class HmacSign implements SignInterface
+/**
+ * HMAC-SHA256 with the 128-character hexadecimal key (64 bytes), lowercase hexadecimal output.
+ */
+final class HmacSign implements SignInterface
 {
-    public function sign($input, $secret)
+    #[\Override]
+    public function sign(string $input, string $secret): string
     {
-        $sharedSecret = pack('H*', $secret);
-        return hash_hmac('sha256', $input, $sharedSecret);
+        return hash_hmac('sha256', $input, pack('H*', $secret));
     }
 }

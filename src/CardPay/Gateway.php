@@ -1,17 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay;
 
+use Omnipay\CardPay\Message\AuthorizeRequest;
+use Omnipay\CardPay\Message\CancelAuthorizeRequest;
+use Omnipay\CardPay\Message\CompleteAuthorizeRequest;
+use Omnipay\CardPay\Message\CompletePurchaseRequest;
+use Omnipay\CardPay\Message\PurchaseRequest;
 use Omnipay\Common\AbstractGateway;
+use Omnipay\Core\GatewayParametersTrait;
 
-class Gateway extends AbstractGateway
+/**
+ * CardPay: card payments, pre-authorization and its capture, reversal or refund.
+ */
+final class Gateway extends AbstractGateway
 {
-    public function getName()
+    use GatewayParametersTrait;
+
+    #[\Override]
+    public function getName(): string
     {
         return 'CardPay Gateway';
     }
 
-    public function getDefaultParameters()
+    /**
+     * @return array<string, string>
+     */
+    #[\Override]
+    public function getDefaultParameters(): array
     {
         return [
             'mid' => '',
@@ -20,58 +38,47 @@ class Gateway extends AbstractGateway
         ];
     }
 
-    public function getMid()
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function purchase(array $parameters = []): PurchaseRequest
     {
-        return $this->getParameter('mid');
+        return $this->createTypedRequest(PurchaseRequest::class, $parameters);
     }
 
-    public function setMid($value)
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function completePurchase(array $parameters = []): CompletePurchaseRequest
     {
-        return $this->setParameter('mid', $value);
+        return $this->createTypedRequest(CompletePurchaseRequest::class, $parameters);
     }
 
-    public function getSharedSecret()
+    /**
+     * Pre-authorization (TXN=PA), HMAC keys only.
+     *
+     * @param array<string, mixed> $parameters
+     */
+    public function authorize(array $parameters = []): AuthorizeRequest
     {
-        return $this->getParameter('sharedSecret');
+        return $this->createTypedRequest(AuthorizeRequest::class, $parameters);
     }
 
-    public function setSharedSecret($value)
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function completeAuthorize(array $parameters = []): CompleteAuthorizeRequest
     {
-        return $this->setParameter('sharedSecret', $value);
+        return $this->createTypedRequest(CompleteAuthorizeRequest::class, $parameters);
     }
 
-    public function getTestHost()
+    /**
+     * Capture (CPA) or reversal (SPA) of a pre-authorization, or a refund (CB), HMAC keys only.
+     *
+     * @param array<string, mixed> $parameters
+     */
+    public function cancelAuthorize(array $parameters = []): CancelAuthorizeRequest
     {
-        return $this->getParameter('testHost');
-    }
-
-    public function setTestHost($value)
-    {
-        return $this->setParameter('testHost', $value);
-    }
-
-    public function purchase(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\CardPay\Message\PurchaseRequest::class, $parameters);
-    }
-
-    public function completePurchase(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\CardPay\Message\CompletePurchaseRequest::class, $parameters);
-    }
-
-    public function authorize(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\CardPay\Message\AuthorizeRequest::class, $parameters);
-    }
-
-    public function completeAuthorize(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\CardPay\Message\CompleteAuthorizeRequest::class, $parameters);
-    }
-
-    public function cancelAuthorize(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\CardPay\Message\CancelAuthorizeRequest::class, $parameters);
+        return $this->createTypedRequest(CancelAuthorizeRequest::class, $parameters);
     }
 }

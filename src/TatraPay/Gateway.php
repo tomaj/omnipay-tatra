@@ -1,17 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\TatraPay;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\Core\GatewayParametersTrait;
+use Omnipay\TatraPay\Message\CompletePurchaseRequest;
+use Omnipay\TatraPay\Message\PurchaseRequest;
 
-class Gateway extends AbstractGateway
+/**
+ * TatraPay: the customer pays from Tatra banka internet banking.
+ */
+final class Gateway extends AbstractGateway
 {
-    public function getName()
+    use GatewayParametersTrait;
+
+    #[\Override]
+    public function getName(): string
     {
         return 'TatraPay Gateway';
     }
 
-    public function getDefaultParameters()
+    /**
+     * @return array<string, string>
+     */
+    #[\Override]
+    public function getDefaultParameters(): array
     {
         return [
             'mid' => '',
@@ -20,43 +35,19 @@ class Gateway extends AbstractGateway
         ];
     }
 
-    public function getMid()
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function purchase(array $parameters = []): PurchaseRequest
     {
-        return $this->getParameter('mid');
+        return $this->createTypedRequest(PurchaseRequest::class, $parameters);
     }
 
-    public function setMid($value)
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function completePurchase(array $parameters = []): CompletePurchaseRequest
     {
-        return $this->setParameter('mid', $value);
-    }
-
-    public function getSharedSecret()
-    {
-        return $this->getParameter('sharedSecret');
-    }
-
-    public function setSharedSecret($value)
-    {
-        return $this->setParameter('sharedSecret', $value);
-    }
-
-    public function getTestHost()
-    {
-        return $this->getParameter('testHost');
-    }
-
-    public function setTestHost($value)
-    {
-        return $this->setParameter('testHost', $value);
-    }
-
-    public function purchase(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\TatraPay\Message\PurchaseRequest::class, $parameters);
-    }
-
-    public function completePurchase(array $parameters = [])
-    {
-        return $this->createRequest(\Omnipay\TatraPay\Message\CompletePurchaseRequest::class, $parameters);
+        return $this->createTypedRequest(CompletePurchaseRequest::class, $parameters);
     }
 }

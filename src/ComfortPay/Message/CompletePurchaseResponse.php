@@ -1,63 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Core\Message\AbstractCallbackResponse;
 
-class CompletePurchaseResponse extends AbstractResponse
+/**
+ * The verified result of a ComfortPay payment.
+ */
+final class CompletePurchaseResponse extends AbstractCallbackResponse
 {
-    public const SUCCESS = 'OK';
-
-    public function isSuccessful()
+    /**
+     * The id of the registered card (CID): pass it as referedCardId to charge().
+     */
+    public function getCid(): ?string
     {
-        return static::SUCCESS === $this->getRes();
+        return $this->getDataString('CID');
     }
 
-    public function getRes()
+    /**
+     * The masked card number (CC).
+     */
+    public function getCc(): ?string
     {
-        if (isset($this->data['RES'])) {
-            return $this->data['RES'];
-        }
-        return null;
+        return $this->getDataString('CC');
     }
 
-    public function getVs()
+    /**
+     * The 3-D Secure result (TRES).
+     */
+    public function getTres(): ?string
     {
-        if (isset($this->data['VS'])) {
-            return $this->data['VS'];
-        }
-        return null;
+        return $this->getDataString('TRES');
     }
 
-    public function getCid()
+    /**
+     * The reason code of a declined payment (RC).
+     */
+    public function getRc(): ?string
     {
-        if (isset($this->data['CID'])) {
-            return $this->data['CID'];
-        }
-        return null;
-    }
-
-    public function getCc()
-    {
-        if (isset($this->data['CC'])) {
-            return $this->data['CC'];
-        }
-        return null;
-    }
-
-    public function getTres()
-    {
-        if (isset($this->data['TRES'])) {
-            return $this->data['TRES'];
-        }
-        return null;
-    }
-
-    public function getRc()
-    {
-        if (isset($this->data['RC'])) {
-            return $this->data['RC'];
-        }
-        return null;
+        return $this->getDataString('RC');
     }
 }

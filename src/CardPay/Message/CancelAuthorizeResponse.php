@@ -1,31 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\CardPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 
-class CancelAuthorizeResponse extends AbstractResponse
+/**
+ * The bank's answer to a capture, reversal or refund: `res` OK or FAIL, and an `errorCode` when it failed.
+ */
+final class CancelAuthorizeResponse extends AbstractResponse
 {
-    public const SUCCESS = 'OK';
+    public const string SUCCESS = 'OK';
 
-    public function isSuccessful()
+    #[\Override]
+    public function isSuccessful(): bool
     {
         return $this->getRes() === self::SUCCESS;
     }
 
-    public function getRes()
+    public function getRes(): ?string
     {
-        if (isset($this->data['res'])) {
-            return $this->data['res'];
-        }
-        return null;
+        return $this->getDataString('res');
     }
 
-    public function getErrorCode()
+    public function getErrorCode(): ?string
     {
-        if (isset($this->data['errorCode'])) {
-            return $this->data['errorCode'];
+        return $this->getDataString('errorCode');
+    }
+
+    #[\Override]
+    public function getCode(): ?string
+    {
+        return $this->getErrorCode();
+    }
+
+    private function getDataString(string $key): ?string
+    {
+        if (!is_array($this->data) || !isset($this->data[$key])) {
+            return null;
         }
-        return null;
+
+        return is_string($this->data[$key]) ? $this->data[$key] : null;
     }
 }

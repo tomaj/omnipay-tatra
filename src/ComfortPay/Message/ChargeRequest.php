@@ -1,123 +1,122 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use Omnipay\ComfortPay\Gateway;
+use Omnipay\ComfortPay\TransactionType;
+use Omnipay\Core\Exception\InvalidParameterException;
 
-class ChargeRequest extends AbstractSoapRequest
+/**
+ * Charges a registered card (doCardTransaction).
+ */
+final class ChargeRequest extends AbstractSoapRequest
 {
-    public function getTransactionType()
+    public function getTransactionType(): ?string
     {
-        return $this->getParameter('transactionType');
+        return $this->getStringParameter('transactionType');
     }
 
-    public function setTransactionType($value)
+    /**
+     * @throws InvalidParameterException for a value that is not a TransactionType
+     */
+    public function setTransactionType(TransactionType|string|null $value): static
     {
-        return $this->setParameter('transactionType', $value);
+        if (is_string($value)) {
+            $value = TransactionType::tryFrom($value) ?? throw new InvalidParameterException("Unsupported transactionType: {$value}");
+        }
+
+        return $this->setParameter('transactionType', $value?->value);
     }
 
-    public function getWs()
+    public function getParentTransactionId(): ?string
     {
-        return $this->getParameter('ws');
+        return $this->getStringParameter('parentTransactionId');
     }
 
-    public function setWs($value)
-    {
-        return $this->setParameter('ws', $value);
-    }
-
-    public function getTerminalId()
-    {
-        return $this->getParameter('terminalId');
-    }
-
-    public function setTerminalId($value)
-    {
-        return $this->setParameter('terminalId', $value);
-    }
-
-    public function getParentTransactionId()
-    {
-        return $this->getParameter('parentTransactionId');
-    }
-
-    public function setParentTransactionId($value)
+    public function setParentTransactionId(?string $value): static
     {
         return $this->setParameter('parentTransactionId', $value);
     }
 
-    public function getReferedCardId()
+    /**
+     * The registered card id (CID) to charge.
+     */
+    public function getReferedCardId(): ?string
     {
-        return $this->getParameter('referedCardId');
+        return $this->getStringParameter('referedCardId');
     }
 
-    public function setReferedCardId($value)
+    public function setReferedCardId(?string $value): static
     {
         return $this->setParameter('referedCardId', $value);
     }
 
-    public function getE2eReference()
+    public function getE2eReference(): ?string
     {
-        return $this->getParameter('e2eReference');
+        return $this->getStringParameter('e2eReference');
     }
 
-    public function setE2eReference($value)
+    public function setE2eReference(?string $value): static
     {
         return $this->setParameter('e2eReference', $value);
     }
 
-    public function getSubmerchantId()
+    public function getSubmerchantId(): ?string
     {
-        return $this->getParameter('submerchantId');
+        return $this->getStringParameter('submerchantId');
     }
 
-    public function setSubmerchantId($value)
+    public function setSubmerchantId(?string $value): static
     {
         return $this->setParameter('submerchantId', $value);
     }
 
-    public function getLocation()
+    public function getLocation(): ?string
     {
-        return $this->getParameter('location');
+        return $this->getStringParameter('location');
     }
 
-    public function setLocation($value)
+    public function setLocation(?string $value): static
     {
         return $this->setParameter('location', $value);
     }
 
-    public function getCity()
+    public function getCity(): ?string
     {
-        return $this->getParameter('city');
+        return $this->getStringParameter('city');
     }
 
-    public function setCity($value)
+    public function setCity(?string $value): static
     {
         return $this->setParameter('city', $value);
     }
 
-    public function getAlpha2CountryCode()
+    public function getAlpha2CountryCode(): ?string
     {
-        return $this->getParameter('alpha2CountryCode');
+        return $this->getStringParameter('alpha2CountryCode');
     }
 
-    public function setAlpha2CountryCode($value)
+    public function setAlpha2CountryCode(?string $value): static
     {
         return $this->setParameter('alpha2CountryCode', $value);
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('terminalId', 'amount', 'transactionId', 'transactionType', 'referedCardId', 'ws', 'currency');
 
-        if (in_array($this->getTransactionType(), [Gateway::TRANSACTION_TYPE_PREAUTH_CONFIRM, Gateway::TRANSACTION_TYPE_PREAUTH_CANCEL, Gateway::TRANSACTION_TYPE_CHARGEBACK], true)) {
+        if (TransactionType::from((string) $this->getTransactionType())->requiresParentTransaction()) {
             $this->validate('parentTransactionId');
         }
 
-        $data = parent::getData();
-        $data = array_merge($data, [
+        $data = array_merge(parent::getData(), [
             'transactionType' => $this->getTransactionType(),
-            'transactionId' => $this->getTransactionId(),
+            'transactionId' => $this->getTransactionIdString(),
             'parentTransactionId' => $this->getParentTransactionId(),
             'referedCardId' => $this->getReferedCardId(),
             'merchantId' => $this->getWs(),
@@ -133,33 +132,42 @@ class ChargeRequest extends AbstractSoapRequest
             'alpha2CountryCode' => $this->getAlpha2CountryCode(),
         ]);
 
-        if (empty($data['e2eReference'])) {
+        if ($this->isEmpty($data['e2eReference'])) {
             $this->validate('ss', 'vs');
         }
 
-        if (empty($data['ss']) && empty($data['vs'])) {
+        if ($this->isEmpty($data['ss']) && $this->isEmpty($data['vs'])) {
             $this->validate('e2eReference');
         }
 
-        if (!empty($data['submerchantId']) || !empty($data['location']) || !empty($data['city']) || !empty($data['alpha2CountryCode'])) {
+        if (!$this->isEmpty($data['submerchantId']) || !$this->isEmpty($data['location']) || !$this->isEmpty($data['city']) || !$this->isEmpty($data['alpha2CountryCode'])) {
             $this->validate('submerchantId', 'location', 'city', 'alpha2CountryCode');
         }
 
         return $data;
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): CardTransactionResponse
     {
+        return $this->sendData($this->getData());
+    }
+
+    /**
+     * @throws \SoapFault for a fault other than a decline
+     */
+    #[\Override]
+    public function sendData(mixed $data): CardTransactionResponse
+    {
+        $data = self::arrayData($data);
+
         if ($this->getTestMode()) {
-            if ((int) $this->getReferedCardId() % 2 == 0) {
-                return $this->response = new CardTransactionResponse(
-                    $this,
-                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123'],
-                );
-            }
+            // test mode: an even card id is declined (02), an odd one approved (00)
+            $status = self::isEven($data['referedCardId']) ? '02' : '00';
+
             return $this->response = new CardTransactionResponse(
                 $this,
-                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123'],
+                ['transactionId' => $data['transactionId'], 'transactionStatus' => $status, 'transactionApproval' => '123'],
             );
         }
 
@@ -173,8 +181,7 @@ class ChargeRequest extends AbstractSoapRequest
         $req->cc = $data['cc'];
 
         $transactionIdentificator = new \stdClass();
-
-        if (!empty($data['vs']) && !empty($data['ss'])) {
+        if (!$this->isEmpty($data['vs']) && !$this->isEmpty($data['ss'])) {
             $symbols = new \stdClass();
             $symbols->variableSymbol = $data['vs'];
             $symbols->specificSymbol = $data['ss'];
@@ -182,10 +189,9 @@ class ChargeRequest extends AbstractSoapRequest
         } else {
             $transactionIdentificator->e2eReference = $data['e2eReference'];
         }
-
         $req->transactionIdentificator = $transactionIdentificator;
 
-        if (!empty($data['submerchantId']) && !empty($data['location']) && !empty($data['city']) && !empty($data['alpha2CountryCode'])) {
+        if (!$this->isEmpty($data['submerchantId']) && !$this->isEmpty($data['location']) && !$this->isEmpty($data['city']) && !$this->isEmpty($data['alpha2CountryCode'])) {
             $ipspData = new \stdClass();
             $ipspData->submerchantId = $data['submerchantId'];
             $ipspData->location = $data['location'];
@@ -198,28 +204,27 @@ class ChargeRequest extends AbstractSoapRequest
         $request->req = $req;
         $request->transactionType = $data['transactionType'];
 
-        $client = $this->getSoapClient();
         try {
-            $response = $client->doCardTransaction($request);
-        } catch (\SoapFault $sf) {
-            // special case for TB :-(
-            // they started to return an error when they are not able to charge this card. We don't want to treat it as SoapFault Exception because it is a "regular" answer. SoapFault is for error on network, outage, etc...
-            // here is an error example:
-            // <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope" xmlns:SOAP-ENC="http://www.w3.org/2003/05/soap-encoding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:types="urn:tatrabanka:ibanking:Types" xmlns:teleplatba="urn:tatrabanka:ibanking:Teleplatba" xmlns:vposCommon="http://www.ri-rpc.sk/cmsdd/aim/common" xmlns:vposAuth="http://www.ri-rpc.sk/cmsdd/aim/vposAuth" xmlns:vposAuthFollow="http://www.ri-rpc.sk/cmsdd/aim/vposAuthFollow" xmlns:vposAuthResponse="http://www.ri-rpc.sk/cmsdd/aim/vposAuthResponse"><SOAP-ENV:Body><SOAP-ENV:Fault><SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:Receiver</SOAP-ENV:Value></SOAP-ENV:Code><SOAP-ENV:Reason><SOAP-ENV:Text xml:lang="en"></SOAP-ENV:Text></SOAP-ENV:Reason><SOAP-ENV:Detail><types:ExceptionType><method>doCardTransaction</method><file>ImplFile</file><line>1359</line><errorCode>50051</errorCode><subsystemId>19</subsystemId><subsystemErrorCode>0</subsystemErrorCode><message></message></types:ExceptionType></SOAP-ENV:Detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>
-            if ($sf->faultcode == 'SOAP-ENV:Receiver') {
+            $response = $this->call('doCardTransaction', $request);
+        } catch (\SoapFault $fault) {
+            // Tatra banka answers a charge it declines (for example an unknown card) with a SOAP-ENV:Receiver fault.
+            // It is a regular answer, not a failure of the service, so it becomes an unsuccessful response.
+            // Other faults (network, outage, invalid request) are rethrown.
+            if ($fault->faultcode === 'SOAP-ENV:Receiver') {
                 return $this->response = new CardTransactionResponse($this, [
                     'transactionId' => false,
                     'transactionStatus' => false,
                     'transactionApproval' => false,
                 ]);
             }
-            throw $sf;
+            throw $fault;
         }
 
-        return $this->response = new CardTransactionResponse($this, [
-            'transactionId' => $response->res->transactionId,
-            'transactionStatus' => $response->res->transactionStatus,
-            'transactionApproval' => $response->res->transactionStatus,
-        ]);
+        return $this->response = new CardTransactionResponse($this, self::transactionResult($response));
+    }
+
+    private function isEmpty(mixed $value): bool
+    {
+        return in_array($value, [null, '', '0'], true);
     }
 }

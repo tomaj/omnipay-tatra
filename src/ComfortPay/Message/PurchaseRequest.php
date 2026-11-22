@@ -1,102 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
+use Omnipay\ComfortPay\ParametersTrait;
+use Omnipay\Core\Exception\UnsupportedKeyException;
 use Omnipay\Core\Message\AbstractRequest;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\KeyType;
 
-class PurchaseRequest extends AbstractRequest
+/**
+ * A CardPay payment that registers the card for later charges (TPAY=Y). HMAC or AES keys only.
+ */
+final class PurchaseRequest extends AbstractRequest
 {
-    public function initialize(array $parameters = [])
+    use ParametersTrait;
+
+    /**
+     * @param array<mixed> $parameters
+     */
+    #[\Override]
+    public function initialize(array $parameters = []): static
     {
         parent::initialize($parameters);
         $this->setTimestamp(gmdate('dmYHis'));
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            $this->setIpc($_SERVER['REMOTE_ADDR']);
+        $remoteAddress = $this->httpRequest->server->get('REMOTE_ADDR');
+        if ($this->getIpc() === null && is_string($remoteAddress)) {
+            $this->setIpc($remoteAddress);
         }
-        $this->setAredir(1);
+        $this->setAredir(true);
 
         return $this;
     }
 
-    public function getIpc()
+    public function getIpc(): ?string
     {
-        return $this->getParameter('ipc');
+        return $this->getStringParameter('ipc');
     }
 
-    public function setIpc($value)
+    public function setIpc(?string $value): static
     {
         return $this->setParameter('ipc', $value);
     }
 
-    public function getName()
+    public function getName(): ?string
     {
-        return $this->getParameter('name');
+        return $this->getStringParameter('name');
     }
 
-    public function setName($value)
+    public function setName(?string $value): static
     {
         return $this->setParameter('name', $value);
     }
 
-    public function getTerminalId()
-    {
-        return $this->getParameter('terminalId');
-    }
-
-    public function setTerminalId($value)
-    {
-        return $this->setParameter('terminalId', $value);
-    }
-
-    public function getWs()
-    {
-        return $this->getParameter('ws');
-    }
-
-    public function setWs($value)
-    {
-        return $this->setParameter('ws', $value);
-    }
-
-    public function getCertPath()
-    {
-        return $this->getParameter('certPath');
-    }
-
-    public function setCertPath($value)
-    {
-        return $this->setParameter('certPath', $value);
-    }
-
-    public function getCertPass()
-    {
-        return $this->getParameter('certPass');
-    }
-
-    public function setCertPass($value)
-    {
-        return $this->setParameter('certPass', $value);
-    }
-
-    public function getTpay()
+    public function getTpay(): string
     {
         return 'Y';
     }
 
-
-
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
-
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
+
         $data = [];
         $data['PT'] = 'CardPay';
         $data['MID'] = $this->getMid();
-        $data['CURR'] = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+        $data['CURR'] = $this->getCurrencyNumericCode();
         $data['VS'] = $this->getVs();
         $data['CS'] = $this->getCs();
         $data['AMT'] = $this->getAmount();
@@ -108,40 +81,42 @@ class PurchaseRequest extends AbstractRequest
         $data['IPC'] = $this->getIpc();
         $data['NAME'] = $this->getName();
         $data['TPAY'] = $this->getTpay();
-        if ($this->getRem()) {
-            $data['REM'] = $this->getRem();
+        $rem = $this->getRem();
+        if (!in_array($rem, [null, '', '0'], true)) {
+            $data['REM'] = $rem;
         }
         $data['TEM'] = 1;
 
-        $sharedSecret = $this->getParameter('sharedSecret');
-        if (strlen($sharedSecret) == 128) {
+        if ($this->getKeyType() === KeyType::Hmac) {
             $data['TIMESTAMP'] = $this->getTimestamp();
         }
+
         return $data;
     }
 
-    public function generateSignature($data)
+    /**
+     * @throws UnsupportedKeyException for a DES key, which ComfortPay does not support
+     */
+    public function generateSignature(string $data): string
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $this->getComfortPayKeyType();
 
-        if (strlen($sharedSecret) == 128) {
-            $sign = new HmacSign();
-            return $sign->sign($data, $sharedSecret);
-        } elseif (strlen($sharedSecret) == 64) {
-            $sign = new Aes256Sign();
-            return $sign->sign($data, $sharedSecret);
-        } else {
-            throw new \Exception('Unknown key length');
-        }
+        return $this->sign($data);
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): PurchaseResponse
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        return $this->sendData($this->getData());
+    }
 
-        $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
+    #[\Override]
+    public function sendData(mixed $data): PurchaseResponse
+    {
+        $data = self::arrayData($data);
+        $curr = $this->getCurrencyNumericCode();
 
-        if (strlen($sharedSecret) == 128) {
+        if ($this->getKeyType() === KeyType::Hmac) {
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTpay()}{$this->getTimestamp()}";
             $data['HMAC'] = $this->generateSignature($input);
         } else {
@@ -152,25 +127,26 @@ class PurchaseRequest extends AbstractRequest
         return $this->response = new PurchaseResponse($this, $data);
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
-        $sharedSecret = $this->getParameter('sharedSecret');
+        $isHmac = $this->getComfortPayKeyType() === KeyType::Hmac;
 
         if ($this->getTestMode()) {
-            $testHost = $this->getParameter('testHost');
-            $host = is_string($testHost) && $testHost !== '' ? $testHost : 'https://platby.tomaj.sk';
-
-            if (strlen($sharedSecret) == 128) {
-                return $host . '/payment/comfortpay-hmac';
-            } else {
-                return $host . '/payment/comfortpay-aes256';
-            }
-        } else {
-            if (strlen($sharedSecret) == 128) {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';
-            } else {
-                return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
-            }
+            return $this->getTestEndpointHost() . ($isHmac ? '/payment/comfortpay-hmac' : '/payment/comfortpay-aes256');
         }
+
+        return $isHmac
+            ? 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay'
+            : 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
+    }
+
+    private function getComfortPayKeyType(): KeyType
+    {
+        $keyType = $this->getKeyType();
+        if ($keyType === KeyType::Des) {
+            throw new UnsupportedKeyException('Unknown key length 8: ComfortPay supports only 64 (AES) or 128 (HMAC) character keys');
+        }
+
+        return $keyType;
     }
 }

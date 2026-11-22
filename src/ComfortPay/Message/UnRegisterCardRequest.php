@@ -1,43 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\ComfortPay\Message;
 
-class UnRegisterCardRequest extends AbstractSoapRequest
+/**
+ * Removes a registered card (unRegisterCard).
+ */
+final class UnRegisterCardRequest extends AbstractSoapRequest
 {
-    public function getCardId()
+    public function getCardId(): ?string
     {
-        return $this->getParameter('cardId');
+        return $this->getStringParameter('cardId');
     }
 
-    public function setCardId($value)
+    public function setCardId(?string $value): static
     {
         return $this->setParameter('cardId', $value);
     }
 
-    public function getData()
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function getData(): array
     {
         $this->validate('cardId');
 
         $data = parent::getData();
         $data['cardId'] = $this->getCardId();
+
         return $data;
     }
 
-    public function sendData($data)
+    #[\Override]
+    public function send(): UnRegisterCardResponse
     {
+        return $this->sendData($this->getData());
+    }
+
+    /**
+     * @throws \SoapFault when the bank refuses to remove the card
+     */
+    #[\Override]
+    public function sendData(mixed $data): UnRegisterCardResponse
+    {
+        $data = self::arrayData($data);
+
         if ($this->getTestMode()) {
-            if ((int) $data['cardId'] % 2 === 0) {
-                return $this->response = new UnRegisterCardResponse($this, 0);
-            }
-            return $this->response = new UnRegisterCardResponse($this, 5);
+            // test mode: an odd card id is removed, an even one is not
+            return $this->response = new UnRegisterCardResponse($this, !self::isEven($data['cardId']));
         }
 
         $request = new \stdClass();
         $request->idOfCard = $data['cardId'];
 
-        $client = $this->getSoapClient();
-        $response = $client->unRegisterCard($request);
-
-        return $this->response = new UnRegisterCardResponse($this, $response);
+        return $this->response = new UnRegisterCardResponse($this, $this->call('unRegisterCard', $request));
     }
 }
