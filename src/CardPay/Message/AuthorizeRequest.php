@@ -9,9 +9,9 @@ use Omnipay\Core\Sign\HmacSign;
 
 class AuthorizeRequest extends AbstractRequest
 {
-    const TXN_VALUE = 'PA';
+    public const TXN_VALUE = 'PA';
 
-    public function initialize(array $parameters = array())
+    public function initialize(array $parameters = [])
     {
         parent::initialize($parameters);
 
@@ -284,7 +284,7 @@ class AuthorizeRequest extends AbstractRequest
 
         $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getE2E()}{$this->getTxn()}{$this->getRurl()}";
         $input .= "{$this->getIpc()}{$this->getName()}{$this->getRem()}{$this->getTpay()}{$this->getCid()}{$this->getEcid()}";
-        $input .="{$this->getTdsCardholder()}{$this->getTdsEmail()}{$this->getTdsMobilePhone()}{$this->getTdsBillCity()}";
+        $input .= "{$this->getTdsCardholder()}{$this->getTdsEmail()}{$this->getTdsMobilePhone()}{$this->getTdsBillCity()}";
         $input .= "{$this->getTdsBillCountry()}{$this->getTdsBillAddress1()}{$this->getTdsBillAddress2()}{$this->getTdsBillZip()}";
         $input .= "{$this->getTdsShipCity()}{$this->getTdsShipCountry()}{$this->getTdsShipAddress1()}{$this->getTdsShipAddress2()}";
         $input .= "{$this->getTdsShipZip()}{$this->getTdsAddrMatch()}{$this->getTimestamp()}";

@@ -2,16 +2,16 @@
 
 namespace Omnipay\TatraPay\Message;
 
-use Money\Currency;
 use Money\Currencies\ISOCurrencies;
+use Money\Currency;
+use Omnipay\Core\Message\AbstractRequest;
+use Omnipay\Core\Sign\Aes256Sign;
 use Omnipay\Core\Sign\DesSign;
 use Omnipay\Core\Sign\HmacSign;
-use Omnipay\Core\Sign\Aes256Sign;
-use Omnipay\Core\Message\AbstractRequest;
 
 class PurchaseRequest extends AbstractRequest
 {
-    public function initialize(array $parameters = array())
+    public function initialize(array $parameters = [])
     {
         parent::initialize($parameters);
         $this->setTimestamp(gmdate('dmYHis'));
@@ -58,8 +58,6 @@ class PurchaseRequest extends AbstractRequest
         } else {
             throw new \Exception('Unknown key length');
         }
-
-        return $sign;
     }
 
     public function sendData($data)
@@ -75,7 +73,7 @@ class PurchaseRequest extends AbstractRequest
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getSs()}{$this->getCs()}{$this->getRurl()}";
             $data['SIGN'] = $this->generateSignature($input);
         }
-        
+
         return $this->response = new PurchaseResponse($this, $data);
     }
 
@@ -83,8 +81,9 @@ class PurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        if ($this->getTestmode()) {
-            $host = $this->getParameter('testHost') ?: 'https://platby.tomaj.sk';
+        if ($this->getTestMode()) {
+            $testHost = $this->getParameter('testHost');
+            $host = is_string($testHost) && $testHost !== '' ? $testHost : 'https://platby.tomaj.sk';
 
             if (strlen($sharedSecret) == 128) {
                 return $host . '/payment/tatrapay-hmac';

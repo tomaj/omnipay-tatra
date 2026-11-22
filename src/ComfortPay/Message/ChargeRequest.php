@@ -110,7 +110,7 @@ class ChargeRequest extends AbstractSoapRequest
     {
         $this->validate('terminalId', 'amount', 'transactionId', 'transactionType', 'referedCardId', 'ws', 'currency');
 
-        if (in_array($this->getTransactionType(), [Gateway::TRANSACTION_TYPE_PREAUTH_CONFIRM, Gateway::TRANSACTION_TYPE_PREAUTH_CANCEL, Gateway::TRANSACTION_TYPE_CHARGEBACK])) {
+        if (in_array($this->getTransactionType(), [Gateway::TRANSACTION_TYPE_PREAUTH_CONFIRM, Gateway::TRANSACTION_TYPE_PREAUTH_CANCEL, Gateway::TRANSACTION_TYPE_CHARGEBACK], true)) {
             $this->validate('parentTransactionId');
         }
 
@@ -150,16 +150,16 @@ class ChargeRequest extends AbstractSoapRequest
 
     public function sendData($data)
     {
-        if ($this->getTestmode()) {
-            if ((int)$this->getReferedCardId() % 2 == 0) {
+        if ($this->getTestMode()) {
+            if ((int) $this->getReferedCardId() % 2 == 0) {
                 return $this->response = new CardTransactionResponse(
                     $this,
-                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123']
+                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123'],
                 );
             }
             return $this->response = new CardTransactionResponse(
                 $this,
-                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123']
+                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123'],
             );
         }
 

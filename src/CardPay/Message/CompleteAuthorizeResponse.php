@@ -6,7 +6,7 @@ use Omnipay\Common\Message\AbstractResponse;
 
 class CompleteAuthorizeResponse extends AbstractResponse
 {
-    const SUCCESS = 'OK';
+    public const SUCCESS = 'OK';
 
     public function isSuccessful()
     {

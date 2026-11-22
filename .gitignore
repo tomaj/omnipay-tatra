@@ -1,3 +1,5 @@
-vendor
+vendor/
 composer.lock
-build
+build/
+.phpunit.cache/
+.idea/

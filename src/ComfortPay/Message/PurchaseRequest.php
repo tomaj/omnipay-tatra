@@ -2,16 +2,15 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use Money\Currency;
 use Money\Currencies\ISOCurrencies;
-use Omnipay\Core\Sign\DesSign;
-use Omnipay\Core\Sign\HmacSign;
-use Omnipay\Core\Sign\Aes256Sign;
+use Money\Currency;
 use Omnipay\Core\Message\AbstractRequest;
+use Omnipay\Core\Sign\Aes256Sign;
+use Omnipay\Core\Sign\HmacSign;
 
 class PurchaseRequest extends AbstractRequest
 {
-    public function initialize(array $parameters = array())
+    public function initialize(array $parameters = [])
     {
         parent::initialize($parameters);
         $this->setTimestamp(gmdate('dmYHis'));
@@ -67,7 +66,7 @@ class PurchaseRequest extends AbstractRequest
     {
         return $this->getParameter('certPath');
     }
-  
+
     public function setCertPath($value)
     {
         return $this->setParameter('certPath', $value);
@@ -77,7 +76,7 @@ class PurchaseRequest extends AbstractRequest
     {
         return $this->getParameter('certPass');
     }
-  
+
     public function setCertPass($value)
     {
         return $this->setParameter('certPass', $value);
@@ -92,7 +91,7 @@ class PurchaseRequest extends AbstractRequest
 
     public function getData()
     {
-    
+
         $this->validate('sharedSecret', 'mid', 'vs', 'rurl');
         $data = [];
         $data['PT'] = 'CardPay';
@@ -134,8 +133,6 @@ class PurchaseRequest extends AbstractRequest
         } else {
             throw new \Exception('Unknown key length');
         }
-
-        return $sign;
     }
 
     public function sendData($data)
@@ -151,7 +148,7 @@ class PurchaseRequest extends AbstractRequest
             $input = "{$this->getMid()}{$this->getAmount()}{$curr}{$this->getVs()}{$this->getCs()}{$this->getRurl()}{$this->getIpc()}{$this->getName()}{$this->getTpay()}";
             $data['SIGN'] = $this->generateSignature($input);
         }
-        
+
         return $this->response = new PurchaseResponse($this, $data);
     }
 
@@ -159,8 +156,9 @@ class PurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        if ($this->getTestmode()) {
-            $host = $this->getParameter('testHost') ?: 'https://platby.tomaj.sk';
+        if ($this->getTestMode()) {
+            $testHost = $this->getParameter('testHost');
+            $host = is_string($testHost) && $testHost !== '' ? $testHost : 'https://platby.tomaj.sk';
 
             if (strlen($sharedSecret) == 128) {
                 return $host . '/payment/comfortpay-hmac';
@@ -174,11 +172,5 @@ class PurchaseRequest extends AbstractRequest
                 return 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
             }
         }
-    }
-
-    private function getCurrencyNumber($code)
-    {
-        $isoCurrencies = new ISOCurrencies();
-        return $isoCurrencies->numericCodeFor(new Currency($code));
     }
 }

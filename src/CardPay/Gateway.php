@@ -50,27 +50,27 @@ class Gateway extends AbstractGateway
         return $this->setParameter('testHost', $value);
     }
 
-    public function purchase(array $parameters = array())
+    public function purchase(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\CardPay\Message\PurchaseRequest::class, $parameters);
     }
 
-    public function completePurchase(array $parameters = array())
+    public function completePurchase(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\CardPay\Message\CompletePurchaseRequest::class, $parameters);
     }
 
-    public function authorize(array $parameters = array())
+    public function authorize(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\CardPay\Message\AuthorizeRequest::class, $parameters);
     }
 
-    public function completeAuthorize(array $parameters = array())
+    public function completeAuthorize(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\CardPay\Message\CompleteAuthorizeRequest::class, $parameters);
     }
 
-    public function cancelAuthorize(array $parameters = array())
+    public function cancelAuthorize(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\CardPay\Message\CancelAuthorizeRequest::class, $parameters);
     }

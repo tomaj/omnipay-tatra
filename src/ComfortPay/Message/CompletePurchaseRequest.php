@@ -2,12 +2,13 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use Money\Currency;
 use Money\Currencies\ISOCurrencies;
+use Money\Currency;
 use Omnipay\Common\Exception\InvalidRequestException;
-use Omnipay\Core\Sign\HmacSign;
-use Omnipay\Core\Sign\Aes256Sign;
 use Omnipay\Core\Message\AbstractRequest;
+use Omnipay\Core\Sign\Aes256Sign;
+use Omnipay\Core\Sign\HmacSign;
+use Omnipay\Core\Sign\Signature;
 
 class CompletePurchaseRequest extends AbstractRequest
 {
@@ -15,15 +16,15 @@ class CompletePurchaseRequest extends AbstractRequest
     {
         $sharedSecret = $this->getParameter('sharedSecret');
 
-        $vs = isset($_GET['VS']) ? $_GET['VS'] : '';
-        $ac = isset($_GET['AC']) ? $_GET['AC'] : '';
-        $cid = isset($_GET['CID']) ? $_GET['CID'] : '';
-        $res = isset($_GET['RES']) ? $_GET['RES'] : '';
-        $tres = isset($_GET['TRES']) ? $_GET['TRES'] : '';
-        $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
-        $cc = isset($_GET['CC']) ? $_GET['CC'] : '';
-        $rc = isset($_GET['RC']) ? $_GET['RC'] : '';
-        $timestamp = isset($_GET['TIMESTAMP']) ? $_GET['TIMESTAMP'] : '';
+        $vs = $_GET['VS'] ?? '';
+        $ac = $_GET['AC'] ?? '';
+        $cid = $_GET['CID'] ?? '';
+        $res = $_GET['RES'] ?? '';
+        $tres = $_GET['TRES'] ?? '';
+        $tid = $_GET['TID'] ?? '';
+        $cc = $_GET['CC'] ?? '';
+        $rc = $_GET['RC'] ?? '';
+        $timestamp = $_GET['TIMESTAMP'] ?? '';
 
         if ($vs != $this->getVs()) {
             throw new InvalidRequestException('Variable symbol mismatch');
@@ -33,13 +34,13 @@ class CompletePurchaseRequest extends AbstractRequest
             $curr = (new ISOCurrencies())->numericCodeFor(new Currency($this->getCurrency()));
             $data = "{$this->getAmount()}{$curr}{$this->getVs()}{$res}{$ac}{$tres}{$cid}{$cc}{$rc}{$tid}{$timestamp}";
             $sign = new HmacSign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['HMAC']) {
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['HMAC'] ?? null)) {
                 throw new InvalidRequestException('incorect signature');
             }
         } elseif (strlen($sharedSecret) == 64) {
             $data = "{$this->getVs()}{$tres}{$ac}{$cid}";
             $sign = new Aes256Sign();
-            if ($sign->sign($data, $sharedSecret) != $_GET['SIGN']) {
+            if (!Signature::equals($sign->sign($data, $sharedSecret), $_GET['SIGN'] ?? null)) {
                 throw new InvalidRequestException('incorect signature');
             }
         } else {
@@ -55,7 +56,7 @@ class CompletePurchaseRequest extends AbstractRequest
             'RC' => $rc,
         ];
     }
-    
+
     public function sendData($data)
     {
         return $this->response = new CompletePurchaseResponse($this, $data);
@@ -85,7 +86,7 @@ class CompletePurchaseRequest extends AbstractRequest
     {
         return $this->getParameter('certPath');
     }
-  
+
     public function setCertPath($value)
     {
         return $this->setParameter('certPath', $value);
@@ -95,7 +96,7 @@ class CompletePurchaseRequest extends AbstractRequest
     {
         return $this->getParameter('certPass');
     }
-  
+
     public function setCertPass($value)
     {
         return $this->setParameter('certPass', $value);

@@ -2,7 +2,6 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use SoapClient;
 use SimpleXMLElement;
 
 class ListOfExpiredRequest extends AbstractSoapRequest
@@ -28,10 +27,10 @@ class ListOfExpiredRequest extends AbstractSoapRequest
 
     public function sendData($data)
     {
-        if ($this->getTestmode()) {
+        if ($this->getTestMode()) {
             return $this->response = new ListOfExpiredResponse($this, [
                 ['id' => 12345],
-                ['id' => 12346]
+                ['id' => 12346],
             ]);
         }
 
@@ -48,7 +47,7 @@ class ListOfExpiredRequest extends AbstractSoapRequest
 
         $resultData = array_map(function ($element) {
             return [
-                'id' => (string)$element,
+                'id' => (string) $element,
             ];
         }, $pairs);
 
