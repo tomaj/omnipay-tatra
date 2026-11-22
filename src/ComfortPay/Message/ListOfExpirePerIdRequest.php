@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
+
 /**
  * The expiration (MMYY) of the given registered cards (getListOfExpPerId), at most 1000 ids.
  */
@@ -51,7 +53,7 @@ final class ListOfExpirePerIdRequest extends AbstractSoapRequest
     }
 
     /**
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      */
     #[\Override]
     public function sendData(mixed $data): ListOfExpirePerIdResponse

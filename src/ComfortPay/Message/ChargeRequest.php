@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
 use Omnipay\ComfortPay\TransactionType;
 use Omnipay\Core\Exception\InvalidParameterException;
 
@@ -154,7 +155,7 @@ final class ChargeRequest extends AbstractSoapRequest
     }
 
     /**
-     * @throws \SoapFault for a fault other than a decline
+     * @throws ComfortPaySoapFault for a fault other than a decline
      */
     #[\Override]
     public function sendData(mixed $data): CardTransactionResponse
@@ -206,15 +207,16 @@ final class ChargeRequest extends AbstractSoapRequest
 
         try {
             $response = $this->call('doCardTransaction', $request);
-        } catch (\SoapFault $fault) {
+        } catch (ComfortPaySoapFault $fault) {
             // Tatra banka answers a charge it declines (for example an unknown card) with a SOAP-ENV:Receiver fault.
-            // It is a regular answer, not a failure of the service, so it becomes an unsuccessful response.
-            // Other faults (network, outage, invalid request) are rethrown.
-            if ($fault->faultcode === 'SOAP-ENV:Receiver') {
+            // It is a regular answer, not a failure of the service, so it becomes an unsuccessful response with the
+            // bank's error code. Other faults (network, outage, invalid request) are rethrown.
+            if ($fault->isReceiverFault()) {
                 return $this->response = new CardTransactionResponse($this, [
                     'transactionId' => false,
                     'transactionStatus' => false,
                     'transactionApproval' => false,
+                    'errorCode' => $fault->getErrorCode(),
                 ]);
             }
             throw $fault;

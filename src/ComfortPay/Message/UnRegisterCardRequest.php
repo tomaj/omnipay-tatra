@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
+
 /**
  * Removes a registered card (unRegisterCard).
  */
@@ -40,7 +42,7 @@ final class UnRegisterCardRequest extends AbstractSoapRequest
     }
 
     /**
-     * @throws \SoapFault when the bank refuses to remove the card
+     * @throws ComfortPaySoapFault when the bank refuses to remove the card
      */
     #[\Override]
     public function sendData(mixed $data): UnRegisterCardResponse

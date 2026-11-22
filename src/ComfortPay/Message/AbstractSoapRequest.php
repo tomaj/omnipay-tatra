@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
 use Omnipay\ComfortPay\ParametersTrait;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Core\Message\AbstractRequest;
@@ -67,9 +68,9 @@ abstract class AbstractSoapRequest extends AbstractRequest
     }
 
     /**
-     * Calls a web service operation.
+     * Calls a web service operation. A SOAP fault is rethrown as ComfortPaySoapFault with the bank's error code.
      *
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      */
     protected function call(string $operation, object $request): mixed
     {
@@ -80,7 +81,7 @@ abstract class AbstractSoapRequest extends AbstractRequest
      * Calls a web service operation and returns the <list> elements of its raw XML response.
      *
      * @return array<\SimpleXMLElement>
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      * @throws InvalidResponseException when the response is not valid XML
      */
     protected function callForList(string $operation, object $request): array
@@ -137,11 +138,15 @@ abstract class AbstractSoapRequest extends AbstractRequest
     }
 
     /**
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      */
     private function callClient(\SoapClient $client, string $operation, object $request): mixed
     {
-        return $client->__soapCall($operation, [$request]);
+        try {
+            return $client->__soapCall($operation, [$request]);
+        } catch (\SoapFault $fault) {
+            throw ComfortPaySoapFault::fromSoapFault($fault);
+        }
     }
 
     /**

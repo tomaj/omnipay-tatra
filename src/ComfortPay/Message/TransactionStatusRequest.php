@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
+
 /**
  * The status of an earlier charge (getTransactionStatus).
  */
@@ -30,7 +32,7 @@ final class TransactionStatusRequest extends AbstractSoapRequest
     }
 
     /**
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      */
     #[\Override]
     public function sendData(mixed $data): CardTransactionResponse

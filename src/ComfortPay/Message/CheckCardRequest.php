@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\ComfortPay\CardStatus;
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
 
 /**
  * Checks whether a registered card can still be charged (checkCard).
@@ -42,7 +43,7 @@ final class CheckCardRequest extends AbstractSoapRequest
     }
 
     /**
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      */
     #[\Override]
     public function sendData(mixed $data): CheckCardResponse

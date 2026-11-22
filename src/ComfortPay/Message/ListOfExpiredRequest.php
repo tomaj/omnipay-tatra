@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Omnipay\ComfortPay\Message;
 
+use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
+
 /**
  * The registered cards that expire after a date (getListOfExpired).
  */
@@ -43,7 +45,7 @@ final class ListOfExpiredRequest extends AbstractSoapRequest
     }
 
     /**
-     * @throws \SoapFault
+     * @throws ComfortPaySoapFault
      */
     #[\Override]
     public function sendData(mixed $data): ListOfExpiredResponse
