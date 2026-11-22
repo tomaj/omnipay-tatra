@@ -27,10 +27,10 @@ Requests are signed with HMAC-SHA256 (128-character key), AES (64-character key)
 
 ## Installation
 
-Requires PHP 8.4 or newer with the `openssl`, `soap` and `simplexml` extensions, and a PSR-18 HTTP client for Omnipay (for example `guzzlehttp/guzzle`).
+Requires PHP 8.4 or newer with the `openssl`, `soap` and `simplexml` extensions, and an HTTP client adapter that Omnipay can discover (for example `php-http/guzzle7-adapter`).
 
 ```bash
-composer require tomaj/omnipay-tatra
+composer require tomaj/omnipay-tatra php-http/guzzle7-adapter
 ```
 
 ## Usage

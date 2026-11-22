@@ -8,13 +8,13 @@ description: Install omnipay-tatra, redirect the customer to Tatra banka and ver
 ## Requirements
 
 - PHP 8.4 or newer with the `openssl`, `soap` and `simplexml` extensions
-- a PSR-18 HTTP client that Omnipay can discover, for example `guzzlehttp/guzzle`
+- an HTTP client adapter that Omnipay can discover, for example `php-http/guzzle7-adapter` (Guzzle 7)
 - a merchant contract with Tatra banka: the merchant id (`MID`) and the shared secret (key) for each service
 
 ## Installation
 
 ```bash
-composer require tomaj/omnipay-tatra guzzlehttp/guzzle
+composer require tomaj/omnipay-tatra php-http/guzzle7-adapter
 ```
 
 The package registers three Omnipay gateways: `TatraPay`, `CardPay` and `ComfortPay`. Create them with
