@@ -3,12 +3,10 @@
 namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Core\Message\AbstractRequest;
 
 class CompletePurchaseResponse extends AbstractResponse
 {
-    const SUCCESS = 'OK';
+    public const SUCCESS = 'OK';
 
     public function isSuccessful()
     {

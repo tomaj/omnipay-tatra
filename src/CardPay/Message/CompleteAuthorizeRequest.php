@@ -12,16 +12,16 @@ class CompleteAuthorizeRequest extends AbstractRequest
 {
     public function getData()
     {
-        $vs = isset($_GET['VS']) ? $_GET['VS'] : '';
-        $ac = isset($_GET['AC']) ? $_GET['AC'] : '';
-        $res = isset($_GET['RES']) ? $_GET['RES'] : '';
-        $tres = isset($_GET['TRES']) ? $_GET['TRES'] : '';
-        $tid = isset($_GET['TID']) ? $_GET['TID'] : '';
-        $cc = isset($_GET['CC']) ? $_GET['CC'] : '';
-        $rc = isset($_GET['RC']) ? $_GET['RC'] : '';
-        $txn = isset($_GET['TXN']) ? $_GET['TXN'] : '';
-        $cid = isset($_GET['CID']) ? $_GET['CID'] : '';
-        $timestamp = isset($_GET['TIMESTAMP']) ? $_GET['TIMESTAMP'] : '';
+        $vs = $_GET['VS'] ?? '';
+        $ac = $_GET['AC'] ?? '';
+        $res = $_GET['RES'] ?? '';
+        $tres = $_GET['TRES'] ?? '';
+        $tid = $_GET['TID'] ?? '';
+        $cc = $_GET['CC'] ?? '';
+        $rc = $_GET['RC'] ?? '';
+        $txn = $_GET['TXN'] ?? '';
+        $cid = $_GET['CID'] ?? '';
+        $timestamp = $_GET['TIMESTAMP'] ?? '';
 
         if ($vs != $this->getVs()) {
             throw new InvalidRequestException('Variable symbol mismatch');

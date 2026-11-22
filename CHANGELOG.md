@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BC break:** PHP 8.3 or newer is required (`"php": "^8.3"`, previously no constraint; CI covered PHP 8.0 - 8.3).
+- CI: GitHub Actions workflow on PHP 8.3 - 8.6 (+ prefer-lowest, nightly 8.7) with PHP CS Fixer (replaces PHP_CodeSniffer), PHPStan level 5 with strict rules and `composer audit`.
+- PHPUnit 11.
+
+### Fixed
+- AES and DES signing threw `ValueError` on PHP 8 (ECB mode has no IV); a failing cipher (e.g. DES without the OpenSSL legacy provider) now throws instead of producing an empty signature.
+
 ## [4.3.0]
 - Added new request `UnregisterCardRequest`
 

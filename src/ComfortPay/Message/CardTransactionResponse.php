@@ -15,7 +15,8 @@ class CardTransactionResponse extends AbstractResponse implements ResponseInterf
     public function getTransactionId()
     {
         if (!isset($this->data['transactionId'])) {
-            return false;
+            // kept for backward compatibility, the parent documents string|null
+            return false; // @phpstan-ignore return.type
         }
         return $this->data['transactionId'];
     }

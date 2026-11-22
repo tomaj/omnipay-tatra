@@ -1,6 +1,10 @@
 Omnipay Tatra module
 ====================
 
+[![CI](https://github.com/tomaj/omnipay-tatra/actions/workflows/ci.yml/badge.svg)](https://github.com/tomaj/omnipay-tatra/actions/workflows/ci.yml)
+
+Requires PHP 8.3 or newer with the `soap`, `openssl` and `simplexml` extensions.
+
 
 ## **ComfortPay**
 

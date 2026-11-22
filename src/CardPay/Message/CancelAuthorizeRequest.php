@@ -8,9 +8,9 @@ use Omnipay\Core\Sign\HmacSign;
 
 class CancelAuthorizeRequest extends AbstractRequest
 {
-    const TXN_CLOSE_PREAUTHORIZATION = 'CPA';
-    const TXN_STORNO_PREAUTHORIZATION = 'SPA';
-    const TXN_CHARGEBACK = 'CB';
+    public const TXN_CLOSE_PREAUTHORIZATION = 'CPA';
+    public const TXN_STORNO_PREAUTHORIZATION = 'SPA';
+    public const TXN_CHARGEBACK = 'CB';
 
     public function initialize(array $parameters = [])
     {
@@ -32,7 +32,7 @@ class CancelAuthorizeRequest extends AbstractRequest
 
     public function setTxn($value)
     {
-        if (!in_array($value, [static::TXN_STORNO_PREAUTHORIZATION, static::TXN_CLOSE_PREAUTHORIZATION, static::TXN_CHARGEBACK])) {
+        if (!in_array($value, [static::TXN_STORNO_PREAUTHORIZATION, static::TXN_CLOSE_PREAUTHORIZATION, static::TXN_CHARGEBACK], true)) {
             throw new \UnexpectedValueException("Unsopported value for TXN parameter: {$value}");
         }
 
@@ -76,7 +76,7 @@ class CancelAuthorizeRequest extends AbstractRequest
 
         $response = $this->httpClient->request(
             'GET',
-            "{$this->getEndpoint()}?{$params}"
+            "{$this->getEndpoint()}?{$params}",
         );
 
         if ($response->getStatusCode() !== 200) {
@@ -86,21 +86,21 @@ class CancelAuthorizeRequest extends AbstractRequest
         $xml = $response->getBody()->getContents();
 
         $authorizationHeaders = $response->getHeader('Authorization');
-        if (is_array($authorizationHeaders) && !empty($authorizationHeaders)) {
+        if ($authorizationHeaders !== []) {
             $parsedHeaders = [];
-            foreach (explode(",", $authorizationHeaders[0]) as $part) {
-                $item = explode("=", $part);
+            foreach (explode(',', $authorizationHeaders[0]) as $part) {
+                $item = explode('=', $part);
                 $parsedHeaders[$item[0]] = $item[1];
             }
 
             if (isset($parsedHeaders['HMAC']) && $parsedHeaders['HMAC'] !== $this->generateSignature($xml)) {
-                throw new InvalidResponseException("Incorrect signature");
+                throw new InvalidResponseException('Incorrect signature');
             }
         }
 
         $simpleXmlElement = new \SimpleXMLElement($xml);
 
-        return $this->response = new CancelAuthorizeResponse($this, (array)$simpleXmlElement->result);
+        return $this->response = new CancelAuthorizeResponse($this, (array) $simpleXmlElement->result);
     }
 
     public function getEndpoint()

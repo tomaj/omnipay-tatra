@@ -2,9 +2,6 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use Money\Currency;
-use Money\Currencies\ISOCurrencies;
-
 class TransactionStatusRequest extends AbstractSoapRequest
 {
     public function getData()
@@ -21,16 +18,16 @@ class TransactionStatusRequest extends AbstractSoapRequest
 
     public function sendData($data)
     {
-        if ($this->getTestmode()) {
+        if ($this->getTestMode()) {
             if (intval($data['cid']) % 2 == 0) {
                 return $this->response = new CardTransactionResponse(
                     $this,
-                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123']
+                    ['transactionId' => $data['transactionId'], 'transactionStatus' => '02', 'transactionApproval' => '123'],
                 );
             }
             return $this->response = new CardTransactionResponse(
                 $this,
-                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123']
+                ['transactionId' => $data['transactionId'], 'transactionStatus' => '00', 'transactionApproval' => '123'],
             );
         }
 
@@ -43,7 +40,7 @@ class TransactionStatusRequest extends AbstractSoapRequest
         return $this->response = new CardTransactionResponse($this, [
             'transactionId' => $response->res->transactionId,
             'transactionStatus' => $response->res->transactionStatus,
-            'transactionApproval' => $response->res->transactionStatus
+            'transactionApproval' => $response->res->transactionStatus,
         ]);
     }
 }

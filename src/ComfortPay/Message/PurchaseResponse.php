@@ -4,7 +4,6 @@ namespace Omnipay\ComfortPay\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;
-use Omnipay\Core\Message\AbstractRequest;
 
 class PurchaseResponse extends AbstractResponse implements RedirectResponseInterface
 {
@@ -29,6 +28,10 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      */
     public function getRequest()
     {
+        if (!$this->request instanceof PurchaseRequest) {
+            throw new \LogicException('Response was created for an unexpected request ' . get_class($this->request));
+        }
+
         return $this->request;
     }
 

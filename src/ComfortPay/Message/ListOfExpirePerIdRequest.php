@@ -2,7 +2,6 @@
 
 namespace Omnipay\ComfortPay\Message;
 
-use SoapClient;
 use SimpleXMLElement;
 
 class ListOfExpirePerIdRequest extends AbstractSoapRequest
@@ -28,7 +27,7 @@ class ListOfExpirePerIdRequest extends AbstractSoapRequest
 
     public function sendData($data)
     {
-        if ($this->getTestmode()) {
+        if ($this->getTestMode()) {
             return $this->response = new ListOfExpirePerIdResponse($this, array_map(function ($id) {
                 return [
                     'id' => $id,
@@ -50,8 +49,8 @@ class ListOfExpirePerIdRequest extends AbstractSoapRequest
 
         $resultData = array_map(function ($element) {
             return [
-                'id' => (string)$element->idOfCard,
-                'date' => (string)$element->expiration
+                'id' => (string) $element->idOfCard,
+                'date' => (string) $element->expiration,
             ];
         }, $pairs);
 

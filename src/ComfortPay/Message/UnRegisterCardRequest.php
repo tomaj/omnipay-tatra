@@ -25,7 +25,7 @@ class UnRegisterCardRequest extends AbstractSoapRequest
 
     public function sendData($data)
     {
-        if ($this->getTestmode()) {
+        if ($this->getTestMode()) {
             if ((int) $data['cardId'] % 2 === 0) {
                 return $this->response = new UnRegisterCardResponse($this, 0);
             }

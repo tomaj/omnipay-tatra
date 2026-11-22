@@ -6,7 +6,6 @@ use SoapClient;
 
 abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
 {
-
     public function getCertPath()
     {
         return $this->getParameter('certPath');
@@ -52,8 +51,8 @@ abstract class AbstractSoapRequest extends \Omnipay\Core\Message\AbstractRequest
                 'ssl' => [
                     'verify_peer'       => false,
                     'verify_peer_name'  => false,
-                ]
-            ])
+                ],
+            ]),
         ];
         return new SoapClient(__DIR__ . '/../Teleplatba_1_0.wsdl', $options);
     }

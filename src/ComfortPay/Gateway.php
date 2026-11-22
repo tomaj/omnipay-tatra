@@ -2,21 +2,19 @@
 
 namespace Omnipay\ComfortPay;
 
-use Omnipay\ComfortPay\Message\ListOfExpiredRequest;
-use Omnipay\ComfortPay\Message\TransactionStatusRequest;
 use Omnipay\Common\AbstractGateway;
 
 class Gateway extends AbstractGateway
 {
-    const TRANSACTION_TYPE_PURCHASE = 'PURCHASE';
-    const TRANSACTION_TYPE_PREAUTHORIZATION = 'PREAUTHORIZATION';
-    const TRANSACTION_TYPE_PREAUTH_CONFIRM = 'PREAUTH-CONFIRM';
-    const TRANSACTION_TYPE_PREAUTH_CANCEL = 'PREAUTH-CANCEL';
-    const TRANSACTION_TYPE_CHARGEBACK = 'CHARGEBACK';
+    public const TRANSACTION_TYPE_PURCHASE = 'PURCHASE';
+    public const TRANSACTION_TYPE_PREAUTHORIZATION = 'PREAUTHORIZATION';
+    public const TRANSACTION_TYPE_PREAUTH_CONFIRM = 'PREAUTH-CONFIRM';
+    public const TRANSACTION_TYPE_PREAUTH_CANCEL = 'PREAUTH-CANCEL';
+    public const TRANSACTION_TYPE_CHARGEBACK = 'CHARGEBACK';
 
-    const CARD_STATUS_OK = 'OK';
-    const CARD_STATUS_FAIL = 'FAIL';
-    const CARD_STATUS_UNKNOWN = 'UNKNOWN';
+    public const CARD_STATUS_OK = 'OK';
+    public const CARD_STATUS_FAIL = 'FAIL';
+    public const CARD_STATUS_UNKNOWN = 'UNKNOWN';
 
     public function getName()
     {
@@ -106,42 +104,42 @@ class Gateway extends AbstractGateway
         return $this->setParameter('certPass', $value);
     }
 
-    public function purchase(array $parameters = array())
+    public function purchase(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\PurchaseRequest::class, $parameters);
     }
 
-    public function completePurchase(array $parameters = array())
+    public function completePurchase(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\CompletePurchaseRequest::class, $parameters);
     }
 
-    public function charge(array $parameters = array())
+    public function charge(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\ChargeRequest::class, $parameters);
     }
 
-    public function checkCard(array $parameters = array())
+    public function checkCard(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\CheckCardRequest::class, $parameters);
     }
 
-    public function unRegisterCard(array $parameters = array())
+    public function unRegisterCard(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\UnRegisterCardRequest::class, $parameters);
     }
 
-    public function listOfExpirePerId(array $parameters = array())
+    public function listOfExpirePerId(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpirePerIdRequest::class, $parameters);
     }
 
-    public function listOfExpired(array $parameters = array())
+    public function listOfExpired(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\ListOfExpiredRequest::class, $parameters);
     }
 
-    public function checkTransaction(array $parameters = array())
+    public function checkTransaction(array $parameters = [])
     {
         return $this->createRequest(\Omnipay\ComfortPay\Message\TransactionStatusRequest::class, $parameters);
     }

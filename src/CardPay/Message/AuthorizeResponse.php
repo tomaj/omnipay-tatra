@@ -27,6 +27,10 @@ class AuthorizeResponse extends AbstractResponse implements RedirectResponseInte
      */
     public function getRequest()
     {
+        if (!$this->request instanceof AuthorizeRequest) {
+            throw new \LogicException('Response was created for an unexpected request ' . get_class($this->request));
+        }
+
         return $this->request;
     }
 

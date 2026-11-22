@@ -12,9 +12,11 @@ class Aes256Sign implements SignInterface
         $bytesHash = substr($bytesHash, 0, 16);
 
         $cipher = 'aes-128-ecb';
-        $ivsize = openssl_cipher_iv_length($cipher);
-        $iv = openssl_random_pseudo_bytes($ivsize);
-        $encrypted = openssl_encrypt($bytesHash, $cipher, $sharedSecret, OPENSSL_RAW_DATA, $iv);
+        // ECB mode uses no initialization vector
+        $encrypted = openssl_encrypt($bytesHash, $cipher, $sharedSecret, OPENSSL_RAW_DATA);
+        if ($encrypted === false) {
+            throw new \RuntimeException("Cannot sign with cipher {$cipher}, is it supported by the OpenSSL build?");
+        }
 
         $sign = strtoupper(substr(bin2hex($encrypted), 0, 32));
 
