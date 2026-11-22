@@ -1,7 +1,8 @@
 {
     "name": "tomaj/omnipay-tatra",
+    "description": "Tatra banka (TatraPay, CardPay, ComfortPay) gateways for the Omnipay payment processing library",
+    "license": "MIT",
     "type": "library",
-    "description": "Tatrabank driver for the Omnipay payment processing library",
     "keywords": [
         "tatrapay",
         "cardpay",
@@ -10,20 +11,23 @@
         "merchant",
         "omnipay",
         "pay",
-        "payment"
+        "payment",
+        "tatrabanka",
+        "slovakia"
     ],
-    "homepage": "https://github.com/tomaj/omnipay-tatra",
-    "license": "MIT",
     "authors": [
         {
             "name": "Tomas Majer",
-            "email": "tomasmajer@gmail.com"
+            "email": "tomasmajer@gmail.com",
+            "homepage": "http://www.tomaj.sk/"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "Omnipay\\": "src/"
-        }
+    "homepage": "https://tomaj.github.io/omnipay-tatra/",
+    "support": {
+        "issues": "https://github.com/tomaj/omnipay-tatra/issues",
+        "source": "https://github.com/tomaj/omnipay-tatra",
+        "docs": "https://tomaj.github.io/omnipay-tatra/",
+        "security": "https://github.com/tomaj/omnipay-tatra/security/policy"
     },
     "require": {
         "php": "^8.3",
@@ -31,7 +35,7 @@
         "ext-hash": "*",
         "ext-soap": "*",
         "ext-SimpleXML": "*",
-        "omnipay/common": "~3.0"
+        "omnipay/common": "^3.2"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.90",
@@ -40,6 +44,18 @@
         "phpstan/phpstan-phpunit": "^2.1",
         "phpstan/phpstan-strict-rules": "^2.1",
         "phpunit/phpunit": "^11.5"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Omnipay\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        },
+        "sort-packages": true
     },
     "scripts": {
         "check": [
@@ -55,11 +71,5 @@
             "phpunit --no-coverage"
         ],
         "test": "@phpunit"
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": false
-        },
-        "sort-packages": true
     }
 }

@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest an improvement to omnipay-tatra
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is difficult or missing today? Link the part of Tatra banka's documentation that describes it, if any.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should the gateway behave?
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Example usage
+      render: php
+    validations:
+      required: false
+
+  - type: dropdown
+    id: gateway
+    attributes:
+      label: Gateway
+      options:
+        - TatraPay
+        - CardPay
+        - ComfortPay
+        - Other
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate
+          required: true

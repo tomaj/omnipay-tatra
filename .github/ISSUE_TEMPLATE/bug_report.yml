@@ -1,0 +1,106 @@
+name: Bug report
+description: Report a defect or unexpected behaviour in omnipay-tatra
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+
+        If this is a security vulnerability (for example a callback that is accepted although it should not be), do not continue. Report it privately at https://github.com/tomaj/omnipay-tatra/security/advisories/new (see SECURITY.md).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: How can someone else trigger this? Remove keys, certificates and personal data.
+      placeholder: |
+        1. Configure the CardPay gateway with an HMAC key...
+        2. Call purchase() with...
+        3. The bank returns...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What happened instead? Include the exception message if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code sample
+      description: The smallest snippet that shows the problem. Never paste a real shared secret.
+      render: php
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: omnipay-tatra version
+      placeholder: "4.3.0"
+    validations:
+      required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      description: Output of `php -v`.
+      placeholder: "8.4"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: gateway
+    attributes:
+      label: Gateway
+      options:
+        - TatraPay
+        - CardPay
+        - ComfortPay
+        - Not gateway-specific
+    validations:
+      required: true
+
+  - type: dropdown
+    id: key
+    attributes:
+      label: Signature
+      options:
+        - HMAC (128-character key)
+        - AES (64-character key)
+        - DES (8-character key)
+        - Not relevant
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate
+          required: true
+        - label: This is not a security vulnerability
+          required: true
