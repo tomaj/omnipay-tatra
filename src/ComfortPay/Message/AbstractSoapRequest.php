@@ -52,6 +52,17 @@ abstract class AbstractSoapRequest extends AbstractRequest
             'stream_context' => $this->getStreamContext() ?? $this->createStreamContext(),
         ];
 
+        $proxyHost = $this->getProxyHost();
+        if ($proxyHost !== null && $proxyHost !== '') {
+            $options['proxy_host'] = $proxyHost;
+            $options['proxy_port'] = $this->getProxyPort();
+            $proxyLogin = $this->getProxyLogin();
+            if ($proxyLogin !== null && $proxyLogin !== '') {
+                $options['proxy_login'] = $proxyLogin;
+                $options['proxy_password'] = $this->getProxyPassword();
+            }
+        }
+
         return $options;
     }
 

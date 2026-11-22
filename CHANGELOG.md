@@ -4,6 +4,11 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## [Unreleased][unreleased]
 
+### Added
+
+* ComfortPay: `proxyHost`, `proxyPort`, `proxyLogin` and `proxyPassword` parameters route the web service requests through an HTTP proxy. Based on [#22](https://github.com/tomaj/omnipay-tatra/pull/22) by [@deltaglow](https://github.com/deltaglow).
+* ComfortPay: `soapClient` parameter to pass your own `SoapClient` (a custom transport, or a fake one in tests).
+
 ### Changed
 
 * **BREAKING CHANGE**: Requires PHP 8.4 or newer (`"php": "^8.4"`; there was no PHP constraint before and CI covered PHP 8.0 - 8.3). Stay on 4.x for older PHP ([#28](https://github.com/tomaj/omnipay-tatra/issues/28)).

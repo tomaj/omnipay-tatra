@@ -102,6 +102,52 @@ trait ParametersTrait
         return $this;
     }
 
+    public function getProxyHost(): ?string
+    {
+        return $this->getStringParameter('proxyHost');
+    }
+
+    public function setProxyHost(?string $value): static
+    {
+        $this->setParameter('proxyHost', $value);
+        return $this;
+    }
+
+    public function getProxyPort(): ?int
+    {
+        $value = $this->getParameter('proxyPort');
+
+        return is_numeric($value) ? (int) $value : null;
+    }
+
+    public function setProxyPort(int|string|null $value): static
+    {
+        $this->setParameter('proxyPort', $value);
+        return $this;
+    }
+
+    public function getProxyLogin(): ?string
+    {
+        return $this->getStringParameter('proxyLogin');
+    }
+
+    public function setProxyLogin(?string $value): static
+    {
+        $this->setParameter('proxyLogin', $value);
+        return $this;
+    }
+
+    public function getProxyPassword(): ?string
+    {
+        return $this->getStringParameter('proxyPassword');
+    }
+
+    public function setProxyPassword(?string $value): static
+    {
+        $this->setParameter('proxyPassword', $value);
+        return $this;
+    }
+
     /**
      * A SoapClient to use instead of the one created from the bundled WSDL (for a custom transport or tests).
      */
