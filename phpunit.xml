@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         cacheDirectory=".phpunit.cache"
-         colors="true"
-         executionOrder="depends,defects"
-         beStrictAboutOutputDuringTests="true"
-         failOnRisky="true"
-         failOnWarning="true"
-         displayDetailsOnTestsThatTriggerDeprecations="true"
-         displayDetailsOnTestsThatTriggerWarnings="true">
-    <testsuites>
-        <testsuite name="Test Suite">
-            <directory>tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <source>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-    </source>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php" cacheDirectory=".phpunit.cache" executionOrder="defects" beStrictAboutOutputDuringTests="true" displayDetailsOnPhpunitDeprecations="true" displayDetailsOnPhpunitNotices="true" displayDetailsOnTestsThatTriggerDeprecations="true" displayDetailsOnTestsThatTriggerNotices="true" displayDetailsOnTestsThatTriggerWarnings="true" failOnDeprecation="true" failOnEmptyTestSuite="true" failOnNotice="true" failOnPhpunitDeprecation="true" failOnPhpunitNotice="true" failOnPhpunitWarning="true" failOnRisky="true" failOnWarning="true" resolveDependencies="true">
+  <testsuites>
+    <testsuite name="default">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+  <!--
+    ignoreIndirectDeprecations: deprecations raised inside a dependency by another dependency are not ours to fix
+    (omnipay/common calls is_integer(), deprecated in PHP 8.6, see #35). Deprecations raised by or for this package's
+    own code still fail the run.
+  -->
+  <source ignoreIndirectDeprecations="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
 </phpunit>

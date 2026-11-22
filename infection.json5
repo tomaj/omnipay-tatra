@@ -1,0 +1,38 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ],
+        // no executable code (all behaviour is inherited), so there is nothing to mutate and no coverage file for it
+        "excludes": [
+            "TatraPay/Message/CompletePurchaseResponse.php"
+        ]
+    },
+    "logs": {
+        "text": "build/infection.log",
+        "html": "build/infection.html",
+        "summary": "build/infection-summary.log",
+        "json": "build/infection.json"
+    },
+    "mutators": {
+        "@default": true,
+        // AES-ECB encrypts block by block and only the first 16-byte block of the output is used, so encrypting more
+        // than the first 16 bytes of the SHA-1 hash (substr length 17, or the whole hash) gives the same signature
+        "IncrementInteger": {
+            "ignore": [
+                "Omnipay\\Core\\Sign\\Aes256Sign::sign"
+            ]
+        },
+        "UnwrapSubstr": {
+            "ignore": [
+                "Omnipay\\Core\\Sign\\Aes256Sign::sign"
+            ]
+        }
+    },
+    "minMsi": 95,
+    "minCoveredMsi": 95,
+    "phpUnit": {
+        "configDir": "."
+    }
+}
