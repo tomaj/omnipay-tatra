@@ -34,6 +34,7 @@ final class PurchaseRequest extends AbstractRequest
         $data['MID'] = $this->getMid();
         $data['CURR'] = $this->getCurrencyNumericCode();
         $data['VS'] = $this->getVs();
+        $data['SS'] = $this->getSs();
         $data['CS'] = $this->getCs();
         $data['AMT'] = $this->getAmount();
         $data['DESC'] = $this->getDesc();

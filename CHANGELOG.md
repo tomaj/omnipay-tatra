@@ -19,6 +19,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Fixed
 
+* TatraPay `purchase()` signed the specific symbol (`ss`) but did not send it, so the bank could not verify the signature of a payment with a specific symbol. `SS` is sent now, and the AES/DES callback signature includes it (`VS`, `SS`, `RES`) like the HMAC one.
 * CardPay `authorize()`: `tdsCardholder` overwrote the `E2E` parameter, and `TDS_SHIP_CITY` was signed but not sent, so the bank rejected the signature when it was set ([#29](https://github.com/tomaj/omnipay-tatra/issues/29)).
 * ComfortPay `charge()` and `checkTransaction()`: `getTransactionApproval()` returned the transaction status instead of the approval code ([#29](https://github.com/tomaj/omnipay-tatra/issues/29)).
 * ComfortPay test mode: `checkCard()` always failed with a PHP warning, `checkTransaction()` read an undefined `cid` ([#29](https://github.com/tomaj/omnipay-tatra/issues/29)).

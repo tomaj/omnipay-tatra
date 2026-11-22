@@ -38,7 +38,7 @@ final class CompletePurchaseRequest extends AbstractRequest
             $data = "{$this->getAmount()}{$curr}{$expectedVs}{$this->getSs()}{$this->getCs()}{$res}{$tid}{$timestamp}";
             $received = $this->getQueryParameter('HMAC');
         } else {
-            $data = "{$expectedVs}{$res}";
+            $data = "{$expectedVs}{$this->getSs()}{$res}";
             $received = $this->getQueryParameter('SIGN');
         }
 
