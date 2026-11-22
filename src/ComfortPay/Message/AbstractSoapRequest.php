@@ -33,28 +33,26 @@ abstract class AbstractSoapRequest extends AbstractRequest
     }
 
     /**
-     * The options the SoapClient is created with.
+     * The options the SoapClient is created with. The bank's TLS certificate is always verified: by the system CA
+     * store, by the `caFile` CA bundle, or by your own `streamContext`.
      *
      * @return array<string, mixed>
      */
     public function getSoapClientOptions(): array
     {
-        return [
+        $options = [
             'trace' => true,
-            'exception' => true,
+            'exceptions' => true,
             'local_cert' => $this->getCertPath(),
             'passphrase' => $this->getCertPass(),
             'connection_timeout' => 5,
             'keep_alive' => false,
             'soap_version' => SOAP_1_2,
             'cache_wsdl' => WSDL_CACHE_NONE,
-            'stream_context' => stream_context_create([
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ]),
+            'stream_context' => $this->getStreamContext() ?? $this->createStreamContext(),
         ];
+
+        return $options;
     }
 
     /**
@@ -133,5 +131,23 @@ abstract class AbstractSoapRequest extends AbstractRequest
     private function callClient(\SoapClient $client, string $operation, object $request): mixed
     {
         return $client->__soapCall($operation, [$request]);
+    }
+
+    /**
+     * @return resource
+     */
+    private function createStreamContext()
+    {
+        $ssl = [
+            'verify_peer' => true,
+            'verify_peer_name' => true,
+        ];
+
+        $caFile = $this->getCaFile();
+        if ($caFile !== null && $caFile !== '') {
+            $ssl['cafile'] = $caFile;
+        }
+
+        return stream_context_create(['ssl' => $ssl]);
     }
 }

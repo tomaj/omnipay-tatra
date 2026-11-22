@@ -25,6 +25,18 @@ if ($response->isSuccessful()) { /* paid */ } // InvalidRequestException('Variab
 With AES and DES keys the bank signs only the VS and the result, not the amount: compare the amount of the order
 yourself before you ship it.
 
+## ComfortPay verifies the bank's TLS certificate
+
+The ComfortPay web service client verifies the certificate and host name of `comfortpay.tatrabanka.sk` against the
+system CA store. **(action)** If your server's CA store cannot verify it, pass a CA bundle instead of turning the
+verification off:
+
+```php
+$gateway->setCaFile('/etc/ssl/certs/ca-certificates.crt');
+// or full control over the TLS options:
+$gateway->setStreamContext(stream_context_create(['ssl' => ['cafile' => '/path/to/ca.pem', 'verify_peer' => true]]));
+```
+
 ## Native types on every accessor
 
 Parameter setters take `?string` (or the type named below) and getters return `?string`. Omnipay's `initialize()` and

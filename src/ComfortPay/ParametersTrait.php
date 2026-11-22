@@ -63,6 +63,46 @@ trait ParametersTrait
     }
 
     /**
+     * Path to a CA bundle that verifies the web service's TLS certificate instead of the system CA store.
+     */
+    public function getCaFile(): ?string
+    {
+        return $this->getStringParameter('caFile');
+    }
+
+    public function setCaFile(?string $value): static
+    {
+        $this->setParameter('caFile', $value);
+        return $this;
+    }
+
+    /**
+     * A stream context (stream_context_create()) for the web service connection; replaces the default one, which
+     * verifies the peer certificate and name.
+     *
+     * @return resource|null
+     */
+    public function getStreamContext(): mixed
+    {
+        $context = $this->getParameter('streamContext');
+
+        return is_resource($context) ? $context : null;
+    }
+
+    /**
+     * @param resource|null $value
+     */
+    public function setStreamContext(mixed $value): static
+    {
+        if ($value !== null && (!is_resource($value) || get_resource_type($value) !== 'stream-context')) {
+            throw new \InvalidArgumentException('streamContext must be a stream context created by stream_context_create()');
+        }
+
+        $this->setParameter('streamContext', $value);
+        return $this;
+    }
+
+    /**
      * A SoapClient to use instead of the one created from the bundled WSDL (for a custom transport or tests).
      */
     public function getSoapClient(): ?\SoapClient
