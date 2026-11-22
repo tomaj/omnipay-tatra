@@ -1,0 +1,23 @@
+{
+  "name": "omnipay-tatra-docs",
+  "version": "1.0.0",
+  "description": "Documentation for tomaj/omnipay-tatra",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview",
+    "docs:links": "bash scripts/check-links.sh"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "linkinator": "8.1.0",
+    "vitepress": "1.6.4"
+  },
+  "overrides": {
+    "vite": "^6.4.3"
+  }
+}

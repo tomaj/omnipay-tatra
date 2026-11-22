@@ -6,6 +6,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Added
 
+* Documentation site at https://tomaj.github.io/omnipay-tatra/: getting started, configuration, TatraPay, CardPay and ComfortPay guides, test mode, the exact signed fields of every message, API reference and FAQ. Every example is a script in `docs/snippets/` that the test suite runs ([#31](https://github.com/tomaj/omnipay-tatra/issues/31), [#6](https://github.com/tomaj/omnipay-tatra/issues/6)).
 * TatraPay `CompletePurchaseResponse::isPending()` is true for the timeout result `RES=TOUT`.
 * ComfortPay: the bank's error code from a SOAP fault. A declined `charge()` (a `SOAP-ENV:Receiver` fault) returns an unsuccessful `CardTransactionResponse` with `getErrorCode()` (for example `50051`, unknown card) and `getCode()`; `isPending()` is true for `50001` (timeout, result not known yet). Other faults, and faults of the other web service requests, are thrown as `ComfortPaySoapFault`, which extends `\SoapFault` and has `getErrorCode()`; constants name the documented codes. Based on [#18](https://github.com/tomaj/omnipay-tatra/pull/18) ([#12](https://github.com/tomaj/omnipay-tatra/issues/12)).
 * ComfortPay: `proxyHost`, `proxyPort`, `proxyLogin` and `proxyPassword` parameters route the web service requests through an HTTP proxy. Based on [#22](https://github.com/tomaj/omnipay-tatra/pull/22) by [@deltaglow](https://github.com/deltaglow).

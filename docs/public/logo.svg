@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>omnipay-tatra</title>
+  <rect x="4" y="12" width="56" height="40" rx="8" fill="#0f766e"/>
+  <rect x="4" y="22" width="56" height="8" fill="#134e4a"/>
+  <rect x="12" y="38" width="18" height="6" rx="2" fill="#ccfbf1"/>
+  <path d="M40 34 L48 46 L56 34" fill="none" stroke="#ccfbf1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

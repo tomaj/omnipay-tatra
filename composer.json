@@ -39,6 +39,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.90",
+        "guzzlehttp/guzzle": "^7.9",
         "guzzlehttp/psr7": "^2.7",
         "infection/infection": "^0.35",
         "php-http/mock-client": "^1.6",
