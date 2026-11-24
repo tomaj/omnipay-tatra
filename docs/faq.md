@@ -56,11 +56,11 @@ does exactly this.
 The reload is a correctly signed callback and verifies again. Change the order only on its first successful return,
 like the [shop example](/examples/shop#the-return-url).
 
-## completePurchase() rejects the simulator's AES or DES return with "incorect signature"
+## completePurchase() rejects a TatraPay return with a specific symbol
 
-You set `ss`. payment-simulator signs its TatraPay AES and DES returns over `VS RES`, the library verifies
-`VS SS RES`; leave `ss` empty for those key types in test mode. HMAC returns include `SS` on both sides. See
-[Test mode](/guide/test-mode#payment-simulator).
+Pass the same `ss` to `completePurchase()` as to `purchase()`. The bank signs the return over it (`VS SS RES` with AES
+and DES keys, `AMT CURR VS SS CS RES TID TIMESTAMP` with HMAC keys), and so does payment-simulator. See the
+[TatraPay example](/examples/tatrapay#_5-with-a-specific-symbol).
 
 ## Is there a notification from the bank to my server?
 
