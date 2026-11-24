@@ -9,6 +9,11 @@ CardPay takes card payments on Tatra banka's page. Besides a plain payment it su
 capture, reverse or refund later with a server-to-server request. `authorize()` and `cancelAuthorize()` need an HMAC
 key.
 
+::: tip Runnable examples
+[CardPay with HMAC and AES](/examples/cardpay) and [Pre-authorization and capture](/examples/cardpay-preauthorization)
+run against payment-simulator in CI.
+:::
+
 ## purchase() and completePurchase()
 
 <<< @/snippets/cardpay-purchase.php#snippet
@@ -26,6 +31,11 @@ signature; with an HMAC key the message contains the signed data to help debuggi
 ## authorize() and completeAuthorize()
 
 A pre-authorization (`TXN=PA`) blocks the amount on the card:
+
+<figure class="ot-diagram">
+  <img class="light-only" src="/diagrams/flow-preauthorization-light.svg" alt="Sequence: authorize() redirects to the bank, the bank blocks the amount and redirects back with RES, TID and HMAC, completeAuthorize() verifies and stores the TID, cancelAuthorize() captures, releases or refunds with a server-to-server request answered by a signed XML" width="760" height="512">
+  <img class="dark-only" src="/diagrams/flow-preauthorization-dark.svg" alt="Sequence: authorize() redirects to the bank, the bank blocks the amount and redirects back with RES, TID and HMAC, completeAuthorize() verifies and stores the TID, cancelAuthorize() captures, releases or refunds with a server-to-server request answered by a signed XML" width="760" height="512">
+</figure>
 
 <<< @/snippets/cardpay-authorize.php#authorize
 

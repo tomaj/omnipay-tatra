@@ -1,0 +1,15 @@
+checkout 24.90: HTTP 302 to http://127.0.0.1:8080/payment/tatrapay-hmac
+  simulator: Sign OK
+  return (ok):           HTTP 200 order 2026101: paid
+  reload the return URL: HTTP 200 order 2026101 was already paid
+  order page:            HTTP 200 order 2026101: paid, 24.90 EUR
+checkout 5.00: HTTP 302 to http://127.0.0.1:8080/payment/tatrapay-hmac
+  simulator: Sign OK
+  edited to RES=OK:      HTTP 400 rejected: incorect signature
+  return (fail):         HTTP 200 order 2026102: failed
+checkout 7.50: HTTP 302 to http://127.0.0.1:8080/payment/tatrapay-hmac
+  simulator: Sign OK
+  return (timeout):      HTTP 200 order 2026103: pending
+replay
+  VS changed to 2026102: HTTP 400 rejected: incorect signature
+  order page:            HTTP 200 order 2026102: failed, 5.00 EUR

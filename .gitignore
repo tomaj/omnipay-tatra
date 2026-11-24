@@ -7,3 +7,6 @@ docs/node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
 .idea/
+/examples/*/vendor/
+/examples/*/composer.lock
+/examples/shop/var/

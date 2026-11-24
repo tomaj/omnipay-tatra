@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Check the snippet imports, build the VitePress site, and check links at the real GitHub Pages base.
+# Check the snippet imports and the SVGs, build the VitePress site, and check links at the real GitHub Pages base.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -9,8 +9,10 @@ base="/omnipay-tatra/"
 
 
 python3 scripts/check-snippets.py
+python3 scripts/check-svg.py
 
 npm run docs:build
+python3 scripts/check-svg.py .vitepress/dist
 
 if curl -sf -o /dev/null "http://127.0.0.1:${port}${base}"; then
   echo "Port ${port} is already in use" >&2

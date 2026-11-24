@@ -1,0 +1,45 @@
+name: Examples
+
+# Runs the e2e.sh of every example in examples/ against the code of the push or pull request: each example installs
+# tomaj/omnipay-tatra from this checkout through a Composer path repository (examples/ci/example.sh) and sends its
+# payments to a payment-simulator started on the PHP built-in server (examples/ci/start-simulator.sh).
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+# a new push to a pull request cancels its older run
+concurrency:
+  group: examples-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  examples:
+    name: Example ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [tatrapay, cardpay, cardpay-preauthorization, comfortpay-recurring, shop, signatures]
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122 # main after 2.40.0 (PHP 8.6 stable)
+      with:
+        php-version: '8.4'
+        extensions: mbstring, xml, soap, openssl, iconv
+        coverage: none
+
+    - name: Run examples/${{ matrix.example }}/e2e.sh
+      env:
+        EXAMPLE: ${{ matrix.example }}
+      run: examples/ci/example.sh "$EXAMPLE"

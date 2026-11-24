@@ -29,6 +29,8 @@ Every gateway works the same way:
    signature in the query string.
 3. **Complete purchase**: on the return URL, verify the signature and the variable symbol, then mark the order paid.
 
+[How a payment works](./payment-flow) explains each step with a diagram.
+
 ## Redirect the customer
 
 <<< @/snippets/tatrapay-purchase.php#snippet
@@ -48,8 +50,26 @@ With HMAC keys the bank signs the amount, so a callback for a different amount f
 signatures do not cover the amount: compare it with the order before you ship.
 :::
 
+## Run it against the simulator
+
+You do not need a contract to try the flow. Start [payment-simulator](https://github.com/tomaj/payment-simulator)
+locally, which accepts the requests signed with its public test keys and answers like the bank:
+
+```bash
+git clone https://github.com/tomaj/omnipay-tatra.git && cd omnipay-tatra
+examples/ci/start-simulator.sh          # clones payment-simulator and serves it at http://127.0.0.1:8080
+examples/ci/example.sh tatrapay         # composer install + run examples/tatrapay/run.php
+```
+
+The [TatraPay example](/examples/tatrapay) redirects to the simulator, follows each of the bank's answers back and
+verifies it; this is its real output, compared in CI on every change:
+
+<<< @/../examples/tatrapay/expected-output.txt{text}
+
 ## Next steps
 
 - [Configuration](./configuration): every gateway parameter and how the key selects the algorithm
 - [TatraPay](./tatrapay), [CardPay](./cardpay), [ComfortPay](./comfortpay): all operations of each service
 - [Test mode](./test-mode): try the flow without the bank
+- [Examples](/examples/): complete recipes, from a shop's return URL to a ComfortPay subscription
+- [Error handling](./errors) and [Security](/security) before you go live

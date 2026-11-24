@@ -1,15 +1,149 @@
+/*
+ * omnipay-tatra: Tatra banka black and yellow. The omnipay-* packages share the layout of this file and swap the
+ * palette (--ot-primary is the square of the logo, --ot-accent the card).
+ */
 :root {
-  --vp-c-brand-1: #0f766e;
-  --vp-c-brand-2: #0d9488;
-  --vp-c-brand-3: #14b8a6;
-  --vp-c-brand-soft: rgba(15, 118, 110, 0.14);
+  --ot-primary: #141414;
+  --ot-accent: #ffd200;
+  --ot-accent-hover: #f2c500;
+  --ot-soft: #fff6c7;
+
+  --vp-c-brand-1: #8a6500;
+  --vp-c-brand-2: #a37800;
+  --vp-c-brand-3: #141414;
+  --vp-c-brand-soft: rgba(255, 210, 0, 0.22);
+
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #141414;
+  --vp-button-brand-bg: var(--ot-accent);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #141414;
+  --vp-button-brand-hover-bg: var(--ot-accent-hover);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #141414;
+  --vp-button-brand-active-bg: var(--ot-accent-hover);
 
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(120deg, #0f766e 0%, #1d4ed8 100%);
+  --vp-home-hero-name-background: linear-gradient(120deg, #141414 30%, #8a6500 100%);
+  --vp-home-hero-image-background-image: radial-gradient(circle at 50% 50%, rgba(255, 210, 0, 0.45), rgba(255, 210, 0, 0) 68%);
+  --vp-home-hero-image-filter: blur(44px);
+
+  --vp-c-tip-1: #8a6500;
+  --vp-c-tip-soft: rgba(255, 210, 0, 0.16);
+
+  --vp-code-color: #6b4f00;
 }
 
 .dark {
-  --vp-c-brand-1: #2dd4bf;
-  --vp-c-brand-2: #14b8a6;
-  --vp-c-brand-3: #0d9488;
+  --ot-primary: #ffd200;
+  --ot-accent: #ffd200;
+  --ot-soft: rgba(255, 210, 0, 0.14);
+
+  --vp-c-brand-1: #ffd200;
+  --vp-c-brand-2: #f2c500;
+  --vp-c-brand-3: #ffd200;
+  --vp-c-brand-soft: rgba(255, 210, 0, 0.16);
+
+  --vp-home-hero-name-background: linear-gradient(120deg, #ffd200 20%, #fff2a8 100%);
+  --vp-home-hero-image-background-image: radial-gradient(circle at 50% 50%, rgba(255, 210, 0, 0.22), rgba(255, 210, 0, 0) 68%);
+
+  --vp-c-tip-1: #ffd200;
+  --vp-c-tip-soft: rgba(255, 210, 0, 0.12);
+
+  --vp-code-color: #f3e5a6;
+}
+
+/* the hero illustration carries text: give it more room than the default 192/256/320 px */
+.VPHero .image-container {
+  width: 300px;
+  height: 260px;
+}
+.VPHero .image-src {
+  max-width: 300px;
+  max-height: 260px;
+}
+@media (min-width: 640px) {
+  .VPHero .image-container {
+    width: 400px;
+    height: 340px;
+  }
+  .VPHero .image-src {
+    max-width: 400px;
+    max-height: 340px;
+  }
+}
+@media (min-width: 960px) {
+  .VPHero .image-container {
+    width: 480px;
+    height: 420px;
+  }
+  .VPHero .image-src {
+    max-width: 480px;
+    max-height: 420px;
+  }
+}
+
+/* links inside text stay readable on white: dark gold, underlined on hover */
+.vp-doc a {
+  text-underline-offset: 3px;
+}
+
+/* feature icons: inline SVGs drawn with these classes, so one icon serves both themes */
+.ot-icon .ot-soft { fill: var(--ot-soft); }
+.ot-icon .ot-ink { fill: none; stroke: var(--vp-c-text-1); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ot-icon .ot-ink-f { fill: var(--vp-c-text-1); }
+.ot-icon .ot-acc { fill: var(--ot-accent); stroke: var(--vp-c-text-1); stroke-width: 2.2; stroke-linejoin: round; }
+.ot-icon .ot-mark { fill: none; stroke: #141414; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.VPFeature .icon {
+  background-color: var(--ot-soft);
+  width: 56px;
+  height: 56px;
+}
+
+/* "Where to go next" cards on the home page */
+.ot-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 16px 0 8px;
+}
+.ot-cards a {
+  display: block;
+  padding: 16px 18px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.ot-cards a:hover {
+  border-color: var(--vp-c-brand-1);
+}
+.ot-cards strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.ot-cards span {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* diagrams: the light or the dark SVG */
+.ot-diagram {
+  margin: 20px auto;
+  max-width: 720px;
+}
+.ot-diagram img {
+  width: 100%;
+  height: auto;
+}
+.ot-diagram .dark-only,
+.dark .ot-diagram .light-only {
+  display: none;
+}
+.dark .ot-diagram .dark-only {
+  display: block;
 }

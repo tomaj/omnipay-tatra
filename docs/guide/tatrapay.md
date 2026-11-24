@@ -6,7 +6,12 @@ description: TatraPay payments from Tatra banka internet banking with omnipay-ta
 # TatraPay
 
 TatraPay lets the customer pay from Tatra banka internet banking. The gateway has two requests: `purchase()` builds the
-signed redirect, `completePurchase()` verifies the customer's return.
+signed redirect, `completePurchase()` verifies the customer's return ([how a payment works](./payment-flow)).
+
+::: tip Runnable example
+[TatraPay round trip](/examples/tatrapay) runs this flow against payment-simulator in CI, including a forged and a
+foreign callback.
+:::
 
 ## purchase()
 
@@ -43,3 +48,11 @@ signed string). The request:
 | `getRes()` | `OK`, `FAIL` or `TOUT` |
 | `getVs()` | the verified variable symbol |
 | `getData()` | `['RES' => ..., 'VS' => ...]` |
+
+`CompletePurchaseResponse::TIMEOUT` is the `'TOUT'` constant, `AbstractCallbackResponse::SUCCESS` is `'OK'`.
+
+## Timeouts
+
+`RES=TOUT` means the bank did not get a final answer in time. Do not mark the order paid or failed: keep it pending.
+Tatra banka sends the final result to the e-mail address in `rem` (and by SMS to `rsms`), so set `rem` to an address
+your shop reads.

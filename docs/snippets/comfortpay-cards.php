@@ -19,7 +19,7 @@ $status = $gateway->checkCard(['cardId' => '5552'])->send()->getCardStatus(); //
 $transaction = $gateway->checkTransaction(['transactionId' => '20261122001'])->send();
 $approved = $transaction->isSuccessful(); // transactionStatus 00
 
-// cards that expire after a date, and the expiration of given cards
+// cards that expire in a month (the day is ignored), and the expiration of given cards
 $expired = $gateway->listOfExpired(['expDate' => '2026-12-31'])->send()->getExpires();         // [['id' => ...], ...]
 $expirations = $gateway->listOfExpirePerId(['cardIds' => ['5551', '5552']])->send()->getExpires(); // [['id' => ..., 'date' => 'MMYY'], ...]
 
