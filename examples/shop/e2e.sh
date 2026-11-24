@@ -11,7 +11,7 @@ rm -f var/orders.json
 log="$(mktemp)"
 php -d display_errors=0 -d log_errors=1 -S "${SHOP_URL#http://}" -t public public/index.php > "$log" 2>&1 &
 SHOP=$!
-trap 'kill $SHOP 2>/dev/null; wait $SHOP 2>/dev/null; rm -f "$log"' EXIT
+trap 'kill $SHOP 2>/dev/null; wait $SHOP 2>/dev/null || true; rm -f "$log"' EXIT
 for _ in $(seq 1 50); do curl -s -o /dev/null "$SHOP_URL/orders/0" && break; sleep 0.1; done
 
 if ! diff -u expected-output.txt <(php -d display_errors=stderr customer.php); then
