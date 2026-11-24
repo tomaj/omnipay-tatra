@@ -4,5 +4,5 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 [[ -f vendor/autoload.php ]] || { echo "fail: vendor/ is missing, run composer install first" >&2; exit 1; }
-diff -u expected-output.txt <(php run.php)
+diff -u expected-output.txt <(php -d display_errors=stderr run.php)
 echo "ok: cardpay-preauthorization"
