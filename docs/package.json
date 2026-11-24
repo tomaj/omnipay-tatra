@@ -11,6 +11,7 @@
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
     "docs:links": "bash scripts/check-links.sh",
+    "docs:locales": "python3 scripts/check-locales.py",
     "images": "python3 scripts/illustrations.py && node scripts/og-image.mjs"
   },
   "license": "MIT",

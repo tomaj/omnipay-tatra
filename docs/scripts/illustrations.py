@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Writes the logo, favicon, hero illustration and social card SVGs into docs/public.
+"""Writes the logo, favicon, hero illustration, diagrams and social card SVGs into docs/public.
+
+The hero and the diagrams are written in English and in Slovak (`-sk` files, used by the pages under docs/sk/).
 
 Each drawing exists once, with colour tokens; the light and dark files only swap the palette. Run it after a change,
 then `node scripts/og-image.mjs` for the PNG icons and og.png (or `npm run images` for both).
@@ -51,11 +53,11 @@ def check(x: float, y: float, color: str, width: float = 2.5) -> str:
     return f'<path d="M{x} {y}l4 4 8-9" fill="none" stroke="{color}" stroke-width="{width}" stroke-linecap="round" stroke-linejoin="round"/>'
 
 
-def hero(c: dict[str, str]) -> str:
+def hero(c: dict[str, str], t: dict[str, str]) -> str:
     """The flow: the shop redirects with a signed request, the bank sends the customer back, completePurchase() verifies."""
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 440" width="520" height="440" role="img" aria-labelledby="t d">
-  <title id="t">TatraPay payment flow</title>
-  <desc id="d">The shop redirects the customer to Tatra banka with a signed request, the bank sends the customer back with a signed result, and completePurchase() verifies the signature and the variable symbol before the order is paid.</desc>
+  <title id="t">{t['title']}</title>
+  <desc id="d">{t['desc']}</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="{c['arrow']}"/>
@@ -66,16 +68,16 @@ def hero(c: dict[str, str]) -> str:
   <rect x="16" y="20" width="232" height="176" rx="14" fill="{c['panel']}" stroke="{c['line']}" stroke-width="1.5"/>
   <path d="M16 34a14 14 0 0 1 14-14h204a14 14 0 0 1 14 14v12H16z" fill="{c['bar']}"/>
   <circle cx="34" cy="34" r="4" fill="{c['line']}"/><circle cx="48" cy="34" r="4" fill="{c['line']}"/><circle cx="62" cy="34" r="4" fill="{c['line']}"/>
-  <text x="80" y="38" {FONT} font-size="12" fill="{c['muted']}">shop.example/checkout</text>
-  <text x="36" y="78" {FONT} font-size="14" fill="{c['muted']}">Order 2026001</text>
-  <text x="36" y="112" {FONT} font-size="28" font-weight="700" fill="{c['ink']}">24.90 €</text>
+  <text x="80" y="38" {FONT} font-size="12" fill="{c['muted']}">{t['url']}</text>
+  <text x="36" y="78" {FONT} font-size="14" fill="{c['muted']}">{t['order']}</text>
+  <text x="36" y="112" {FONT} font-size="28" font-weight="700" fill="{c['ink']}">{t['amount']}</text>
   <rect x="36" y="134" width="124" height="40" rx="9" fill="{c['yellow']}"/>
-  <text x="98" y="159" {FONT} font-size="15" font-weight="700" fill="{c['on_yellow']}" text-anchor="middle">Pay by card</text>
+  <text x="98" y="159" {FONT} font-size="15" font-weight="700" fill="{c['on_yellow']}" text-anchor="middle">{t['pay']}</text>
 
   <!-- signed redirect -->
   <path d="M252 72C350 72 392 78 392 112" fill="none" stroke="{c['arrow']}" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
   <text x="268" y="58" {MONO} font-size="12" fill="{c['ink']}">purchase()</text>
-  <text x="268" y="96" {FONT} font-size="11" fill="{c['muted']}">signed redirect</text>
+  <text x="268" y="96" {FONT} font-size="11" fill="{c['muted']}">{t['redirect']}</text>
 
   <!-- the bank's payment page -->
   <rect x="272" y="120" width="232" height="190" rx="14" fill="{c['panel']}" stroke="{c['line']}" stroke-width="1.5"/>
@@ -90,20 +92,20 @@ def hero(c: dict[str, str]) -> str:
   <text x="426" y="226" {MONO} font-size="11" fill="{c['muted']}">HMAC</text>
   {check(461, 219, c['ok'], 2.2)}
   <rect x="290" y="264" width="196" height="32" rx="8" fill="{c['ink']}"/>
-  <text x="388" y="285" {FONT} font-size="13" font-weight="600" fill="{c['panel']}" text-anchor="middle">Confirm payment</text>
+  <text x="388" y="285" {FONT} font-size="13" font-weight="600" fill="{c['panel']}" text-anchor="middle">{t['confirm']}</text>
 
   <!-- signed return -->
   <path d="M392 314C392 364 352 370 272 370" fill="none" stroke="{c['arrow']}" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
   <text x="404" y="346" {MONO} font-size="12" fill="{c['ink']}">RES=OK</text>
-  <text x="404" y="364" {FONT} font-size="11" fill="{c['muted']}">signed return</text>
+  <text x="404" y="364" {FONT} font-size="11" fill="{c['muted']}">{t['return']}</text>
 
   <!-- verification -->
   <rect x="16" y="318" width="250" height="104" rx="14" fill="{c['ok_soft']}" stroke="{c['ok']}" stroke-width="1.5"/>
   <circle cx="56" cy="370" r="22" fill="{c['ok']}"/>
   {check(46, 370, c['ok_soft'], 3.5)}
   <text x="92" y="354" {MONO} font-size="13" font-weight="700" fill="{c['ink']}">completePurchase()</text>
-  <text x="92" y="378" {FONT} font-size="12" fill="{c['muted']}">signature and VS verified</text>
-  <text x="92" y="402" {FONT} font-size="13" font-weight="700" fill="{c['ok']}">order 2026001 paid</text>
+  <text x="92" y="378" {FONT} font-size="12" fill="{c['muted']}">{t['verified']}</text>
+  <text x="92" y="402" {FONT} font-size="13" font-weight="700" fill="{c['ok']}">{t['paid']}</text>
 </svg>
 """
 
@@ -122,7 +124,7 @@ def og(c: dict[str, str]) -> str:
   <text x="80" y="476" {FONT} font-size="34" fill="{c['muted']}">TatraPay, CardPay, ComfortPay</text>
   <text x="80" y="566" {MONO} font-size="26" fill="{c['ink']}">composer require tomaj/omnipay-tatra</text>
   <g transform="translate(700 70) scale(0.95)">
-    {hero(c).split('</defs>', 1)[1].rsplit('</svg>', 1)[0]}
+    {hero(c, HERO['']).split('</defs>', 1)[1].rsplit('</svg>', 1)[0]}
   </g>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -171,48 +173,112 @@ def sequence(c: dict[str, str], title: str, desc: str, lanes: list[str], steps: 
     return "\n".join(out)
 
 
+# Labels per language. English files keep their names; Slovak files get a -sk suffix
+# (illustrations/hero-sk-light.svg, diagrams/flow-tatrapay-sk-dark.svg …) and are used by the pages under docs/sk/.
+HERO = {
+    "": {
+        "title": "TatraPay payment flow",
+        "desc": "The shop redirects the customer to Tatra banka with a signed request, the bank sends the customer back with a signed result, and completePurchase() verifies the signature and the variable symbol before the order is paid.",
+        "url": "shop.example/checkout", "order": "Order 2026001", "amount": "24.90 €", "pay": "Pay by card",
+        "redirect": "signed redirect", "confirm": "Confirm payment", "return": "signed return",
+        "verified": "signature and VS verified", "paid": "order 2026001 paid",
+    },
+    "-sk": {
+        "title": "Priebeh platby TatraPay",
+        "desc": "E-shop presmeruje zákazníka do Tatra banky s podpísanou požiadavkou, banka ho vráti s podpísaným výsledkom a completePurchase() overí podpis a variabilný symbol skôr, než sa objednávka označí ako zaplatená.",
+        "url": "obchod.example/pokladna", "order": "Objednávka 2026001", "amount": "24,90 €", "pay": "Zaplatiť",
+        "redirect": "podpísaná požiadavka", "confirm": "Potvrdiť platbu", "return": "podpísaný návrat",
+        "verified": "podpis a VS overené", "paid": "objednávka zaplatená",
+    },
+}
+
 DIAGRAMS = {
-    "flow-tatrapay": (
-        "TatraPay and CardPay payment flow",
-        "The customer pays in the shop, purchase() redirects them to Tatra banka with a signed request, the bank redirects them back to the return URL with a signed result, and completePurchase() verifies the signature and the variable symbol before the shop marks the order paid.",
-        ["Customer's browser", "Your shop", "Tatra banka"],
-        [
-            (0, 1, "Pay 24.90 €", "the order gets VS 2026001"),
-            (1, 0, "302 to the bank", "purchase(): MID AMT CURR VS RURL … HMAC"),
-            (0, 2, "GET payment page", "the signed query string"),
-            (2, None, "the customer pays", "card, internet banking"),
-            (2, 0, "302 to RURL", "VS RES … TIMESTAMP HMAC"),
-            (0, 1, "GET /payment/return", "the bank's signed answer"),
-            (1, None, "completePurchase()", "signature + VS, then isSuccessful()"),
-        ],
-    ),
-    "flow-preauthorization": (
-        "CardPay pre-authorization, capture and refund",
-        "authorize() redirects the customer to block the amount, completeAuthorize() verifies the return and gives the transaction id, and cancelAuthorize() captures, releases or refunds it with a server-to-server request whose XML answer is signed.",
-        ["Customer's browser", "Your shop", "Tatra banka"],
-        [
-            (1, 0, "302 to the bank", "authorize(): TXN=PA, 3-D Secure data"),
-            (0, 2, "GET payment page", "the card is checked, the amount blocked"),
-            (2, 0, "302 to RURL", "RES=OK TID AC CC … HMAC"),
-            (0, 1, "GET return URL", "the bank's signed answer"),
-            (1, None, "completeAuthorize()", "verify, store the TID"),
-            (1, 2, "cancelAuthorize()", "TXN=CPA capture · SPA release · CB refund"),
-            (2, 1, "XML &lt;res&gt;OK&lt;/res&gt;", "Authorization: HMAC=… over the body"),
-        ],
-    ),
-    "flow-comfortpay": (
-        "ComfortPay card registration and recurring charges",
-        "The first payment registers the card (TPAY=Y) and the return carries the card id CID; later charges go to the ComfortPay SOAP web service with the CID, authenticated by the merchant's client certificate.",
-        ["Customer's browser", "Your shop", "Tatra banka"],
-        [
-            (1, 0, "302 to the bank", "purchase(): TPAY=Y"),
-            (2, 0, "302 to RURL", "RES=OK CID=111111 … HMAC"),
-            (0, 1, "GET return URL", "the bank's signed answer"),
-            (1, None, "completePurchase()", "verify, store the CID"),
-            (1, 2, "charge() over SOAP", "referedCardId=CID, client certificate"),
-            (2, 1, "transactionStatus 00", "approved; a fault with a code otherwise"),
-        ],
-    ),
+    "": {
+        "flow-tatrapay": (
+            "TatraPay and CardPay payment flow",
+            "The customer pays in the shop, purchase() redirects them to Tatra banka with a signed request, the bank redirects them back to the return URL with a signed result, and completePurchase() verifies the signature and the variable symbol before the shop marks the order paid.",
+            ["Customer's browser", "Your shop", "Tatra banka"],
+            [
+                (0, 1, "Pay 24.90 €", "the order gets VS 2026001"),
+                (1, 0, "302 to the bank", "purchase(): MID AMT CURR VS RURL … HMAC"),
+                (0, 2, "GET payment page", "the signed query string"),
+                (2, None, "the customer pays", "card, internet banking"),
+                (2, 0, "302 to RURL", "VS RES … TIMESTAMP HMAC"),
+                (0, 1, "GET /payment/return", "the bank's signed answer"),
+                (1, None, "completePurchase()", "signature + VS, then isSuccessful()"),
+            ],
+        ),
+        "flow-preauthorization": (
+            "CardPay pre-authorization, capture and refund",
+            "authorize() redirects the customer to block the amount, completeAuthorize() verifies the return and gives the transaction id, and cancelAuthorize() captures, releases or refunds it with a server-to-server request whose XML answer is signed.",
+            ["Customer's browser", "Your shop", "Tatra banka"],
+            [
+                (1, 0, "302 to the bank", "authorize(): TXN=PA, 3-D Secure data"),
+                (0, 2, "GET payment page", "the card is checked, the amount blocked"),
+                (2, 0, "302 to RURL", "RES=OK TID AC CC … HMAC"),
+                (0, 1, "GET return URL", "the bank's signed answer"),
+                (1, None, "completeAuthorize()", "verify, store the TID"),
+                (1, 2, "cancelAuthorize()", "TXN=CPA capture · SPA release · CB refund"),
+                (2, 1, "XML &lt;res&gt;OK&lt;/res&gt;", "Authorization: HMAC=… over the body"),
+            ],
+        ),
+        "flow-comfortpay": (
+            "ComfortPay card registration and recurring charges",
+            "The first payment registers the card (TPAY=Y) and the return carries the card id CID; later charges go to the ComfortPay SOAP web service with the CID, authenticated by the merchant's client certificate.",
+            ["Customer's browser", "Your shop", "Tatra banka"],
+            [
+                (1, 0, "302 to the bank", "purchase(): TPAY=Y"),
+                (2, 0, "302 to RURL", "RES=OK CID=111111 … HMAC"),
+                (0, 1, "GET return URL", "the bank's signed answer"),
+                (1, None, "completePurchase()", "verify, store the CID"),
+                (1, 2, "charge() over SOAP", "referedCardId=CID, client certificate"),
+                (2, 1, "transactionStatus 00", "approved; a fault with a code otherwise"),
+            ],
+        ),
+    },
+    "-sk": {
+        "flow-tatrapay": (
+            "Priebeh platby TatraPay a CardPay",
+            "Zákazník zaplatí v e-shope, purchase() ho presmeruje do Tatra banky s podpísanou požiadavkou, banka ho vráti na návratovú URL s podpísaným výsledkom a completePurchase() overí podpis a variabilný symbol skôr, než e-shop označí objednávku ako zaplatenú.",
+            ["Prehliadač zákazníka", "Váš e-shop", "Tatra banka"],
+            [
+                (0, 1, "Zaplatiť 24,90 €", "objednávka dostane VS 2026001"),
+                (1, 0, "302 do banky", "purchase(): MID AMT CURR VS RURL … HMAC"),
+                (0, 2, "GET platobná stránka", "podpísané parametre v URL"),
+                (2, None, "zákazník zaplatí", "karta, internet banking"),
+                (2, 0, "302 na RURL", "VS RES … TIMESTAMP HMAC"),
+                (0, 1, "GET /payment/return", "podpísaná odpoveď banky"),
+                (1, None, "completePurchase()", "podpis + VS, potom isSuccessful()"),
+            ],
+        ),
+        "flow-preauthorization": (
+            "CardPay: predautorizácia, dokončenie a vrátenie platby",
+            "authorize() presmeruje zákazníka, aby sa suma zablokovala, completeAuthorize() overí návrat a vráti ID transakcie a cancelAuthorize() predautorizáciu dokončí, zruší alebo platbu vráti server-to-server požiadavkou, na ktorú banka odpovie podpísaným XML.",
+            ["Prehliadač zákazníka", "Váš e-shop", "Tatra banka"],
+            [
+                (1, 0, "302 do banky", "authorize(): TXN=PA, údaje pre 3-D Secure"),
+                (0, 2, "GET platobná stránka", "karta sa overí, suma sa zablokuje"),
+                (2, 0, "302 na RURL", "RES=OK TID AC CC … HMAC"),
+                (0, 1, "GET návratová URL", "podpísaná odpoveď banky"),
+                (1, None, "completeAuthorize()", "overiť, uložiť TID"),
+                (1, 2, "cancelAuthorize()", "TXN=CPA dokončenie · SPA zrušenie · CB vrátenie"),
+                (2, 1, "XML &lt;res&gt;OK&lt;/res&gt;", "Authorization: HMAC=… z tela odpovede"),
+            ],
+        ),
+        "flow-comfortpay": (
+            "ComfortPay: registrácia karty a opakované platby",
+            "Prvá platba zaregistruje kartu (TPAY=Y) a návrat obsahuje ID karty CID; ďalšie platby idú cez webovú službu ComfortPay (SOAP) s CID, overené klientskym certifikátom obchodníka.",
+            ["Prehliadač zákazníka", "Váš e-shop", "Tatra banka"],
+            [
+                (1, 0, "302 do banky", "purchase(): TPAY=Y"),
+                (2, 0, "302 na RURL", "RES=OK CID=111111 … HMAC"),
+                (0, 1, "GET návratová URL", "podpísaná odpoveď banky"),
+                (1, None, "completePurchase()", "overiť, uložiť CID"),
+                (1, 2, "charge() cez SOAP", "referedCardId=CID, klientsky certifikát"),
+                (2, 1, "transactionStatus 00", "schválené; inak chyba s kódom"),
+            ],
+        ),
+    },
 }
 
 
@@ -226,12 +292,14 @@ def main() -> None:
     write(PUBLIC / "logo.svg", logo(LIGHT))
     write(PUBLIC / "logo-dark.svg", logo(DARK))
     write(PUBLIC / "favicon.svg", logo(LIGHT))
-    write(PUBLIC / "illustrations" / "hero-light.svg", hero(LIGHT))
-    write(PUBLIC / "illustrations" / "hero-dark.svg", hero(DARK))
+    for suffix, strings in HERO.items():
+        write(PUBLIC / "illustrations" / f"hero{suffix}-light.svg", hero(LIGHT, strings))
+        write(PUBLIC / "illustrations" / f"hero{suffix}-dark.svg", hero(DARK, strings))
     write(PUBLIC / "og.svg", og(LIGHT))
-    for name, (title, desc, lanes, steps) in DIAGRAMS.items():
-        write(PUBLIC / "diagrams" / f"{name}-light.svg", sequence(LIGHT, title, desc, lanes, steps))
-        write(PUBLIC / "diagrams" / f"{name}-dark.svg", sequence(DARK, title, desc, lanes, steps))
+    for suffix, diagrams in DIAGRAMS.items():
+        for name, (title, desc, lanes, steps) in diagrams.items():
+            write(PUBLIC / "diagrams" / f"{name}{suffix}-light.svg", sequence(LIGHT, title, desc, lanes, steps))
+            write(PUBLIC / "diagrams" / f"{name}{suffix}-dark.svg", sequence(DARK, title, desc, lanes, steps))
 
 
 if __name__ == "__main__":
