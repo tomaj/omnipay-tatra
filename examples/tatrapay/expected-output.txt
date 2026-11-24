@@ -1,0 +1,16 @@
+redirect: http://127.0.0.1:8080/payment/tatrapay-hmac
+  PT        TatraPay
+  MID       9999
+  AMT       24.90
+  CURR      978
+  VS        2026001
+  RURL      https://shop.example/payment/return
+  REM       orders@shop.example
+  LANG      sk
+  HMAC      64 hex characters
+simulator: Sign OK
+ok       -> paid, VS 2026001
+fail     -> not paid (RES=FAIL)
+timeout  -> pending (RES=TOUT), wait for the bank
+forged   -> rejected: incorect signature
+foreign  -> rejected: Variable symbol mismatch

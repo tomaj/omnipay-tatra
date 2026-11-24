@@ -1,10 +1,15 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://tomaj.github.io/omnipay-tatra/logo-dark.svg">
+  <img src="https://tomaj.github.io/omnipay-tatra/logo.svg" alt="omnipay-tatra logo" width="88" align="right">
+</picture>
+
 # Omnipay: Tatra banka
 
 **Tatra banka (TatraPay, CardPay, ComfortPay) gateways for the Omnipay payment processing library**
 
 **Documentation: https://tomaj.github.io/omnipay-tatra/**
 
-[Getting started](https://tomaj.github.io/omnipay-tatra/guide/getting-started) · [API reference](https://tomaj.github.io/omnipay-tatra/api/reference) · [Changelog](https://tomaj.github.io/omnipay-tatra/changelog)
+[Getting started](https://tomaj.github.io/omnipay-tatra/guide/getting-started) · [Examples](https://tomaj.github.io/omnipay-tatra/examples/) · [API reference](https://tomaj.github.io/omnipay-tatra/api/reference) · [Changelog](https://tomaj.github.io/omnipay-tatra/changelog)
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/tomaj/omnipay-tatra.svg)](https://packagist.org/packages/tomaj/omnipay-tatra)
 [![CI](https://github.com/tomaj/omnipay-tatra/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/tomaj/omnipay-tatra/actions/workflows/ci.yml?query=branch%3Amaster)
@@ -68,7 +73,7 @@ if ($response->isSuccessful()) {
 }
 ```
 
-`completePurchase()` throws `Omnipay\Common\Exception\InvalidRequestException` when the signature is wrong or the bank returned a different variable symbol. See the [documentation](https://tomaj.github.io/omnipay-tatra/) for CardPay, ComfortPay, test mode and the signatures.
+`completePurchase()` throws `Omnipay\Common\Exception\InvalidRequestException` when the signature is wrong or the bank returned a different variable symbol. See the [documentation](https://tomaj.github.io/omnipay-tatra/) for CardPay, ComfortPay, test mode and the signatures, and the [examples](examples/) for complete recipes that run against [payment-simulator](https://github.com/tomaj/payment-simulator) in CI.
 
 ## Contributing
 

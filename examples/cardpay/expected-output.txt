@@ -1,0 +1,14 @@
+HMAC key
+  redirect:  http://127.0.0.1:8080/payment/cardpay-hmac
+  signed in: HMAC + TIMESTAMP
+  simulator: Sign OK
+  ok   -> paid
+  fail -> declined (RES=FAIL)
+AES key
+  redirect:  http://127.0.0.1:8080/payment/cardpay-aes256
+  signed in: SIGN
+  simulator: Sign OK
+  ok   -> paid
+  fail -> declined (RES=FAIL)
+name with diacritics: The name parameter may contain only letters without diacritics, digits, space and the characters . - _ @
+transliterated: Jan Novak

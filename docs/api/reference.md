@@ -50,7 +50,9 @@ Base of every request: `getMid()`, `getSharedSecret()`, `getTestHost()`, `getVs(
 | `ComfortPay\Message\ListOfExpiredRequest` | `getExpDate()` | `ComfortPay\Message\ListOfExpiredResponse` |
 | `ComfortPay\Message\ListOfExpirePerIdRequest` | `getCardIds(): ?list<string>`, `setCardIds(?array)` | `ComfortPay\Message\ListOfExpirePerIdResponse` |
 
-The ComfortPay web service requests extend `ComfortPay\Message\AbstractSoapRequest` (abstract): constant `WSDL` (the
+The ComfortPay requests use `Omnipay\ComfortPay\ParametersTrait` for the web service parameters (`ws`,
+`terminalId`, `certPath`, `certPass`, `caFile`, `streamContext`, the proxy and `soapClient`, with the types listed for
+the gateway above). The ComfortPay web service requests extend `ComfortPay\Message\AbstractSoapRequest` (abstract): constant `WSDL` (the
 bundled `Teleplatba_1_0.wsdl`) and `getSoapClientOptions(): array`.
 
 ## Responses
@@ -88,6 +90,24 @@ compares in constant time.
 The 4.x constants `CancelAuthorizeRequest::TXN_*`, `ComfortPay\Gateway::TRANSACTION_TYPE_*` and `CARD_STATUS_*` still
 exist and are deprecated.
 
+## Constants
+
+| Constant | Value |
+|---|---|
+| `Core\Message\AbstractRequest::DEFAULT_TEST_HOST` | `'https://platby.tomaj.sk'` |
+| `Core\Message\AbstractCallbackResponse::SUCCESS` | `'OK'` |
+| `TatraPay\Message\CompletePurchaseResponse::TIMEOUT` | `'TOUT'` |
+| `CardPay\Message\AuthorizeRequest::TXN_VALUE` | `'PA'`, returned by `getTxn()` |
+| `CardPay\Message\CancelAuthorizeResponse::SUCCESS` | `'OK'` |
+| `ComfortPay\Message\CardTransactionResponse::STATUS_APPROVED` | `'00'` |
+| `ComfortPay\Message\AbstractSoapRequest::WSDL` | path of the bundled `Teleplatba_1_0.wsdl` |
+| `ComfortPay\Exception\ComfortPaySoapFault::GENERAL_ERROR` ... `PARENT_TRANSACTION_NOT_FOUND` | `50000` ... `50060`, see [ComfortPay](/guide/comfortpay#declines-and-errors) |
+
+Enum values: `TransactionType::Purchase` is `'PURCHASE'`, `Preauthorization` `'PREAUTHORIZATION'`, `PreauthConfirm`
+`'PREAUTH-CONFIRM'`, `PreauthCancel` `'PREAUTH-CANCEL'`, `Chargeback` `'CHARGEBACK'`; `requiresParentTransaction()`
+is `true` for `PreauthConfirm`, `PreauthCancel` and `Chargeback`. `CardStatus::Ok` is `'OK'`, `Fail` `'FAIL'`,
+`Unknown` `'UNKNOWN'`.
+
 ## Exceptions
 
 Every exception thrown by the package implements `Omnipay\Core\Exception\TatraException`, except Omnipay's own
@@ -99,6 +119,6 @@ Every exception thrown by the package implements `Omnipay\Core\Exception\TatraEx
 | `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL cannot compute the signature |
 | `Core\Exception\GatewayException` | `RuntimeException` | `cancelAuthorize()` gets an HTTP status other than 200 |
 | `Core\Exception\InvalidParameterException` | `UnexpectedValueException` | unsupported `txn` or `transactionType` |
-| `ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | a SOAP fault from the web service; `getErrorCode(): ?int`, `isReceiverFault(): bool` |
+| `ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | a SOAP fault from the web service; `getErrorCode(): ?int`, `isReceiverFault(): bool`, `static fromSoapFault(\SoapFault): self` |
 | `InvalidRequestException` (Omnipay) | | missing or invalid parameter, wrong callback signature, variable symbol mismatch |
 | `InvalidResponseException` (Omnipay) | | wrong signature or invalid XML in a response from the bank |

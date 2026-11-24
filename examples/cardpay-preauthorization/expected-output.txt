@@ -1,0 +1,8 @@
+redirect: http://127.0.0.1:8080/payment/cardpay-authorize-hmac
+  TXN=PA TPAY=Y TDS_EMAIL=jan.novak@example.com
+simulator: Sign OK
+authorized: OK, TID 567898, approval code 31232, card ************1234, card id 123456
+capture 110.00: OK
+release: OK
+refund: OK
+wrong key: FAIL, error code 10

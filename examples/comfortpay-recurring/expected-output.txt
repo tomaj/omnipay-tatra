@@ -1,0 +1,9 @@
+redirect: http://127.0.0.1:8080/payment/comfortpay-hmac (TPAY=Y)
+simulator: Sign OK
+first payment: OK, card 1111********1111 registered as 111111
+charged 9.90: transaction 202612001, status 00, approval 123
+even card id: declined, status 02
+check transaction: approved
+check card: Fail
+card expires: 0199 (MMYY)
+unregister card: removed

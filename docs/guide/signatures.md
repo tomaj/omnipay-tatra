@@ -67,6 +67,11 @@ printf '%s' "$DATA" | openssl dgst -sha1 -binary \
 On the return, the library signs the **expected** `VS` (and `SS`, `CS`, `AMT`, `CURR`) you pass to the request, not the
 values in the query string, and rejects a callback whose `VS` differs. The other fields come from the query string.
 
+## Check a signature yourself
+
+The [signatures example](/examples/signatures) builds a TatraPay request with each key type and compares the library's
+signature with the `openssl` commands above; CI runs it on every change.
+
 ## What you still check
 
 - The amount, for AES and DES keys: their return signatures do not cover it.

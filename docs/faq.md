@@ -44,3 +44,26 @@ as `testHost`.
 
 Yes: `new \Omnipay\TatraPay\Gateway($httpClient, $httpRequest)`. The callbacks read the query string from
 `$httpRequest`, so pass the request of the current page (`Request::createFromGlobals()`).
+
+## How do I find the order on the return URL?
+
+By the `VS` query parameter: look the order up by it, then pass that order's `vs`, `amount` and `currency` to
+`completePurchase()`. Never pass values from the query string as the expected ones. The [shop example](/examples/shop#the-return-url)
+does exactly this.
+
+## The customer reloaded the return URL. Is that a problem?
+
+The reload is a correctly signed callback and verifies again. Change the order only on its first successful return,
+like the [shop example](/examples/shop#the-return-url).
+
+## completePurchase() rejects the simulator's AES or DES return with "incorect signature"
+
+You set `ss`. payment-simulator signs its TatraPay AES and DES returns over `VS RES`, the library verifies
+`VS SS RES`; leave `ss` empty for those key types in test mode. HMAC returns include `SS` on both sides. See
+[Test mode](/guide/test-mode#payment-simulator).
+
+## Is there a notification from the bank to my server?
+
+Not for these gateways: the result arrives with the customer on the return URL. Set `rem` to get the result by
+e-mail as well, and `aredir` to `true` so that the bank sends the customer back without waiting for a click. An order
+whose customer never came back stays unpaid in your shop; check it against the e-mail or the bank's merchant portal.

@@ -9,6 +9,16 @@ ComfortPay is CardPay that registers the customer's card (`TPAY=Y`). The bank re
 charge the card later through Tatra banka's SOAP web service, for recurring payments for example. HMAC and AES keys are
 supported, DES is not.
 
+<figure class="ot-diagram">
+  <img class="light-only" src="/diagrams/flow-comfortpay-light.svg" alt="Sequence: purchase() with TPAY=Y redirects to the bank, the bank returns RES=OK with the card id CID, completePurchase() verifies and stores the CID; later charge() calls the SOAP web service with the CID and the client certificate" width="760" height="454">
+  <img class="dark-only" src="/diagrams/flow-comfortpay-dark.svg" alt="Sequence: purchase() with TPAY=Y redirects to the bank, the bank returns RES=OK with the card id CID, completePurchase() verifies and stores the CID; later charge() calls the SOAP web service with the CID and the client certificate" width="760" height="454">
+</figure>
+
+::: tip Runnable example
+[ComfortPay subscription](/examples/comfortpay-recurring) registers a card at payment-simulator and charges it in
+test mode, in CI.
+:::
+
 ## Register the card: purchase() and completePurchase()
 
 <<< @/snippets/comfortpay-purchase.php#purchase

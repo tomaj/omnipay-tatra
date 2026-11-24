@@ -12,6 +12,7 @@ points marked with **(action)**.
 **(action)** Pass the variable symbol of the order you expect. A callback for a different VS is rejected
 ([#33](https://github.com/tomaj/omnipay-tatra/issues/33)):
 
+<!-- snippet: skip -->
 ```php
 // 4.x: any correctly signed callback was successful; you had to compare getVs() yourself
 $response = $gateway->completePurchase(['amount' => '10.00', 'currency' => 'EUR'])->send();
@@ -31,6 +32,7 @@ The ComfortPay web service client verifies the certificate and host name of `com
 system CA store. **(action)** If your server's CA store cannot verify it, pass a CA bundle instead of turning the
 verification off:
 
+<!-- snippet: skip -->
 ```php
 $gateway->setCaFile('/etc/ssl/certs/ca-certificates.crt');
 // or full control over the TLS options:
@@ -44,6 +46,7 @@ the request factories (`$gateway->purchase([...])`) still accept integers becaus
 non-strict code, and the getters return the value as a string. **(action)** Only a direct setter call from a file with
 `declare(strict_types=1)` needs a string:
 
+<!-- snippet: skip -->
 ```php
 // 4.x
 $gateway->setMid(1111);
@@ -73,6 +76,7 @@ and `ComfortPay\Message\AbstractSoapRequest` stay abstract base classes of the p
 with. `Omnipay::create()` and `new Gateway()` without arguments use `Request::createFromGlobals()`, so nothing changes
 for them. **(action)** If you pass your own Symfony request, it must carry the query string:
 
+<!-- snippet: skip -->
 ```php
 // 4.x: the gateway ignored $httpRequest and read $_GET
 $gateway = new \Omnipay\TatraPay\Gateway($httpClient, $httpRequest);
@@ -125,6 +129,7 @@ The constants still exist but are deprecated:
 | `ComfortPay\Gateway::TRANSACTION_TYPE_*` | `ComfortPay\TransactionType::Purchase`, `Preauthorization`, `PreauthConfirm`, `PreauthCancel`, `Chargeback` |
 | `ComfortPay\Gateway::CARD_STATUS_*` | `ComfortPay\CardStatus::Ok`, `Fail`, `Unknown` (`CheckCardResponse::getCardStatus()`) |
 
+<!-- snippet: skip -->
 ```php
 // 4.x
 $gateway->cancelAuthorize(['txn' => \Omnipay\CardPay\Message\CancelAuthorizeRequest::TXN_CHARGEBACK, ...]);
@@ -139,6 +144,7 @@ CardPay `purchase()`/`authorize()` and ComfortPay `purchase()` throw `InvalidReq
 characters Tatra banka does not accept ([#3](https://github.com/tomaj/omnipay-tatra/issues/3)). **(action)** Remove
 diacritics first:
 
+<!-- snippet: skip -->
 ```php
 // 4.x: the bank showed an error page
 $gateway->purchase(['name' => 'Ján Novák', ...]);

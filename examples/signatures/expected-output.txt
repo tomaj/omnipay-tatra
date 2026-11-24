@@ -1,0 +1,12 @@
+HMAC (HMAC field)
+  signed:  999924.909782026001770308https://shop.example/payment/returnorders@shop.example24112026101500
+  library: d594feb52753b79989297c21705bea7ad7cea071c4ccfa14a1c308902f045a5c
+  openssl: same
+AES (SIGN field)
+  signed:  999924.909782026001770308https://shop.example/payment/return
+  library: B918E956DCCD0E3E2A5C48C12764DFF6
+  openssl: same
+DES (SIGN field)
+  signed:  999924.909782026001770308https://shop.example/payment/return
+  library: E47D11CDE42661B0
+  openssl: same
