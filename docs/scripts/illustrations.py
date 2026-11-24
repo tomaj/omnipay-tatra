@@ -4,7 +4,7 @@
 The hero and the diagrams are written in English and in Slovak (`-sk` files, used by the pages under docs/sk/).
 
 Each drawing exists once, with colour tokens; the light and dark files only swap the palette. Run it after a change,
-then `node scripts/og-image.mjs` for the PNG icons and og.png (or `npm run images` for both).
+then `node scripts/og-image.mjs` for the PNG icons, og.png and og-sk.png (or `npm run images` for both).
 
 The omnipay-* packages and payment-simulator share the mark: a rounded square in the bank's primary colour with a
 payment card in its accent colour, a magnetic stripe and a check mark cut out of it. Tatra banka is black and yellow.
@@ -110,21 +110,29 @@ def hero(c: dict[str, str], t: dict[str, str]) -> str:
 """
 
 
-def og(c: dict[str, str]) -> str:
-    """The 1200 × 630 social card."""
+# The social card tagline per language: og.svg (English) and og-sk.svg (pages under docs/sk/).
+OG = {
+    "": {"label": "Tatra banka payments for Omnipay", "line1": "Tatra banka payments for Omnipay:", "line2": "TatraPay, CardPay, ComfortPay"},
+    "-sk": {"label": "platby Tatra banky pre Omnipay", "line1": "Platby Tatra banky pre Omnipay:", "line2": "TatraPay, CardPay, ComfortPay"},
+}
+
+
+def og(c: dict[str, str], suffix: str = "") -> str:
+    """The 1200 × 630 social card, in English or Slovak (suffix "-sk")."""
     mark = MARK.format(**c)
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="{NAME}: Tatra banka payments for Omnipay">
+    t = OG[suffix]
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="{NAME}: {t['label']}">
   <rect width="1200" height="630" fill="{c['bg']}"/>
   <rect x="0" y="0" width="1200" height="14" fill="{c['yellow']}"/>
   <g transform="translate(80 110) scale(2.6)">
   {mark}
   </g>
   <text x="80" y="370" {FONT} font-size="84" font-weight="800" fill="{c['ink']}">{NAME}</text>
-  <text x="80" y="432" {FONT} font-size="34" fill="{c['muted']}">Tatra banka payments for Omnipay:</text>
-  <text x="80" y="476" {FONT} font-size="34" fill="{c['muted']}">TatraPay, CardPay, ComfortPay</text>
+  <text x="80" y="432" {FONT} font-size="34" fill="{c['muted']}">{t['line1']}</text>
+  <text x="80" y="476" {FONT} font-size="34" fill="{c['muted']}">{t['line2']}</text>
   <text x="80" y="566" {MONO} font-size="26" fill="{c['ink']}">composer require tomaj/omnipay-tatra</text>
   <g transform="translate(700 70) scale(0.95)">
-    {hero(c, HERO['']).split('</defs>', 1)[1].rsplit('</svg>', 1)[0]}
+    {hero(c, HERO[suffix]).split('</defs>', 1)[1].rsplit('</svg>', 1)[0]}
   </g>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -187,7 +195,7 @@ HERO = {
         "title": "Priebeh platby TatraPay",
         "desc": "E-shop presmeruje zákazníka do Tatra banky s podpísanou požiadavkou, banka ho vráti s podpísaným výsledkom a completePurchase() overí podpis a variabilný symbol skôr, než sa objednávka označí ako zaplatená.",
         "url": "obchod.example/pokladna", "order": "Objednávka 2026001", "amount": "24,90 €", "pay": "Zaplatiť",
-        "redirect": "podpísaná požiadavka", "confirm": "Potvrdiť platbu", "return": "podpísaný návrat",
+        "redirect": "podpísaná žiadosť", "confirm": "Potvrdiť platbu", "return": "podpísaný návrat",
         "verified": "podpis a VS overené", "paid": "objednávka zaplatená",
     },
 }
@@ -200,7 +208,7 @@ DIAGRAMS = {
             ["Customer's browser", "Your shop", "Tatra banka"],
             [
                 (0, 1, "Pay 24.90 €", "the order gets VS 2026001"),
-                (1, 0, "302 to the bank", "purchase(): MID AMT CURR VS RURL … HMAC"),
+                (1, 0, "302 to the bank", "purchase(): MID AMT VS RURL … HMAC"),
                 (0, 2, "GET payment page", "the signed query string"),
                 (2, None, "the customer pays", "card, internet banking"),
                 (2, 0, "302 to RURL", "VS RES … TIMESTAMP HMAC"),
@@ -243,7 +251,7 @@ DIAGRAMS = {
             ["Prehliadač zákazníka", "Váš e-shop", "Tatra banka"],
             [
                 (0, 1, "Zaplatiť 24,90 €", "objednávka dostane VS 2026001"),
-                (1, 0, "302 do banky", "purchase(): MID AMT CURR VS RURL … HMAC"),
+                (1, 0, "302 do banky", "purchase(): MID AMT VS RURL … HMAC"),
                 (0, 2, "GET platobná stránka", "podpísané parametre v URL"),
                 (2, None, "zákazník zaplatí", "karta, internet banking"),
                 (2, 0, "302 na RURL", "VS RES … TIMESTAMP HMAC"),
@@ -261,7 +269,7 @@ DIAGRAMS = {
                 (2, 0, "302 na RURL", "RES=OK TID AC CC … HMAC"),
                 (0, 1, "GET návratová URL", "podpísaná odpoveď banky"),
                 (1, None, "completeAuthorize()", "overiť, uložiť TID"),
-                (1, 2, "cancelAuthorize()", "TXN=CPA dokončenie · SPA zrušenie · CB vrátenie"),
+                (1, 2, "cancelAuthorize()", "TXN=CPA zúčtovať · SPA zrušiť · CB vrátiť"),
                 (2, 1, "XML &lt;res&gt;OK&lt;/res&gt;", "Authorization: HMAC=… z tela odpovede"),
             ],
         ),
@@ -295,7 +303,8 @@ def main() -> None:
     for suffix, strings in HERO.items():
         write(PUBLIC / "illustrations" / f"hero{suffix}-light.svg", hero(LIGHT, strings))
         write(PUBLIC / "illustrations" / f"hero{suffix}-dark.svg", hero(DARK, strings))
-    write(PUBLIC / "og.svg", og(LIGHT))
+    for suffix in OG:
+        write(PUBLIC / f"og{suffix}.svg", og(LIGHT, suffix))
     for suffix, diagrams in DIAGRAMS.items():
         for name, (title, desc, lanes, steps) in diagrams.items():
             write(PUBLIC / "diagrams" / f"{name}{suffix}-light.svg", sequence(LIGHT, title, desc, lanes, steps))

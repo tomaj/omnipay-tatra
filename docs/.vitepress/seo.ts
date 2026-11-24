@@ -5,6 +5,8 @@ import type { HeadConfig, PageData } from 'vitepress'
 
 export const siteUrl = 'https://tomaj.github.io/omnipay-tatra/'
 export const ogImage = `${siteUrl}og.png`
+// Slovak pages get the social card with the Slovak tagline.
+export const ogImageSk = `${siteUrl}og-sk.png`
 const siteName = 'omnipay-tatra'
 const repoUrl = 'https://github.com/tomaj/omnipay-tatra'
 
@@ -96,6 +98,7 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
   const locale = localeOf(page.relativePath)
   const sk = locale.prefix === 'sk/'
   const isHome = page.frontmatter.layout === 'home'
+  const image = sk ? ogImageSk : ogImage
   const homeTitle = sk ? 'omnipay-tatra – platby Tatra banky pre Omnipay' : 'omnipay-tatra - Tatra banka payments for Omnipay'
   const title = isHome ? homeTitle : `${page.title} | ${siteName}`
   const description = page.description || page.frontmatter.description || siteDescription
@@ -110,14 +113,14 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
     ['meta', { property: 'og:title', content: title }],
     ['meta', { property: 'og:description', content: description }],
     ['meta', { property: 'og:url', content: url }],
-    ['meta', { property: 'og:image', content: ogImage }],
+    ['meta', { property: 'og:image', content: image }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { property: 'og:image:alt', content: sk ? 'omnipay-tatra: e-shop presmeruje zákazníka do Tatra banky, podpísaný návrat overí completePurchase()' : 'omnipay-tatra: the shop redirects to Tatra banka, the signed return is verified by completePurchase()' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: title }],
     ['meta', { name: 'twitter:description', content: description }],
-    ['meta', { name: 'twitter:image', content: ogImage }],
+    ['meta', { name: 'twitter:image', content: image }],
     ['meta', { name: 'author', content: person.name }],
   ]
   if (modified && !isHome) head.push(['meta', { property: 'article:modified_time', content: modified }])
@@ -141,7 +144,7 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
       runtimePlatform: 'PHP 8.4',
       license: 'https://opensource.org/licenses/MIT',
       author: { '@id': person['@id'] },
-      image: ogImage,
+      image,
     })
   } else {
     graph.push({
@@ -152,7 +155,7 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
       url,
       mainEntityOfPage: url,
       inLanguage: locale.lang,
-      image: ogImage,
+      image,
       author: { '@id': person['@id'] },
       isPartOf: { '@id': `${siteUrl}#website` },
       about: { '@type': 'SoftwareSourceCode', name: siteName, codeRepository: repoUrl },
