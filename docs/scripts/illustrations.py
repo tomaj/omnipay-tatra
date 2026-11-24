@@ -208,7 +208,7 @@ DIAGRAMS = {
             ["Customer's browser", "Your shop", "Tatra banka"],
             [
                 (0, 1, "Pay 24.90 €", "the order gets VS 2026001"),
-                (1, 0, "302 to the bank", "purchase(): MID AMT VS RURL … HMAC"),
+                (1, 0, "302 to the bank", "purchase(): MID AMT VS … HMAC"),
                 (0, 2, "GET payment page", "the signed query string"),
                 (2, None, "the customer pays", "card, internet banking"),
                 (2, 0, "302 to RURL", "VS RES … TIMESTAMP HMAC"),
@@ -251,7 +251,7 @@ DIAGRAMS = {
             ["Prehliadač zákazníka", "Váš e-shop", "Tatra banka"],
             [
                 (0, 1, "Zaplatiť 24,90 €", "objednávka dostane VS 2026001"),
-                (1, 0, "302 do banky", "purchase(): MID AMT VS RURL … HMAC"),
+                (1, 0, "302 do banky", "purchase(): MID AMT VS … HMAC"),
                 (0, 2, "GET platobná stránka", "podpísané parametre v URL"),
                 (2, None, "zákazník zaplatí", "karta, internet banking"),
                 (2, 0, "302 na RURL", "VS RES … TIMESTAMP HMAC"),
