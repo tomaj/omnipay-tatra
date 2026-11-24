@@ -30,7 +30,8 @@ are skipped locally, CI runs them with the provider enabled.
 
 ## This documentation
 
-The site is VitePress in `docs/`. Code reaches the pages in three ways, and all of it runs in CI:
+The site is VitePress in `docs/`. English pages are at the root of `docs/`, Slovak ones in `docs/sk/` with the same
+paths; a CI check (`npm run docs:locales`) fails when a page has no twin in the other language. Code reaches the pages in three ways, and all of it runs in CI:
 
 | Code | Lives in | Runs in |
 |---|---|---|
@@ -50,4 +51,5 @@ npm run images      # after a change to scripts/illustrations.py: SVGs, og.png, 
 ```
 
 The logo, the hero illustration, the diagrams and the social card are generated from
-`docs/scripts/illustrations.py`; edit the script, not the SVGs.
+`docs/scripts/illustrations.py`; the hero illustration and the diagrams in English and in Slovak (`-sk` files). Edit
+the script, not the SVGs.

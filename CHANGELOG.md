@@ -12,6 +12,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 * ComfortPay: the bank's error code from a SOAP fault. A declined `charge()` (a `SOAP-ENV:Receiver` fault) returns an unsuccessful `CardTransactionResponse` with `getErrorCode()` (for example `50051`, unknown card) and `getCode()`; `isPending()` is true for `50001` (timeout, result not known yet). Other faults, and faults of the other web service requests, are thrown as `ComfortPaySoapFault`, which extends `\SoapFault` and has `getErrorCode()`; constants name the documented codes. Based on [#18](https://github.com/tomaj/omnipay-tatra/pull/18) ([#12](https://github.com/tomaj/omnipay-tatra/issues/12)).
 * ComfortPay: `proxyHost`, `proxyPort`, `proxyLogin` and `proxyPassword` parameters route the web service requests through an HTTP proxy. Based on [#22](https://github.com/tomaj/omnipay-tatra/pull/22) by [@deltaglow](https://github.com/deltaglow).
 * ComfortPay: `soapClient` parameter to pass your own `SoapClient` (a custom transport, or a fake one in tests).
+- Slovak translation of the documentation site ([#45](https://github.com/tomaj/omnipay-tatra/issues/45)).
 
 ### Changed
 

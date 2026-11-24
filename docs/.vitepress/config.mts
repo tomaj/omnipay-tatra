@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitepress'
+import { nav, navSk, sidebar, sidebarSk } from '../site-nav'
 import { seoHead, siteUrl } from './seo'
 
 const description = 'Tatra banka (TatraPay, CardPay, ComfortPay) gateways for the Omnipay payment processing library: signed requests, verified callbacks, pre-authorization and card-on-file payments for PHP 8.4+.'
+const descriptionSk = 'Platobné brány Tatra banky (TatraPay, CardPay, ComfortPay) pre platobnú knižnicu Omnipay: podpísané požiadavky, overené návraty, predautorizácia a platby uloženou kartou pre PHP 8.4+.'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -26,7 +28,57 @@ export default defineConfig({
   },
 
   transformHead({ pageData, siteConfig }) {
-    return seoHead(pageData, siteConfig.srcDir, description)
+    return seoHead(pageData, siteConfig.srcDir, pageData.relativePath.startsWith('sk/') ? descriptionSk : description)
+  },
+
+  // English is the default locale at the site root; Slovak mirrors every page under /sk/.
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en-US',
+      description,
+    },
+    sk: {
+      label: 'Slovenčina',
+      lang: 'sk-SK',
+      link: '/sk/',
+      title: 'omnipay-tatra',
+      description: descriptionSk,
+      themeConfig: {
+        nav: navSk,
+        sidebar: sidebarSk,
+        outline: { level: [2, 3], label: 'Na tejto stránke' },
+        docFooter: {
+          prev: 'Predchádzajúca stránka',
+          next: 'Nasledujúca stránka',
+        },
+        editLink: {
+          pattern: 'https://github.com/tomaj/omnipay-tatra/edit/master/docs/:path',
+          text: 'Upraviť túto stránku na GitHube',
+        },
+        lastUpdated: {
+          text: 'Naposledy upravené',
+        },
+        darkModeSwitchLabel: 'Vzhľad',
+        lightModeSwitchTitle: 'Prepnúť na svetlý režim',
+        darkModeSwitchTitle: 'Prepnúť na tmavý režim',
+        sidebarMenuLabel: 'Ponuka',
+        returnToTopLabel: 'Späť na začiatok',
+        langMenuLabel: 'Zmeniť jazyk',
+        skipToContentLabel: 'Preskočiť na obsah',
+        footer: {
+          message: 'Vydané pod <a href="https://github.com/tomaj/omnipay-tatra/blob/master/LICENSE.md">licenciou MIT</a>. Projekt nie je prepojený s Tatra bankou, a.s.',
+          copyright: 'Copyright © 2016-2026 Tomas Majer',
+        },
+        notFound: {
+          code: '404',
+          title: 'STRÁNKA SA NENAŠLA',
+          quote: 'Táto stránka neexistuje alebo sa presunula. Skúste vyhľadávanie alebo začnite od úvodu.',
+          linkLabel: 'prejsť na úvod',
+          linkText: 'Späť na úvod',
+        },
+      },
+    },
   },
 
   markdown: {
@@ -50,71 +102,8 @@ export default defineConfig({
   themeConfig: {
     logo: { light: '/logo.svg', dark: '/logo-dark.svg', alt: 'omnipay-tatra' },
 
-    nav: [
-      { text: 'Guide', link: '/guide/getting-started', activeMatch: '/guide/' },
-      { text: 'Examples', link: '/examples/', activeMatch: '/examples/' },
-      { text: 'API', link: '/api/reference' },
-      { text: 'Changelog', link: '/changelog' },
-      {
-        text: '5.x',
-        items: [
-          { text: '5.x (master)', link: '/' },
-          { text: '4.x (README of 4.3.0)', link: 'https://github.com/tomaj/omnipay-tatra/blob/4.3.0/readme.md' },
-          { text: 'Upgrading to 5.0', link: '/upgrade' },
-        ],
-      },
-    ],
-
-    sidebar: [
-      {
-        text: 'Introduction',
-        items: [
-          { text: 'Getting started', link: '/guide/getting-started' },
-          { text: 'How a payment works', link: '/guide/payment-flow' },
-          { text: 'Configuration', link: '/guide/configuration' },
-          { text: 'Test mode', link: '/guide/test-mode' },
-        ],
-      },
-      {
-        text: 'Gateways',
-        items: [
-          { text: 'TatraPay', link: '/guide/tatrapay' },
-          { text: 'CardPay', link: '/guide/cardpay' },
-          { text: 'ComfortPay', link: '/guide/comfortpay' },
-        ],
-      },
-      {
-        text: 'In production',
-        items: [
-          { text: 'Signatures', link: '/guide/signatures' },
-          { text: 'Error handling', link: '/guide/errors' },
-          { text: 'Testing your integration', link: '/guide/testing' },
-          { text: 'Security', link: '/security' },
-        ],
-      },
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Overview', link: '/examples/' },
-          { text: 'TatraPay round trip', link: '/examples/tatrapay' },
-          { text: 'CardPay with HMAC and AES', link: '/examples/cardpay' },
-          { text: 'Pre-authorization and capture', link: '/examples/cardpay-preauthorization' },
-          { text: 'ComfortPay subscription', link: '/examples/comfortpay-recurring' },
-          { text: 'Shop with a return URL', link: '/examples/shop' },
-          { text: 'Signatures and openssl', link: '/examples/signatures' },
-        ],
-      },
-      {
-        text: 'Reference',
-        items: [
-          { text: 'API reference', link: '/api/reference' },
-          { text: 'FAQ', link: '/faq' },
-          { text: 'Upgrading to 5.0', link: '/upgrade' },
-          { text: 'Changelog', link: '/changelog' },
-          { text: 'Contributing', link: '/contributing' },
-        ],
-      },
-    ],
+    nav,
+    sidebar,
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/tomaj/omnipay-tatra' },
@@ -135,6 +124,33 @@ export default defineConfig({
 
     search: {
       provider: 'local',
+      options: {
+        locales: {
+          sk: {
+            translations: {
+              button: {
+                buttonText: 'Hľadať',
+                buttonAriaLabel: 'Hľadať',
+              },
+              modal: {
+                displayDetails: 'Zobraziť podrobný zoznam',
+                resetButtonTitle: 'Vymazať hľadanie',
+                backButtonTitle: 'Zavrieť hľadanie',
+                noResultsText: 'Žiadne výsledky pre',
+                footer: {
+                  selectText: 'vybrať',
+                  selectKeyAriaLabel: 'enter',
+                  navigateText: 'prejsť',
+                  navigateUpKeyAriaLabel: 'šípka hore',
+                  navigateDownKeyAriaLabel: 'šípka dole',
+                  closeText: 'zavrieť',
+                  closeKeyAriaLabel: 'escape',
+                },
+              },
+            },
+          },
+        },
+      },
     },
 
     footer: {
