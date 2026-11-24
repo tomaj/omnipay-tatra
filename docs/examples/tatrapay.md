@@ -7,7 +7,7 @@ description: A complete TatraPay payment against payment-simulator - the signed 
 
 The customer pays from Tatra banka internet banking. The example sends a TatraPay payment with an HMAC key to
 [payment-simulator](/guide/test-mode#payment-simulator), follows each of the three answers the bank can give back to the
-return URL and verifies it, then tries two attacks.
+return URL and verifies it, then tries two attacks and pays with a specific symbol on an HMAC and an AES key.
 
 Source: [`examples/tatrapay/run.php`](https://github.com/tomaj/omnipay-tatra/blob/master/examples/tatrapay/run.php) ·
 run it with `examples/ci/example.sh tatrapay`.
@@ -58,6 +58,14 @@ request to the gateway's constructor instead, because one script plays both side
 - A correctly signed answer for order `2026001` is not accepted for order `2026002`: the returned `VS` must be the
   one you expect.
 
+## 5. With a specific symbol
+
+<<< @/../examples/tatrapay/run.php#specific-symbol
+
+`ss` is sent as `SS` and signed in the request (`MID AMT CURR VS SS CS RURL …`). The bank sends it back and signs the
+return over it: `VS SS RES` with AES and DES keys, `AMT CURR VS SS CS RES TID TIMESTAMP` with HMAC keys, as Tatra
+banka's TatraPay manual specifies. Pass the same `ss` to `completePurchase()`; without it the signature fails.
+
 ## Output
 
 <<< @/../examples/tatrapay/expected-output.txt{text}
@@ -66,6 +74,8 @@ request to the gateway's constructor instead, because one script plays both side
 
 - the simulator accepts the request signature (`Sign OK`), so the fields and their order are the bank's;
 - `isSuccessful()` for `OK`, `isPending()` for `TOUT`, neither for `FAIL`;
-- `InvalidRequestException` for an edited result and for another order's callback.
+- `InvalidRequestException` for an edited result and for another order's callback;
+- a specific symbol on an HMAC and an AES key: the simulator accepts the request, the library the return, and the
+  return fails without the expected `ss`.
 
 Next: [CardPay with HMAC and AES](./cardpay), or the same flow inside a real [shop](./shop).

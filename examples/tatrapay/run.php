@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 // TatraPay with an HMAC key: redirect the customer to payment-simulator, follow each of the bank's answers back to
-// the return URL and verify it with completePurchase(). Then try a forged and a foreign callback.
+// the return URL and verify it with completePurchase(). Then try a forged and a foreign callback, and pay with a
+// specific symbol (SS) on an HMAC and an AES key.
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/../_support/simulator.php';
@@ -58,6 +59,7 @@ function completeTatraPay(array $config, array $order, string $returnUrl): strin
     try {
         $response = $gateway->completePurchase([
             'vs' => $order['vs'],               // the order you expect
+            'ss' => $order['ss'] ?? null,       // the specific symbol sent with purchase(), signed in the return
             'amount' => $order['amount'],       // signed with HMAC keys
             'currency' => $order['currency'],
         ])->send();
@@ -85,3 +87,22 @@ echo 'forged   -> ', completeTatraPay($config, $order, $forged), "\n";
 // a correctly signed answer, but for another order
 echo 'foreign  -> ', completeTatraPay($config, ['vs' => '2026002'] + $order, (string) $page['ok']), "\n";
 // #endregion forged
+
+// #region specific-symbol
+// a specific symbol is signed in the request and in the return (AES/DES: VS SS RES, HMAC: AMT CURR VS SS CS RES ...)
+$aesConfig = ['sharedSecret' => str_repeat('1', 64)] + $config; // the simulator's AES test key
+foreach (['HMAC' => $config, 'AES' => $aesConfig] as $keyType => $keyConfig) {
+    $withSs = ['ss' => '0308'] + $order;
+    $gateway = new Gateway();
+    $gateway->initialize($keyConfig);
+    $response = $gateway->purchase($withSs + ['rurl' => 'https://shop.example/payment/return'])->send();
+
+    $page = payAtSimulator($response->getRedirectUrl());
+    echo "{$keyType} with SS {$response->getRedirectData()['SS']}: {$page['verdict']}\n";
+    foreach (['ok', 'fail'] as $answer) {
+        printf("  %-6s -> %s\n", $answer, completeTatraPay($keyConfig, $withSs, (string) $page[$answer]));
+    }
+    // the same return verified without the specific symbol fails: SS is part of the signature
+    printf("  %-6s -> %s\n", 'no SS', completeTatraPay($keyConfig, $order, (string) $page['ok']));
+}
+// #endregion specific-symbol

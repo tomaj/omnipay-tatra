@@ -57,8 +57,6 @@ What the simulator does not do:
 
 - it sends no `TID` on TatraPay and CardPay returns; `getTransactionReference()` is only set by `completeAuthorize()`
   with `tpay` `Y`;
-- its TatraPay AES and DES returns are signed over `VS RES`, while the library verifies `VS SS RES`: leave `ss` empty
-  with AES and DES keys in test mode (HMAC returns include `SS` on both sides);
 - it does not answer the ComfortPay web service; test mode answers those requests locally, see below.
 
 ## ComfortPay web service in test mode

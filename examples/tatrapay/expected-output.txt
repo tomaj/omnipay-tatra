@@ -14,3 +14,11 @@ fail     -> not paid (RES=FAIL)
 timeout  -> pending (RES=TOUT), wait for the bank
 forged   -> rejected: incorect signature
 foreign  -> rejected: Variable symbol mismatch
+HMAC with SS 0308: Sign OK
+  ok     -> paid, VS 2026001
+  fail   -> not paid (RES=FAIL)
+  no SS  -> rejected: incorect signature
+AES with SS 0308: Sign OK
+  ok     -> paid, VS 2026001
+  fail   -> not paid (RES=FAIL)
+  no SS  -> rejected: incorect signature
