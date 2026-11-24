@@ -54,6 +54,12 @@
 }
 
 /* the hero illustration carries text: give it more room than the default 192/256/320 px */
+@media (max-width: 959px) {
+  /* the default negative margins would pull the larger image over the title */
+  .VPHero .image {
+    margin: -24px -24px 16px;
+  }
+}
 .VPHero .image-container {
   width: 300px;
   height: 260px;
