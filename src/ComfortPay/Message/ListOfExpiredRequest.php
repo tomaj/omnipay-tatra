@@ -7,12 +7,13 @@ namespace Omnipay\ComfortPay\Message;
 use Omnipay\ComfortPay\Exception\ComfortPaySoapFault;
 
 /**
- * The registered cards that expire after a date (getListOfExpired).
+ * The registered cards whose card expires in a given month (getListOfExpired).
  */
 final class ListOfExpiredRequest extends AbstractSoapRequest
 {
     /**
-     * The date, format YYYY-MM-DD (xsd:date).
+     * A date in the expiry month, format YYYY-MM-DD (xsd:date). Only the month and the year are used;
+     * the day is ignored.
      */
     public function getExpDate(): ?string
     {

@@ -90,7 +90,7 @@ exceeded, `04` pick up the card; a negative value means the transaction is not f
 |---|---|---|
 | `checkCard()` | `cardId` | `CheckCardResponse`: `getCardStatus()` (`CardStatus` enum), `getStatus()` (`OK`, `FAIL`, `UNKNOWN`) |
 | `checkTransaction()` | `transactionId` | `CardTransactionResponse` |
-| `listOfExpired()` | `expDate` (`YYYY-MM-DD`) | `ListOfExpiredResponse::getExpires()`: `[['id' => ...]]` |
+| `listOfExpired()` | `expDate` (`YYYY-MM-DD`): the cards expiring in that month; the day is ignored | `ListOfExpiredResponse::getExpires()`: `[['id' => ...]]` |
 | `listOfExpirePerId()` | `cardIds` (up to 1000) | `ListOfExpirePerIdResponse::getExpires()`: `[['id' => ..., 'date' => 'MMYY']]` |
 | `unRegisterCard()` | `cardId` | `UnRegisterCardResponse::isSuccessful()` |
 

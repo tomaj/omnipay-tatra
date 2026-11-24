@@ -7,7 +7,7 @@ namespace Omnipay\ComfortPay\Message;
 use Omnipay\Common\Message\AbstractResponse;
 
 /**
- * The cards that expire: a list of ['id' => card id].
+ * The registered cards that expire in the requested month: a list of ['id' => card id].
  */
 final class ListOfExpiredResponse extends AbstractResponse
 {
