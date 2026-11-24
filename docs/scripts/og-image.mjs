@@ -1,4 +1,4 @@
-// Rasterizes public/og.svg to public/og.png (1200 × 630) and public/logo.svg to the PNG icons and favicon.ico.
+// Rasterizes public/og.svg and og-sk.svg to public/og.png and og-sk.png (1200 × 630) and public/logo.svg to the PNG icons and favicon.ico.
 // Run after scripts/illustrations.py: node scripts/og-image.mjs (CHROME_PATH points at Chrome or Chromium).
 import { readFileSync, writeFileSync } from 'node:fs'
 import puppeteer from 'puppeteer-core'
@@ -18,6 +18,7 @@ async function render(svgFile, width, height, transparent = false) {
 }
 
 writeFileSync(pub('og.png'), await render('og.svg', 1200, 630))
+writeFileSync(pub('og-sk.png'), await render('og-sk.svg', 1200, 630))
 const icons = {}
 for (const [name, size] of [['favicon-16.png', 16], ['favicon-32.png', 32], ['icon-192.png', 192], ['icon-512.png', 512]]) {
   icons[size] = await render('logo.svg', size, size, true)
@@ -46,4 +47,4 @@ images.forEach((png, i) => {
   offset += png.length
 })
 writeFileSync(pub('favicon.ico'), Buffer.concat([header, ...images]))
-console.log('public/og.png, the PNG icons and favicon.ico written')
+console.log('public/og.png, og-sk.png, the PNG icons and favicon.ico written')
