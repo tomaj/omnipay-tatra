@@ -1,4 +1,4 @@
-redirect: http://127.0.0.1:18432/payment/tatrapay-hmac
+redirect: http://127.0.0.1:8080/payment/tatrapay-hmac
   PT        TatraPay
   MID       9999
   AMT       24.90
