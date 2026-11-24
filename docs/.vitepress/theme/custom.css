@@ -7,6 +7,7 @@
   --ot-accent: #ffd200;
   --ot-accent-hover: #f2c500;
   --ot-soft: #fff6c7;
+  --ot-soft-strong: #ffe680;
 
   --vp-c-brand-1: #8a6500;
   --vp-c-brand-2: #a37800;
@@ -38,6 +39,7 @@
   --ot-primary: #ffd200;
   --ot-accent: #ffd200;
   --ot-soft: rgba(255, 210, 0, 0.14);
+  --ot-soft-strong: rgba(255, 210, 0, 0.32);
 
   --vp-c-brand-1: #ffd200;
   --vp-c-brand-2: #f2c500;
@@ -95,7 +97,7 @@
 }
 
 /* feature icons: inline SVGs drawn with these classes, so one icon serves both themes */
-.ot-icon .ot-soft { fill: var(--ot-soft); }
+.ot-icon .ot-soft { fill: var(--ot-soft-strong); }
 .ot-icon .ot-ink { fill: none; stroke: var(--vp-c-text-1); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .ot-icon .ot-ink-f { fill: var(--vp-c-text-1); }
 .ot-icon .ot-acc { fill: var(--ot-accent); stroke: var(--vp-c-text-1); stroke-width: 2.2; stroke-linejoin: round; }

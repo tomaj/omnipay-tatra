@@ -17,7 +17,7 @@ function browse(string $url): array
     $body = (string) file_get_contents($url, false, stream_context_create(['http' => ['follow_location' => 0, 'ignore_errors' => true]]));
     $status = 0;
     $location = null;
-    foreach ($http_response_header as $header) {
+    foreach (http_get_last_response_headers() ?? [] as $header) {
         if (preg_match('~^HTTP/\S+ (\d{3})~', $header, $match) === 1) {
             $status = (int) $match[1];
         } elseif (stripos($header, 'Location:') === 0) {
