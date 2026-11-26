@@ -24,7 +24,7 @@ The package separates three kinds of failure:
 | `Omnipay\Common\Exception\InvalidResponseException` | `Exception` | `cancelAuthorize()` | `Incorrect signature` of the XML answer, or the answer is not XML |
 | | | `listOfExpired()`, `listOfExpirePerId()` | the web service answer is not XML |
 | `Omnipay\Core\Exception\UnsupportedKeyException` | `InvalidArgumentException` | every signed request | the shared secret is not 8, 64 or 128 characters long, or a DES key for ComfortPay |
-| `Omnipay\Core\Exception\SignatureException` | `RuntimeException` | every signed request | OpenSSL cannot compute the signature, typically DES without the legacy provider |
+| `Omnipay\Core\Exception\SignatureException` | `RuntimeException` | every signed request | OpenSSL cannot compute the signature, typically DES without the legacy provider, or the HMAC/AES key is not hexadecimal |
 | `Omnipay\Core\Exception\GatewayException` | `RuntimeException` | `cancelAuthorize()` | the bank answered with an HTTP status other than 200 |
 | `Omnipay\Core\Exception\InvalidParameterException` | `UnexpectedValueException` | `cancelAuthorize()`, `charge()` | `txn` other than `CPA`, `SPA`, `CB`, or an unknown `transactionType` |
 | `Omnipay\ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | every ComfortPay web service request | a SOAP fault, except a declined `charge()` (see [below](#comfortpay-web-service)) |

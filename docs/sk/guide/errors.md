@@ -24,7 +24,7 @@ Balík rozlišuje tri druhy zlyhania:
 | `Omnipay\Common\Exception\InvalidResponseException` | `Exception` | `cancelAuthorize()` | `Incorrect signature` odpovede XML, alebo odpoveď nie je XML |
 | | | `listOfExpired()`, `listOfExpirePerId()` | odpoveď webovej služby nie je XML |
 | `Omnipay\Core\Exception\UnsupportedKeyException` | `InvalidArgumentException` | každá podpisovaná požiadavka | zdieľaný kľúč nemá 8, 64 ani 128 znakov, alebo kľúč DES pri ComfortPay |
-| `Omnipay\Core\Exception\SignatureException` | `RuntimeException` | každá podpisovaná požiadavka | OpenSSL nevie vypočítať podpis, typicky DES bez legacy providera |
+| `Omnipay\Core\Exception\SignatureException` | `RuntimeException` | každá podpisovaná požiadavka | OpenSSL nevie vypočítať podpis, typicky DES bez legacy providera, alebo kľúč HMAC/AES nie je hexadecimálny |
 | `Omnipay\Core\Exception\GatewayException` | `RuntimeException` | `cancelAuthorize()` | banka odpovedala iným HTTP stavom ako 200 |
 | `Omnipay\Core\Exception\InvalidParameterException` | `UnexpectedValueException` | `cancelAuthorize()`, `charge()` | `txn` iný ako `CPA`, `SPA`, `CB`, alebo neznámy `transactionType` |
 | `Omnipay\ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | každá požiadavka webovej služby ComfortPay | chyba SOAP, okrem zamietnutej platby cez `charge()` (pozrite [nižšie](#comfortpay-web-service)) |

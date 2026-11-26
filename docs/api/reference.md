@@ -118,7 +118,7 @@ Every exception thrown by the package implements `Omnipay\Core\Exception\TatraEx
 | Exception | Extends | Thrown when |
 |---|---|---|
 | `Core\Exception\UnsupportedKeyException` | `InvalidArgumentException` | the shared secret has an unsupported length (or DES for ComfortPay) |
-| `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL cannot compute the signature |
+| `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL cannot compute the signature, or the HMAC/AES key is not hexadecimal |
 | `Core\Exception\GatewayException` | `RuntimeException` | `cancelAuthorize()` gets an HTTP status other than 200 |
 | `Core\Exception\InvalidParameterException` | `UnexpectedValueException` | unsupported `txn` or `transactionType` |
 | `ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | a SOAP fault from the web service; `getErrorCode(): ?int`, `isReceiverFault(): bool`, `static fromSoapFault(\SoapFault): self` |

@@ -7,10 +7,12 @@ namespace Omnipay\Tests\Tatra\Core;
 use Omnipay\CardPay\Gateway as CardPayGateway;
 use Omnipay\ComfortPay\Gateway as ComfortPayGateway;
 use Omnipay\ComfortPay\Message\ChargeRequest;
+use Omnipay\Core\Exception\SignatureException;
 use Omnipay\Core\Exception\UnsupportedKeyException;
 use Omnipay\Core\Message\AbstractRequest;
 use Omnipay\Core\Sign\Aes256Sign;
 use Omnipay\Core\Sign\DesSign;
+use Omnipay\Core\Sign\HexKey;
 use Omnipay\Core\Sign\HmacSign;
 use Omnipay\Core\Sign\KeyType;
 use Omnipay\Core\Sign\SignInterface;
@@ -34,6 +36,7 @@ final class SensitiveParameterTest extends TestCase
             'Aes256Sign::sign' => [Aes256Sign::class, 'sign', 'secret'],
             'DesSign::sign' => [DesSign::class, 'sign', 'secret'],
             'KeyType::fromSecret' => [KeyType::class, 'fromSecret', 'secret'],
+            'HexKey::decode' => [HexKey::class, 'decode', 'secret'],
             'AbstractRequest::setSharedSecret' => [AbstractRequest::class, 'setSharedSecret', 'value'],
             'TatraPay Gateway::setSharedSecret' => [TatraPayGateway::class, 'setSharedSecret', 'value'],
             'CardPay Gateway::setSharedSecret' => [CardPayGateway::class, 'setSharedSecret', 'value'],
@@ -75,6 +78,44 @@ final class SensitiveParameterTest extends TestCase
             self::assertStringNotContainsString($secret, $trace);
             self::assertStringNotContainsString($secret, print_r($exception->getTrace(), true));
         } finally {
+            ini_set('zend.exception_ignore_args', (string) $ignoreArgs);
+        }
+    }
+
+    /**
+     * @return array<string, array{class-string<SignInterface>, string}>
+     */
+    public static function nonHexadecimalKeyProvider(): array
+    {
+        return [
+            'HMAC' => [HmacSign::class, 'Z' . str_repeat('a', 127)],
+            'AES' => [Aes256Sign::class, 'Z' . str_repeat('a', 63)],
+        ];
+    }
+
+    /**
+     * pack() warns about a non-hexadecimal key; an error handler that turns the warning into an exception would show the
+     * key as pack()'s argument in the trace, so the key is rejected before pack() is called.
+     *
+     * @param class-string<SignInterface> $signer
+     */
+    #[DataProvider('nonHexadecimalKeyProvider')]
+    public function testNonHexadecimalKeyIsRejectedWithoutAWarning(string $signer, string $secret): void
+    {
+        $ignoreArgs = ini_set('zend.exception_ignore_args', '0');
+        set_error_handler(static fn(int $severity, string $message): never => throw new \ErrorException($message, 0, $severity));
+        try {
+            new $signer()->sign('abc', $secret);
+            self::fail('SignatureException expected');
+        } catch (SignatureException $exception) {
+            self::assertSame('The shared secret must be hexadecimal', $exception->getMessage());
+            self::assertStringContainsString('HexKey::decode(Object(SensitiveParameterValue))', $exception->getTraceAsString());
+            // the frames of the library (this test's own frame has the secret as its argument)
+            $frames = array_filter($exception->getTrace(), static fn(array $frame): bool => str_starts_with($frame['file'] ?? '', dirname(__DIR__, 2) . '/src/'));
+            self::assertNotSame([], $frames);
+            self::assertNotContains($secret, array_merge(...array_map(static fn(array $frame): array => $frame['args'] ?? [], array_values($frames))));
+        } finally {
+            restore_error_handler();
             ini_set('zend.exception_ignore_args', (string) $ignoreArgs);
         }
     }

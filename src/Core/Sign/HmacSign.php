@@ -12,6 +12,6 @@ final class HmacSign implements SignInterface
     #[\Override]
     public function sign(string $input, #[\SensitiveParameter] string $secret): string
     {
-        return hash_hmac('sha256', $input, pack('H*', $secret));
+        return hash_hmac('sha256', $input, HexKey::decode($secret));
     }
 }
