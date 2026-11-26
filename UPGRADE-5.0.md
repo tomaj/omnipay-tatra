@@ -121,7 +121,11 @@ try {
 
 ## Enums instead of constant sets
 
-The constants still exist but are deprecated:
+The constants still exist with their 4.x values, but they are deprecated and will be removed in 6.0. They carry PHP's
+`#[\Deprecated]` attribute, so reading one emits an `E_USER_DEPRECATED` that names the replacement, for example
+`Constant Omnipay\CardPay\Message\CancelAuthorizeRequest::TXN_CHARGEBACK is deprecated since 5.0, use Omnipay\CardPay\Message\CancelAuthorizeTxn::Chargeback`.
+A test suite that fails on deprecations (PHPUnit's `failOnDeprecation`) fails until you switch. **(action)** Use the
+enums:
 
 | 4.x | 5.0 |
 |---|---|

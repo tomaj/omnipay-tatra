@@ -88,7 +88,8 @@ compares in constant time.
 | `Omnipay\ComfortPay\CardStatus` (string) | `Ok`, `Fail`, `Unknown` |
 
 The 4.x constants `CancelAuthorizeRequest::TXN_*`, `ComfortPay\Gateway::TRANSACTION_TYPE_*` and `CARD_STATUS_*` still
-exist and are deprecated.
+exist with their 4.x values. They are marked `#[\Deprecated(since: '5.0')]`: reading one emits `E_USER_DEPRECATED`
+naming the enum case to use. They are removed in 6.0.
 
 ## Constants
 

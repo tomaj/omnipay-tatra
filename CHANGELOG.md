@@ -29,6 +29,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 * PHPStan runs at level max with bleedingEdge, strict, deprecation and PHPUnit rules; PHP-CS-Fixer enforces `declare(strict_types=1)` and the PHP 8.4 migration rules; Rector checks the code; new composer scripts `rector`, `rector-fix`, `coverage` and `infection` ([#27](https://github.com/tomaj/omnipay-tatra/issues/27)).
 * The Composer dist archive contains only the library (`src/`, `composer.json`, README, LICENSE, CHANGELOG); the ad-hoc scripts `index.php`, `test.php` and `testserver.php` were removed. Added `LICENSE.md` (MIT), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` and `RELEASING.md`; `omnipay/common` is required as `^3.4`, its first release for PHP 8.4 ([#25](https://github.com/tomaj/omnipay-tatra/issues/25)).
 
+### Deprecated
+
+* The 4.x constants `CardPay\Message\CancelAuthorizeRequest::TXN_*`, `ComfortPay\Gateway::TRANSACTION_TYPE_*` and `ComfortPay\Gateway::CARD_STATUS_*` carry PHP's native `#[\Deprecated]` attribute: reading one emits `E_USER_DEPRECATED` (`Constant ... is deprecated since 5.0, use ...` naming the enum case), so the deprecation shows up in logs and in test suites that fail on deprecations. They keep their values and are removed in 6.0 ([#48](https://github.com/tomaj/omnipay-tatra/issues/48)).
+
 ### Fixed
 
 * TatraPay `purchase()` signed the specific symbol (`ss`) but did not send it, so the bank could not verify the signature of a payment with a specific symbol. `SS` is sent now, and the AES/DES callback signature includes it (`VS`, `SS`, `RES`) like the HMAC one, as Tatra banka's *Technická príručka k službe TatraPay* (version 3.3) specifies. The `tatrapay` example pays with a specific symbol on an HMAC and an AES key against payment-simulator, which signs its AES/DES return the same way since [tomaj/payment-simulator#34](https://github.com/tomaj/payment-simulator/issues/34).

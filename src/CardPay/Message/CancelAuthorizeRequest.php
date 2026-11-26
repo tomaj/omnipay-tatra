@@ -17,11 +17,11 @@ use Omnipay\Core\Sign\Signature;
  */
 final class CancelAuthorizeRequest extends AbstractRequest
 {
-    /** @deprecated use CancelAuthorizeTxn::ClosePreauthorization */
+    #[\Deprecated(message: 'use Omnipay\CardPay\Message\CancelAuthorizeTxn::ClosePreauthorization', since: '5.0')]
     public const string TXN_CLOSE_PREAUTHORIZATION = 'CPA';
-    /** @deprecated use CancelAuthorizeTxn::StornoPreauthorization */
+    #[\Deprecated(message: 'use Omnipay\CardPay\Message\CancelAuthorizeTxn::StornoPreauthorization', since: '5.0')]
     public const string TXN_STORNO_PREAUTHORIZATION = 'SPA';
-    /** @deprecated use CancelAuthorizeTxn::Chargeback */
+    #[\Deprecated(message: 'use Omnipay\CardPay\Message\CancelAuthorizeTxn::Chargeback', since: '5.0')]
     public const string TXN_CHARGEBACK = 'CB';
 
     /**

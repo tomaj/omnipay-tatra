@@ -89,7 +89,8 @@ porovnáva v konštantnom čase.
 | `Omnipay\ComfortPay\CardStatus` (string) | `Ok`, `Fail`, `Unknown` |
 
 Konštanty zo 4.x `CancelAuthorizeRequest::TXN_*`, `ComfortPay\Gateway::TRANSACTION_TYPE_*` a `CARD_STATUS_*` stále
-existujú, sú však označené ako zastarané (deprecated).
+existujú s hodnotami zo 4.x. Sú označené `#[\Deprecated(since: '5.0')]`: každé ich čítanie vyvolá `E_USER_DEPRECATED`
+s názvom hodnoty enumu, ktorú treba použiť. Verzia 6.0 ich odstráni.
 
 ## Konštanty {#constants}
 
