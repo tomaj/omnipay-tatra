@@ -10,7 +10,7 @@ namespace Omnipay\Core\Sign;
 final class HmacSign implements SignInterface
 {
     #[\Override]
-    public function sign(string $input, string $secret): string
+    public function sign(string $input, #[\SensitiveParameter] string $secret): string
     {
         return hash_hmac('sha256', $input, pack('H*', $secret));
     }

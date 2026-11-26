@@ -77,6 +77,8 @@ The callback responses extend `Core\Message\AbstractCallbackResponse` (abstract,
 `Omnipay\Core\Sign\SignInterface::sign(string $input, string $secret): string`, implemented by `HmacSign`,
 `Aes256Sign` and `DesSign` (see [Signatures](/guide/signatures)). `Signature::equals(string $expected, mixed $received): bool`
 compares in constant time.
+The `$secret` of `sign()` and `KeyType::fromSecret()`, and the value of `setSharedSecret()`, `setCertPass()` and
+`setProxyPassword()`, are marked `#[\SensitiveParameter]` ([Security](/security#secrets-in-error-reports)).
 
 ## Enums
 

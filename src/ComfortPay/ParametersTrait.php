@@ -56,7 +56,7 @@ trait ParametersTrait
         return $this->getStringParameter('certPass');
     }
 
-    public function setCertPass(?string $value): static
+    public function setCertPass(#[\SensitiveParameter] ?string $value): static
     {
         $this->setParameter('certPass', $value);
         return $this;
@@ -142,7 +142,7 @@ trait ParametersTrait
         return $this->getStringParameter('proxyPassword');
     }
 
-    public function setProxyPassword(?string $value): static
+    public function setProxyPassword(#[\SensitiveParameter] ?string $value): static
     {
         $this->setParameter('proxyPassword', $value);
         return $this;

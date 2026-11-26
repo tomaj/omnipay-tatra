@@ -78,6 +78,8 @@ Odpovede na návrat z banky (callback) rozširujú `Core\Message\AbstractCallbac
 `Omnipay\Core\Sign\SignInterface::sign(string $input, string $secret): string`, implementovaný triedami `HmacSign`,
 `Aes256Sign` a `DesSign` (pozrite [Podpisy](/sk/guide/signatures)). `Signature::equals(string $expected, mixed $received): bool`
 porovnáva v konštantnom čase.
+Parameter `$secret` metód `sign()` a `KeyType::fromSecret()` a hodnota `setSharedSecret()`, `setCertPass()` a
+`setProxyPassword()` sú označené `#[\SensitiveParameter]` ([Bezpečnosť](/sk/security#secrets-in-error-reports)).
 
 ## Enumy {#enums}
 

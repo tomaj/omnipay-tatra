@@ -21,7 +21,7 @@ enum KeyType: int
     /**
      * @throws UnsupportedKeyException
      */
-    public static function fromSecret(string $secret): self
+    public static function fromSecret(#[\SensitiveParameter] string $secret): self
     {
         return self::tryFrom(strlen($secret)) ?? throw new UnsupportedKeyException(
             'Unknown key length ' . strlen($secret) . ': the shared secret must have 8 (DES), 64 (AES) or 128 (HMAC) characters',

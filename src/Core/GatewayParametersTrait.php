@@ -27,7 +27,7 @@ trait GatewayParametersTrait
         return $this->getStringParameter('sharedSecret');
     }
 
-    public function setSharedSecret(?string $value): static
+    public function setSharedSecret(#[\SensitiveParameter] ?string $value): static
     {
         $this->setParameter('sharedSecret', $value);
         return $this;

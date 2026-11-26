@@ -20,7 +20,7 @@ final class Aes256Sign implements SignInterface
     private const string CIPHER = 'aes-128-ecb';
 
     #[\Override]
-    public function sign(string $input, string $secret): string
+    public function sign(string $input, #[\SensitiveParameter] string $secret): string
     {
         $hash = substr(sha1($input, true), 0, 16);
 
