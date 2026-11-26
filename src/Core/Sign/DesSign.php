@@ -16,7 +16,7 @@ final class DesSign implements SignInterface
     private const string CIPHER = 'des-ecb';
 
     #[\Override]
-    public function sign(string $input, string $secret): string
+    public function sign(string $input, #[\SensitiveParameter] string $secret): string
     {
         // ECB mode uses no initialization vector
         $encrypted = openssl_encrypt(sha1($input, true), self::CIPHER, $secret, OPENSSL_RAW_DATA);

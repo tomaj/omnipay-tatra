@@ -77,6 +77,8 @@ The callback responses extend `Core\Message\AbstractCallbackResponse` (abstract,
 `Omnipay\Core\Sign\SignInterface::sign(string $input, string $secret): string`, implemented by `HmacSign`,
 `Aes256Sign` and `DesSign` (see [Signatures](/guide/signatures)). `Signature::equals(string $expected, mixed $received): bool`
 compares in constant time.
+The `$secret` of `sign()` and `KeyType::fromSecret()`, and the value of `setSharedSecret()`, `setCertPass()` and
+`setProxyPassword()`, are marked `#[\SensitiveParameter]` ([Security](/security#secrets-in-error-reports)).
 
 ## Enums
 
@@ -117,7 +119,7 @@ Every exception thrown by the package implements `Omnipay\Core\Exception\TatraEx
 | Exception | Extends | Thrown when |
 |---|---|---|
 | `Core\Exception\UnsupportedKeyException` | `InvalidArgumentException` | the shared secret has an unsupported length (or DES for ComfortPay) |
-| `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL cannot compute the signature |
+| `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL cannot compute the signature, or the HMAC/AES key is not hexadecimal |
 | `Core\Exception\GatewayException` | `RuntimeException` | `cancelAuthorize()` gets an HTTP status other than 200 |
 | `Core\Exception\InvalidParameterException` | `UnexpectedValueException` | unsupported `txn` or `transactionType` |
 | `ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | a SOAP fault from the web service; `getErrorCode(): ?int`, `isReceiverFault(): bool`, `static fromSoapFault(\SoapFault): self` |

@@ -20,12 +20,12 @@ final class Aes256Sign implements SignInterface
     private const string CIPHER = 'aes-128-ecb';
 
     #[\Override]
-    public function sign(string $input, string $secret): string
+    public function sign(string $input, #[\SensitiveParameter] string $secret): string
     {
         $hash = substr(sha1($input, true), 0, 16);
 
         // ECB mode uses no initialization vector; OpenSSL uses the first 16 bytes of the key for AES-128
-        $encrypted = openssl_encrypt($hash, self::CIPHER, pack('H*', $secret), OPENSSL_RAW_DATA);
+        $encrypted = openssl_encrypt($hash, self::CIPHER, HexKey::decode($secret), OPENSSL_RAW_DATA);
         if ($encrypted === false) {
             throw new SignatureException('Cannot sign with cipher ' . self::CIPHER . ', is it supported by the OpenSSL build?');
         }

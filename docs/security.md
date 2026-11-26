@@ -47,6 +47,19 @@ supported versions. Fixes are published as [GitHub Security Advisories](https://
   with `caFile` or your own `streamContext` ([TLS and proxy](./guide/comfortpay#tls-and-proxy)).
 - A leaked key lets anyone sign callbacks for your shop: ask Tatra banka for a new one at once.
 
+## Secrets in error reports
+
+The shared secret and the ComfortPay passwords are marked `#[\SensitiveParameter]` wherever they are a function
+argument: `setSharedSecret()`, `setCertPass()`, `setProxyPassword()`, the signers' `sign()` and `KeyType::fromSecret()`.
+When an exception is thrown while one of these calls is on the stack, PHP shows `Object(SensitiveParameterValue)`
+instead of the value in `getTraceAsString()` and in error reports (Tracy, Sentry, Monolog).
+
+The attribute does not cover values passed inside an array or held by an object: `initialize(['sharedSecret' => ...])`,
+`purchase([...])` or the options this library passes to `SoapClient` appear in a trace as `Array`, and the gateway or a
+request passed through your own code as `Object(...)`; tools that dump arguments in full (Tracy's BlueScreen, a
+`print_r()` of `getTrace()`) show the secrets inside them. Set `zend.exception_ignore_args = On` in production (the default of `php.ini-production`):
+traces then contain no arguments at all.
+
 ## Known limitations
 
 - The AES signature uses AES-128 and the first half of the 64-character key, as it has since 2017; whether Tatra banka

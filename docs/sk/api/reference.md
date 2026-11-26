@@ -78,6 +78,8 @@ Odpovede na návrat z banky (callback) rozširujú `Core\Message\AbstractCallbac
 `Omnipay\Core\Sign\SignInterface::sign(string $input, string $secret): string`, implementovaný triedami `HmacSign`,
 `Aes256Sign` a `DesSign` (pozrite [Podpisy](/sk/guide/signatures)). `Signature::equals(string $expected, mixed $received): bool`
 porovnáva v konštantnom čase.
+Parameter `$secret` metód `sign()` a `KeyType::fromSecret()` a hodnota `setSharedSecret()`, `setCertPass()` a
+`setProxyPassword()` sú označené `#[\SensitiveParameter]` ([Bezpečnosť](/sk/security#secrets-in-error-reports)).
 
 ## Enumy {#enums}
 
@@ -118,7 +120,7 @@ Omnipay `Omnipay\Common\Exception\InvalidRequestException` a `InvalidResponseExc
 | Výnimka | Rozširuje | Vyhodí sa, keď |
 |---|---|---|
 | `Core\Exception\UnsupportedKeyException` | `InvalidArgumentException` | kľúč má nepodporovanú dĺžku (alebo je to DES kľúč pre ComfortPay) |
-| `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL nevie vypočítať podpis |
+| `Core\Exception\SignatureException` | `RuntimeException` | OpenSSL nevie vypočítať podpis alebo kľúč HMAC/AES nie je hexadecimálny |
 | `Core\Exception\GatewayException` | `RuntimeException` | `cancelAuthorize()` dostane iný HTTP status ako 200 |
 | `Core\Exception\InvalidParameterException` | `UnexpectedValueException` | nepodporovaný `txn` alebo `transactionType` |
 | `ComfortPay\Exception\ComfortPaySoapFault` | `SoapFault` | SOAP fault z webovej služby; `getErrorCode(): ?int`, `isReceiverFault(): bool`, `static fromSoapFault(\SoapFault): self` |

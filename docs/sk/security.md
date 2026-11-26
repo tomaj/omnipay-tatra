@@ -47,6 +47,19 @@ aj podporované verzie. Opravy sa zverejňujú ako [GitHub Security Advisories](
   cez `caFile` alebo vlastný `streamContext` ([TLS a proxy](./guide/comfortpay#tls-and-proxy)).
 - Uniknutý kľúč umožní komukoľvek podpisovať callbacky pre váš e-shop: okamžite požiadajte Tatra banku o nový.
 
+## Tajomstvá v chybových hláseniach {#secrets-in-error-reports}
+
+Zdieľaný kľúč a heslá pre ComfortPay sú označené `#[\SensitiveParameter]` všade, kde sú argumentom funkcie:
+`setSharedSecret()`, `setCertPass()`, `setProxyPassword()`, `sign()` podpisovačov a `KeyType::fromSecret()`. Keď sa
+vyhodí výnimka a niektoré z týchto volaní je na zásobníku, PHP v `getTraceAsString()` aj v chybových hláseniach
+(Tracy, Sentry, Monolog) zobrazí namiesto hodnoty `Object(SensitiveParameterValue)`.
+
+Atribút nepokrýva hodnoty odovzdané v poli ani uložené v objekte: `initialize(['sharedSecret' => ...])`,
+`purchase([...])` či voľby, ktoré knižnica odovzdáva `SoapClient`, sa v trase zobrazia ako `Array` a brána alebo
+požiadavka odovzdaná cez váš kód ako `Object(...)`; nástroje, ktoré vypisujú argumenty celé (BlueScreen v Tracy,
+`print_r()` z `getTrace()`), v nich tajomstvá ukážu. V produkcii nastavte `zend.exception_ignore_args = On` (predvolená hodnota v `php.ini-production`): trasy
+potom neobsahujú žiadne argumenty.
+
 ## Známe obmedzenia {#known-limitations}
 
 - Podpis AES používa AES-128 a prvú polovicu 64-znakového kľúča, tak ako od roku 2017; či Tatra banka očakáva

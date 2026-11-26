@@ -11,5 +11,5 @@ interface SignInterface
     /**
      * @throws SignatureException when the signature cannot be computed
      */
-    public function sign(string $input, string $secret): string;
+    public function sign(string $input, #[\SensitiveParameter] string $secret): string;
 }

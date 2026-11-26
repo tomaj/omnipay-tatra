@@ -32,7 +32,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->getStringParameter('sharedSecret');
     }
 
-    public function setSharedSecret(?string $value): static
+    public function setSharedSecret(#[\SensitiveParameter] ?string $value): static
     {
         return $this->setParameter('sharedSecret', $value);
     }
