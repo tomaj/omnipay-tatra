@@ -64,6 +64,8 @@ final class SensitiveParameterTest extends TestCase
         $gateway = new TatraPayGateway($this->getHttpClient(), $this->getHttpRequest());
         $gateway->initialize(['mid' => '1111', 'sharedSecret' => $secret]);
 
+        // php.ini-production (and setup-php in CI) drops all arguments from traces; record them like a development setup
+        $ignoreArgs = ini_set('zend.exception_ignore_args', '0');
         try {
             $gateway->purchase(['amount' => '10.00', 'currency' => 'EUR', 'vs' => '123456', 'rurl' => 'https://shop.example/return'])->getData();
             self::fail('UnsupportedKeyException expected');
@@ -72,6 +74,8 @@ final class SensitiveParameterTest extends TestCase
             self::assertStringContainsString('KeyType::fromSecret(Object(SensitiveParameterValue))', $trace);
             self::assertStringNotContainsString($secret, $trace);
             self::assertStringNotContainsString($secret, print_r($exception->getTrace(), true));
+        } finally {
+            ini_set('zend.exception_ignore_args', (string) $ignoreArgs);
         }
     }
 
