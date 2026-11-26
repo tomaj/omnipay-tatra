@@ -24,22 +24,22 @@ final class Gateway extends AbstractGateway
     use GatewayParametersTrait;
     use ParametersTrait;
 
-    /** @deprecated use TransactionType::Purchase */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\TransactionType::Purchase', since: '5.0')]
     public const string TRANSACTION_TYPE_PURCHASE = 'PURCHASE';
-    /** @deprecated use TransactionType::Preauthorization */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\TransactionType::Preauthorization', since: '5.0')]
     public const string TRANSACTION_TYPE_PREAUTHORIZATION = 'PREAUTHORIZATION';
-    /** @deprecated use TransactionType::PreauthConfirm */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\TransactionType::PreauthConfirm', since: '5.0')]
     public const string TRANSACTION_TYPE_PREAUTH_CONFIRM = 'PREAUTH-CONFIRM';
-    /** @deprecated use TransactionType::PreauthCancel */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\TransactionType::PreauthCancel', since: '5.0')]
     public const string TRANSACTION_TYPE_PREAUTH_CANCEL = 'PREAUTH-CANCEL';
-    /** @deprecated use TransactionType::Chargeback */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\TransactionType::Chargeback', since: '5.0')]
     public const string TRANSACTION_TYPE_CHARGEBACK = 'CHARGEBACK';
 
-    /** @deprecated use CardStatus::Ok */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\CardStatus::Ok', since: '5.0')]
     public const string CARD_STATUS_OK = 'OK';
-    /** @deprecated use CardStatus::Fail */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\CardStatus::Fail', since: '5.0')]
     public const string CARD_STATUS_FAIL = 'FAIL';
-    /** @deprecated use CardStatus::Unknown */
+    #[\Deprecated(message: 'use Omnipay\ComfortPay\CardStatus::Unknown', since: '5.0')]
     public const string CARD_STATUS_UNKNOWN = 'UNKNOWN';
 
     #[\Override]

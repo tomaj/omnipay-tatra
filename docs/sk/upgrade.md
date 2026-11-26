@@ -127,7 +127,11 @@ try {
 
 ## Enumy namiesto skupín konštánt {#enums-instead-of-constant-sets}
 
-Konštanty stále existujú, sú však označené ako zastarané (deprecated):
+Konštanty stále existujú s hodnotami zo 4.x, sú však zastarané (deprecated) a verzia 6.0 ich odstráni. Majú atribút
+PHP `#[\Deprecated]`, takže každé ich čítanie vyvolá `E_USER_DEPRECATED` s názvom náhrady, napríklad
+`Constant Omnipay\CardPay\Message\CancelAuthorizeRequest::TXN_CHARGEBACK is deprecated since 5.0, use Omnipay\CardPay\Message\CancelAuthorizeTxn::Chargeback`.
+Testovacia sada, ktorá zlyhá pri deprecation (`failOnDeprecation` v PHPUnit), zlyhá, kým neprejdete na enumy.
+**(úprava)** Použite enumy:
 
 | 4.x | 5.0 |
 |---|---|
